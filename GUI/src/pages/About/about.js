@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/system';
-import background from '../../assets/images/hero.jpg';
+import background from 'assets/images/hero.jpg';
 
 const ProgressBox = styled(Box)({
   marginTop: '16px',

@@ -3,11 +3,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import backgroundImage from '../../assets/images/background-contact.jpg';
-import Header from '../../layout/HomeLayout/header';
-import Footer from '../../layout/HomeLayout/footer';
-import Contact from '../contact/contact';
-import About from '../about/about';
+import backgroundImage from 'assets/images/background-contact.jpg';
+import Header from 'layout/HomeLayout/header';
+import Footer from 'layout/HomeLayout/footer';
+import Contact from '../contact';
+import About from '../about';
 import Slide from '@mui/material/Slide'; // Import the Slide component
 import { styled } from '@mui/system';
 
