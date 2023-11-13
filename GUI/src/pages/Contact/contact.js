@@ -108,7 +108,7 @@ const Contact = () => {
                 </SlideBox>
                 <SlideBox direction="right" in={true} timeout={500}>
                   <form
-                    sx={{
+                    style={{
                       backgroundColor: '#fff',
                       padding: '20px',
                       borderRadius: '8px',

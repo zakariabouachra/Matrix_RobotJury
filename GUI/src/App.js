@@ -1,14 +1,16 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routes';
+// project import
+import Routes from 'routes';
+import ThemeCustomization from 'themes';
+import ScrollTop from 'components/ScrollTop';
 
+// ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
-function App() {
-  return (
-    <Router>
-      <AppRoutes/>
-    </Router>
-  );
-};
+const App = () => (
+  <ThemeCustomization>
+    <ScrollTop>
+      <Routes />
+    </ScrollTop>
+  </ThemeCustomization>
+);
 
 export default App;

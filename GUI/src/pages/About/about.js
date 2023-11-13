@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/system';
-import background from '../../assets/Images/hero.jpg';
+import background from '../../assets/images/hero.jpg';
 
 const ProgressBox = styled(Box)({
   marginTop: '16px',
@@ -71,7 +71,7 @@ const AboutUs = () => {
           Who are we?
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, fontFamily: 'cursive' }}>
-          Let's work together and make awesome sites easily.
+          Let&rsquo;s work together and make awesome sites easily.
         </Typography>
       </Box>
     </Box>

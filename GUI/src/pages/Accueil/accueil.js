@@ -3,11 +3,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import backgroundImage from '../../assets/Images/background-contact.jpg';
-import Header from '../../Layouts/header';
-import Footer from '../../Layouts/footer';
-import Contact from '../Contact/contact';
-import About from '../About/about';
+import backgroundImage from '../../assets/images/background-contact.jpg';
+import Header from '../../layout/HomeLayout/header';
+import Footer from '../../layout/HomeLayout/footer';
+import Contact from '../contact/contact';
+import About from '../about/about';
 import Slide from '@mui/material/Slide'; // Import the Slide component
 import { styled } from '@mui/system';
 
@@ -23,10 +23,13 @@ const AnimatedButton = styled(Button)({
   },
 });
 
+
+
 function Accueil() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [aboutVisible, setAboutVisible] = useState(false);
   const [contactvisible, setContactVisible] = useState(false);
+
 
   const handleScroll = () => {
     setScrollPosition(window.scrollY);
@@ -35,7 +38,6 @@ function Accueil() {
     setAboutVisible(window.scrollY > 200);
     setContactVisible(window.scrollY > 700);
 
-    
   };
 
   window.addEventListener('scroll', handleScroll);
@@ -74,7 +76,7 @@ function Accueil() {
               mb={2}
               textAlign="left"
             >
-              Bienvenue sur notre plateforme de soumission d'articles scientifiques
+              Bienvenue sur notre plateforme de soumission d&rsquo;articles scientifiques
             </Typography>
             <Typography
               variant="body1"
@@ -83,7 +85,7 @@ function Accueil() {
               mb={3}
               textAlign="left"
             >
-              Ce projet vise à créer une plateforme web facilitant la soumission, la validation d'articles scientifiques, et l'enregistrement des chercheurs avec un système de paiement intégré après l'acceptation de l'article.
+              Ce projet vise à créer une plateforme web facilitant la soumission, la validation d&rsquo;articles scientifiques, et l&rsquo;enregistrement des chercheurs avec un système de paiement intégré après l&rsquo;acceptation de l&rsquo;article.
             </Typography>
             <AnimatedButton
               component={Link}

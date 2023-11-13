@@ -1,13 +1,11 @@
-import React from 'react';
-import Routes from './route';
+import { useRoutes } from 'react-router-dom';
 
+// project import
+import LoginRoutes from './LoginRoutes';
+import MainRoutes from './MainRoutes';
+import HomeRoutes from './HomeRoutes';
+// ==============================|| ROUTING RENDER ||============================== //
 
-const AppRoutes = () => {
-    return (
-      <div>
-        <Routes />
-      </div>
-    );
-  };
-  
-  export default AppRoutes;
+export default function ThemeRoutes() {
+  return useRoutes([HomeRoutes, MainRoutes, LoginRoutes]);
+}
