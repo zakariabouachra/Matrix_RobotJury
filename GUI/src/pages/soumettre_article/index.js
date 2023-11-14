@@ -1,18 +1,15 @@
 // material-ui
-import {
-    Grid,
-    Typography
-  } from '@mui/material';
+import { Grid } from '@mui/material';
+import SoumissionForm from './formulaire'; 
 
 const SoumettreArticles = () => {
-    return (
-      <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-        <Grid item xs={12} sx={{ mb: -2.25 }}>
-          <Typography variant="h7">en cours</Typography>
-        </Grid>
+  return (
+    <Grid container rowSpacing={4.5} columnSpacing={2.75} >
+      <Grid item xs={12} sx={{ mb: 5 }}>
+        <SoumissionForm /> 
       </Grid>
-    );
-  };
-  
-  export default SoumettreArticles;
-  
+    </Grid>
+  );
+};
+
+export default SoumettreArticles;
