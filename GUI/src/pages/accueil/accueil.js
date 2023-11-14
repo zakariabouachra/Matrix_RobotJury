@@ -43,7 +43,7 @@ function Accueil() {
   window.addEventListener('scroll', handleScroll);
 
   return (
-    <Box>
+    <Box sx={{ overflowX: 'hidden' }}>
       <AnimatedBackground
         sx={{
           position: 'relative',

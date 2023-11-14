@@ -15,7 +15,7 @@ const Footer = () => {
 
 
       <Typography variant="body2">
-        © 2023 Nom de votre entreprise. Tous droits réservés.
+        © 2023 Matrix scientifique evaluation. Tous droits réservés.
       </Typography>
     </Box>
   );
