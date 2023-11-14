@@ -69,7 +69,7 @@ function Accueil() {
             }}
           >
             <Typography
-              variant="h3"
+              variant="h1"
               fontWeight="bold"
               letterSpacing="2px"
               textTransform="uppercase"
@@ -79,7 +79,7 @@ function Accueil() {
               Bienvenue sur notre plateforme de soumission d&rsquo;articles scientifiques
             </Typography>
             <Typography
-              variant="body1"
+              variant="h2"
               fontSize="1.2rem"
               lineHeight="1.6"
               mb={3}

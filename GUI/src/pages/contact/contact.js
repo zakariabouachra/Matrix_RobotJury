@@ -52,10 +52,12 @@ const Contact = () => {
             Contact Informations
           </Typography>
           <Typography variant="h6" sx={{ mb: 4 }}>
-            Votre texte ici...
+            Feel free to reach out to us for any inquiries or assistance.
           </Typography>
           <Typography variant="body1">
-            Une autre ligne de texte centrée.
+            Whether you have questions about our services, need technical support,
+            or simply want to connect, we are here to help. Please dont hesitate
+            to contact us via the details provided below.
           </Typography>
         </Box>
 
@@ -63,33 +65,33 @@ const Contact = () => {
           <Container>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <SlideBox direction="left" in={true}>
+                <SlideBox direction="left" in={true} timeout={500}>
                   <Typography variant="h5" sx={{ mb: 2 }}>
                     Contact Information
                   </Typography>
                 </SlideBox>
                 <SlideBox direction="left" in={true} timeout={500}>
-                  <Card sx={{ mb: 2 }}>
+                  <Card sx={{ mb: 2, borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <CardContent>
                       <PhoneIcon />
                       <Typography variant="body1">
-                        Phone Number: (123) 456-7890
+                        Phone Number: (514) 456-8755
                       </Typography>
                     </CardContent>
                   </Card>
                 </SlideBox>
                 <SlideBox direction="left" in={true} timeout={1000}>
-                  <Card sx={{ mb: 2 }}>
+                  <Card sx={{ mb: 2, borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <CardContent>
                       <EmailIcon />
                       <Typography variant="body1">
-                        Email: info@example.com
+                        Email: info_matrix@gmail.com
                       </Typography>
                     </CardContent>
                   </Card>
                 </SlideBox>
                 <SlideBox direction="left" in={true} timeout={1500}>
-                  <Card sx={{ mb: 2 }}>
+                  <Card sx={{ mb: 2, borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <CardContent>
                       <FaxIcon />
                       <Typography variant="body1">
@@ -111,7 +113,8 @@ const Contact = () => {
                     style={{
                       backgroundColor: '#fff',
                       padding: '20px',
-                      borderRadius: '8px',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     }}
                   >
                     <TextField

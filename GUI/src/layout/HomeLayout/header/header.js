@@ -2,22 +2,38 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button'; // Import the Button component from MUI
+import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
-import Logo from 'components/Logo'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Logo from 'components/Logo';
 
 function Header() {
   return (
-    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none', color: 'white' }}>
+    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
       <Toolbar disableGutters>
         <Box sx={{ flexGrow: 1 }}>
           <Logo />
         </Box>
 
-        {/* Use MUI Button for the "Se connecter" link styled as a button */}
-        <Button component={RouterLink} to="/login" color="inherit" variant="text">
-          Se connecter
-        </Button>
+        <Box sx={{ marginRight: '27px' }}>
+          <Button
+            component={RouterLink}
+            to="/login"
+            color="inherit"
+            variant="outlined"
+            startIcon={<LockOutlinedIcon />}
+            sx={{
+              fontSize: '16px',
+              borderRadius: '20px',
+              borderColor: '#2196F3',
+              '&:hover': {
+                borderColor: '#1565C0',
+              },
+            }}
+          >
+            Se connecter
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );
