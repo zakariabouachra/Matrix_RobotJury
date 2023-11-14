@@ -71,8 +71,7 @@ const AboutUs = () => {
           Who are we?
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, fontFamily: 'cursive' }}>
-          Let&rsquo;s work together and make awesome sites easily.
-        </Typography>
+        Lets collaborate to streamline the submission of scientific articles on our platform        </Typography>
       </Box>
     </Box>
   );

@@ -76,7 +76,7 @@ function Accueil() {
               mb={2}
               textAlign="left"
             >
-              Bienvenue sur notre plateforme de soumission d&rsquo;articles scientifiques
+              Welcome to our platform for submitting scientific articles.
             </Typography>
             <Typography
               variant="h2"
@@ -85,8 +85,7 @@ function Accueil() {
               mb={3}
               textAlign="left"
             >
-              Ce projet vise à créer une plateforme web facilitant la soumission, la validation d&rsquo;articles scientifiques, et l&rsquo;enregistrement des chercheurs avec un système de paiement intégré après l&rsquo;acceptation de l&rsquo;article.
-            </Typography>
+              This project aims to create a web platform that facilitates the submission, validation of scientific articles, and the registration of researchers with an integrated payment system upon article acceptance            </Typography>
             <AnimatedButton
               component={Link}
               to="/login"
