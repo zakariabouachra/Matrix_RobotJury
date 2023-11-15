@@ -2,46 +2,29 @@ import React, { useState } from 'react';
 import { Typography, TextField, Button, Grid, MenuItem, Box } from '@mui/material';
 
 const Step2 = ({ onPrev, onNext }) => {
-  const [ formData, setFormData] = useState({
-    contributionTitle: '',
-    trackPreference: '',
-    mainTopic: '',
-    contributionType: '',
-    contentType: '',
-    robotVerification: '',
-  });
+  const [trackPreference, setTrackPreference] = useState('');
+  const [mainTopic, setMainTopic] = useState('');
+  const [contributionType, setContributionType] = useState('');
+  const [contentType, setContentType] = useState('');
 
-  // Ajoutez un état pour suivre l'option sélectionnée pour chaque TextField
-  const [selectedTrackPreference, setSelectedTrackPreference] = useState('');
-  const [selectedMainTopic, setSelectedMainTopic] = useState('');
-  const [selectedContributionType, setSelectedContributionType] = useState('');
-  const [selectedContentType, setSelectedContentType] = useState('');
+  const isFormValid = () => {
+    return trackPreference !== '' && mainTopic !== '' && contributionType !== '' && contentType !== '';
+  };
 
+  const handleTrackPreferenceChange = event => {
+    setTrackPreference(event.target.value);
+  };
 
+  const handleMainTopicChange = event => {
+    setMainTopic(event.target.value);
+  };
 
-  const handleChange = (id, value) => {
-    // Mettez à jour l'état en fonction de l'id du TextField
-    switch (id) {
-      case 'trackPreference':
-        setSelectedTrackPreference(value);
-        break;
-      case 'mainTopic':
-        setSelectedMainTopic(value);
-        break;
-      case 'contributionType':
-        setSelectedContributionType(value);
-        break;
-      case 'contentType':
-        setSelectedContentType(value);
-        break;
-      default:
-        break;
-    }
+  const handleContributionTypeChange = event => {
+    setContributionType(event.target.value);
+  };
 
-    setFormData(prevData => ({
-      ...prevData,
-      [id]: value,
-    }));
+  const handleContentTypeChange = event => {
+    setContentType(event.target.value);
   };
 
   return (
@@ -56,13 +39,13 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Track preference"
           fullWidth
           required
-          value={formData.trackPreference} 
-          onChange={(event) => handleChange('trackPreference', event.target.value)}
+          value={trackPreference}
+          onChange={handleTrackPreferenceChange}
         >
-          <MenuItem value="0">
-            IARIA Congress 2023 - General event track
+           <MenuItem value="General event track">
+            Matrix Scientifique Evolution - General event track
           </MenuItem>
-          {/* Ajoutez d'autres options au besoin */}
+
         </TextField>
       </Grid>
       <Grid item xs={12}>
@@ -72,27 +55,27 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Main topic"
           fullWidth
           required
-          value={selectedMainTopic} 
-          onChange={(event) => handleChange('mainTopic', event.target.value)}
+          value={mainTopic}
+          onChange={handleMainTopicChange}
         >
-          <MenuItem value="1">IARIA Congress 2023: Cloud </MenuItem>
-          <MenuItem value="2">IARIA Congress 2023: Data </MenuItem>
-          <MenuItem value="3">IARIA Congress 2023: Energy </MenuItem>
-          <MenuItem value="4">IARIA Congress 2023: Health </MenuItem>
-          <MenuItem value="5">IARIA Congress 2023: Human-machine </MenuItem>
-          <MenuItem value="6">IARIA Congress 2023: Intelligence</MenuItem>
-          <MenuItem value="7">IARIA Congress 2023: Internet</MenuItem>
-          <MenuItem value="8">IARIA Congress 2023: Iot </MenuItem>
-          <MenuItem value="9">IARIA Congress 2023: Learning </MenuItem>
-          <MenuItem value="10">IARIA Congress 2023: Metaverse </MenuItem>
-          <MenuItem value="11">IARIA Congress 2023: Mobility </MenuItem>
-          <MenuItem value="12">IARIA Congress 2023: Multimedia</MenuItem>
-          <MenuItem value="13">IARIA Congress 2023: Networks </MenuItem>
-          <MenuItem value="14">IARIA Congress 2023: Robotics</MenuItem>
-          <MenuItem value="15">IARIA Congress 2023: Security </MenuItem>
-          <MenuItem value="16">IARIA Congress 2023:Sensors</MenuItem>
-          <MenuItem value="17">IARIA Congress 2023: Signal</MenuItem>
-          <MenuItem value="18"> IARIA Congress 2023: Smart Cities </MenuItem>
+          <MenuItem value="Cloud">Matrix Scientifique Evolution: Cloud </MenuItem>
+          <MenuItem value="Data">Matrix Scientifique Evolution: Data </MenuItem>
+          <MenuItem value="Energy">Matrix Scientifique Evolution: Energy </MenuItem>
+          <MenuItem value="Health">Matrix Scientifique Evolution: Health </MenuItem>
+          <MenuItem value="Human-machin">Matrix Scientifique Evolution: Human-machine </MenuItem>
+          <MenuItem value="Intelligence">Matrix Scientifique Evolution: Intelligence</MenuItem>
+          <MenuItem value="Internet">Matrix Scientifique Evolution: Internet</MenuItem>
+          <MenuItem value="Iot">Matrix Scientifique Evolution: Iot </MenuItem>
+          <MenuItem value="Learning">Matrix Scientifique Evolution: Learning </MenuItem>
+          <MenuItem value="Metaverse">Matrix Scientifique Evolution: Metaverse </MenuItem>
+          <MenuItem value="Mobility">Matrix Scientifique Evolution: Mobility </MenuItem>
+          <MenuItem value="Multimedia">Matrix Scientifique Evolution: Multimedia</MenuItem>
+          <MenuItem value="Networks">Matrix Scientifique Evolution: Networks </MenuItem>
+          <MenuItem value="Robotics">Matrix Scientifique Evolution: Robotics</MenuItem>
+          <MenuItem value="Security">Matrix Scientifique Evolution: Security </MenuItem>
+          <MenuItem value="Sensors">Matrix Scientifique Evolution:Sensors</MenuItem>
+          <MenuItem value="Signal">Matrix Scientifique Evolution: Signal</MenuItem>
+          <MenuItem value="Smart Cities">Matrix Scientifique Evolution: Smart Cities </MenuItem>
         </TextField>
       </Grid>
       <Grid item xs={12}>
@@ -102,17 +85,18 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Contribution type"
           fullWidth
           required
-          value={selectedContributionType} 
-          onChange={(event) => handleChange('contributionType', event.target.value)}
+          value={contributionType}
+          onChange={handleContributionTypeChange}
         >
-          <MenuItem value="1">regular paper [in the proceedings, digital library]</MenuItem>
-          <MenuItem value="2">short paper (work in progress) [in the proceedings, digital library]</MenuItem>
-          <MenuItem value="3">idea: two pages [in the proceedings, digital library]</MenuItem>
-          <MenuItem value="4">extended abstract: two pages [in the proceedings, digital library]</MenuItem>
-          <MenuItem value="5">poster! two pages [in the proceedings, digital library]</MenuItem>
-          <MenuItem value="6">poster: slide only [slide-deck posted on www.iaria.org]</MenuItem>
-          <MenuItem value="7">presentation: slide only [slide-deck posted on www.iaria.org]</MenuItem>
-          <MenuItem value="8">demo: two pages [posted on www.iaria.org]</MenuItem>
+          <MenuItem value="regular paper">regular paper [in the proceedings, digital library]</MenuItem>
+          <MenuItem value="short paper">short paper (work in progress) [in the proceedings, digital library]</MenuItem>
+          <MenuItem value="idea: two pages">idea: two pages [in the proceedings, digital library]</MenuItem>
+          <MenuItem value="extended abstract">extended abstract: two pages [in the proceedings, digital library]</MenuItem>
+          <MenuItem value="poster! two pages">poster! two pages [in the proceedings, digital library]</MenuItem>
+          <MenuItem value="poster: slide only">poster: slide only [slide-deck posted on www.iaria.org]</MenuItem>
+          <MenuItem value="presentation: slide only">presentation: slide only [slide-deck posted on www.iaria.org]</MenuItem>
+          <MenuItem value="demo: two pages">demo: two pages [posted on www.iaria.org]</MenuItem>
+
         </TextField>
       </Grid>
       <Grid item xs={12}>
@@ -122,15 +106,15 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Content type"
           fullWidth
           required
-          value={selectedContentType}
-          onChange={(event) => handleChange('contentType', event.target.value)}
+          value={contentType}
+          onChange={handleContentTypeChange}
         >
-          <MenuItem value="1">academic research</MenuItem>
-          <MenuItem value="2">implementations and benchmarks industry report industry research</MenuItem>
-          <MenuItem value="3">state of the art (surveys, studies, etc.)</MenuItem>
+          <MenuItem value="academic research">academic research</MenuItem>
+          <MenuItem value="implementations and benchmarks industry report industry researc">implementations and benchmarks industry report industry research</MenuItem>
+          <MenuItem value="state of the art">state of the art (surveys, studies, etc.)</MenuItem>
+
         </TextField>
       </Grid>
-
       <Grid item xs={12}>
         <Box mt={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button variant="contained" onClick={onPrev}>
@@ -140,7 +124,7 @@ const Step2 = ({ onPrev, onNext }) => {
             variant="contained"
             color="primary"
             onClick={onNext}
-            
+            disabled={!isFormValid()}
           >
             Suivant
           </Button>
@@ -151,4 +135,3 @@ const Step2 = ({ onPrev, onNext }) => {
 };
 
 export default Step2;
-
