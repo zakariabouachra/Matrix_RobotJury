@@ -23,6 +23,17 @@ const Step3 = ({ onPrev, onNext }) => {
     },
   ]);
 
+  const isFormValid = () => {
+    return authors.every(
+      (author) =>
+        author.contactType !== '' &&
+        author.firstName !== '' &&
+        author.lastName !== '' &&
+        author.institution !== '' &&
+        author.country !== ''
+    );
+  };
+
   const handleAddAuthor = () => {
     const newAuthor = {
       id: authors.length + 1,
@@ -114,27 +125,28 @@ const Step3 = ({ onPrev, onNext }) => {
       ))}
       <Grid item xs={12}>
         <Box mt={1}>
-            <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={handleAddAuthor}
-            >
-                Ajouter un auteur
-            </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleAddAuthor}
+          >
+            Ajouter un auteur
+          </Button>
         </Box>
         <Box mt={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button variant="contained" onClick={onPrev}>
-                Précédent
-            </Button>
-            <Button variant="contained" color="primary" onClick={onNext}>
-                Suivant
-            </Button>
+          <Button variant="contained" onClick={onPrev}>
+            Précédent
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onNext}
+            disabled={!isFormValid()}
+          >
+            Suivant
+          </Button>
         </Box>
-
-       
-        
-        
       </Grid>
     </Grid>
   );
