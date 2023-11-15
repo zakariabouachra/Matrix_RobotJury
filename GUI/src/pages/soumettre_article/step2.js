@@ -11,12 +11,33 @@ const Step2 = ({ onPrev, onNext }) => {
     robotVerification: '',
   });
 
-  const isFormValid = () => {
-    return Object.values(formData).every(value => value !== '');
-  };
+  // Ajoutez un état pour suivre l'option sélectionnée pour chaque TextField
+  const [selectedTrackPreference, setSelectedTrackPreference] = useState('');
+  const [selectedMainTopic, setSelectedMainTopic] = useState('');
+  const [selectedContributionType, setSelectedContributionType] = useState('');
+  const [selectedContentType, setSelectedContentType] = useState('');
 
-  const handleChange = event => {
-    const { id, value } = event.target;
+
+
+  const handleChange = (id, value) => {
+    // Mettez à jour l'état en fonction de l'id du TextField
+    switch (id) {
+      case 'trackPreference':
+        setSelectedTrackPreference(value);
+        break;
+      case 'mainTopic':
+        setSelectedMainTopic(value);
+        break;
+      case 'contributionType':
+        setSelectedContributionType(value);
+        break;
+      case 'contentType':
+        setSelectedContentType(value);
+        break;
+      default:
+        break;
+    }
+
     setFormData(prevData => ({
       ...prevData,
       [id]: value,
@@ -35,7 +56,7 @@ const Step2 = ({ onPrev, onNext }) => {
           fullWidth
           required
           value={formData.contributionTitle}
-          onChange={handleChange}
+          onChange={(event) => handleChange('contributionTitle', event.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
@@ -45,13 +66,12 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Track preference"
           fullWidth
           required
-          value={formData.trackPreference}
-          onChange={handleChange}
+          value={selectedTrackPreference} 
+          onChange={(event) => handleChange('trackPreference', event.target.value)}
         >
           <MenuItem value="0">
             IARIA Congress 2023 - General event track
           </MenuItem>
-
           {/* Ajoutez d'autres options au besoin */}
         </TextField>
       </Grid>
@@ -62,8 +82,8 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Main topic"
           fullWidth
           required
-          value={formData.mainTopic}
-          onChange={handleChange}
+          value={selectedMainTopic} 
+          onChange={(event) => handleChange('mainTopic', event.target.value)}
         >
           <MenuItem value="1">IARIA Congress 2023: Cloud </MenuItem>
           <MenuItem value="2">IARIA Congress 2023: Data </MenuItem>
@@ -82,8 +102,7 @@ const Step2 = ({ onPrev, onNext }) => {
           <MenuItem value="15">IARIA Congress 2023: Security </MenuItem>
           <MenuItem value="16">IARIA Congress 2023:Sensors</MenuItem>
           <MenuItem value="17">IARIA Congress 2023: Signal</MenuItem>
-          <MenuItem value="18">IARIA Congress 2023: Smart Cities </MenuItem>
-
+          <MenuItem value="18"> IARIA Congress 2023: Smart Cities </MenuItem>
         </TextField>
       </Grid>
       <Grid item xs={12}>
@@ -93,8 +112,8 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Contribution type"
           fullWidth
           required
-          value={formData.contributionType}
-          onChange={handleChange}
+          value={selectedContributionType} 
+          onChange={(event) => handleChange('contributionType', event.target.value)}
         >
           <MenuItem value="1">regular paper [in the proceedings, digital library]</MenuItem>
           <MenuItem value="2">short paper (work in progress) [in the proceedings, digital library]</MenuItem>
@@ -104,7 +123,6 @@ const Step2 = ({ onPrev, onNext }) => {
           <MenuItem value="6">poster: slide only [slide-deck posted on www.iaria.org]</MenuItem>
           <MenuItem value="7">presentation: slide only [slide-deck posted on www.iaria.org]</MenuItem>
           <MenuItem value="8">demo: two pages [posted on www.iaria.org]</MenuItem>
-
         </TextField>
       </Grid>
       <Grid item xs={12}>
@@ -114,26 +132,16 @@ const Step2 = ({ onPrev, onNext }) => {
           label="Content type"
           fullWidth
           required
-          value={formData.contentType}
-          onChange={handleChange}
+          value={selectedContentType}
+          onChange={(event) => handleChange('contentType', event.target.value)}
         >
           <MenuItem value="1">Please select .</MenuItem>
           <MenuItem value="2">academic research</MenuItem>
           <MenuItem value="3">implementations and benchmarks industry report industry research</MenuItem>
           <MenuItem value="4">state of the art (surveys, studies, etc.)</MenuItem>
-
         </TextField>
       </Grid>
-      <Grid item xs={12}>
-        <TextField
-          id="robotVerification"
-          label="To prove you are not a robot, solve 8 + 5 ="
-          fullWidth
-          required
-          value={formData.robotVerification}
-          onChange={handleChange}
-        />
-      </Grid>
+
       <Grid item xs={12}>
         <Box mt={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button variant="contained" onClick={onPrev}>
@@ -143,7 +151,7 @@ const Step2 = ({ onPrev, onNext }) => {
             variant="contained"
             color="primary"
             onClick={onNext}
-            disabled={!isFormValid()}
+            
           >
             Suivant
           </Button>
@@ -154,3 +162,4 @@ const Step2 = ({ onPrev, onNext }) => {
 };
 
 export default Step2;
+

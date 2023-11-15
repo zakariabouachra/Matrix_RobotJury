@@ -112,7 +112,7 @@ const Contact = () => {
                   <form
                     style={{
                       backgroundColor: '#fff',
-                      padding: '20px',
+                      padding: '30px',
                       borderRadius: '12px',
                       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     }}
