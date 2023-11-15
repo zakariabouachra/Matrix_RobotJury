@@ -110,7 +110,7 @@ const getStatusColor = ( status ) => {
       break;
     case "Publier":
       color = 'success';
-      title = 'Approved';
+      title = 'Published';
       break;
     case "Refuser":
       color = 'error';
