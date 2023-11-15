@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // assets
-import { LockOutlined, QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER PROFILE - SETTING TAB ||============================== //
 
@@ -25,13 +25,7 @@ const SettingTab = () => {
         </ListItemIcon>
         <ListItemText primary="Support" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
-        <ListItemIcon>
-          <UserOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Account Settings" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
+      <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 2)}>
         <ListItemIcon>
           <LockOutlined />
         </ListItemIcon>
