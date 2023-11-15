@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { AppBar, IconButton, Toolbar, useMediaQuery } from '@mui/material';
+import { useState } from 'react';
+import { AppBar, IconButton, Toolbar, useMediaQuery,Switch  } from '@mui/material';
 
 // project import
 import AppBarStyled from './AppBarStyled';
@@ -16,6 +17,13 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 const Header = ({ open, handleDrawerToggle }) => {
   const theme = useTheme();
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
+  // State pour gérer le mode sombre
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Fonction pour basculer entre le mode sombre et clair
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   const iconBackColor = 'grey.100';
   const iconBackColorOpen = 'grey.200';
@@ -34,6 +42,7 @@ const Header = ({ open, handleDrawerToggle }) => {
         {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </IconButton>
       <HeaderContent />
+      <Switch checked={darkMode} onChange={toggleDarkMode} />
     </Toolbar>
   );
 
