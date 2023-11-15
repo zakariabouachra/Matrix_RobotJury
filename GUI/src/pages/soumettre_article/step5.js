@@ -49,5 +49,4 @@ const Step5 = ({ onPrev, onNext }) => {
     </Grid>
   );
 };
-
 export default Step5;
