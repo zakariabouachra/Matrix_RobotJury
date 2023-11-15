@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Typography, TextField, Button, Grid, MenuItem, Box } from '@mui/material';
 
 const Step2 = ({ onPrev, onNext }) => {
-  const [formData, setFormData] = useState({
+  const [ formData, setFormData] = useState({
     contributionTitle: '',
     trackPreference: '',
     mainTopic: '',
@@ -51,22 +51,12 @@ const Step2 = ({ onPrev, onNext }) => {
       </Grid>
       <Grid item xs={12}>
         <TextField
-          id="contributionTitle"
-          label="Titre de la contribution"
-          fullWidth
-          required
-          value={formData.contributionTitle}
-          onChange={(event) => handleChange('contributionTitle', event.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
           id="trackPreference"
           select
           label="Track preference"
           fullWidth
           required
-          value={selectedTrackPreference} 
+          value={formData.trackPreference} 
           onChange={(event) => handleChange('trackPreference', event.target.value)}
         >
           <MenuItem value="0">
@@ -135,10 +125,9 @@ const Step2 = ({ onPrev, onNext }) => {
           value={selectedContentType}
           onChange={(event) => handleChange('contentType', event.target.value)}
         >
-          <MenuItem value="1">Please select .</MenuItem>
-          <MenuItem value="2">academic research</MenuItem>
-          <MenuItem value="3">implementations and benchmarks industry report industry research</MenuItem>
-          <MenuItem value="4">state of the art (surveys, studies, etc.)</MenuItem>
+          <MenuItem value="1">academic research</MenuItem>
+          <MenuItem value="2">implementations and benchmarks industry report industry research</MenuItem>
+          <MenuItem value="3">state of the art (surveys, studies, etc.)</MenuItem>
         </TextField>
       </Grid>
 
