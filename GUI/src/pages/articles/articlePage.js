@@ -16,93 +16,128 @@ import {
   TableRow,
   TableCell,
   TablePagination,
+  Stack
 } from '@mui/material';
-import 'assets/Styles/style.css';
+import Dot from 'components/@extended/Dot';
 
 const articlesData = [
   { id: 1, title: 'Article 1', status: 'Publier' },
   { id: 2, title: 'Article 2', status: 'En cours' },
   { id: 3, title: 'Article 3', status: 'Publier' },
   { id: 4, title: 'Article 4', status: 'Verifier' },
-  { id: 5, title: 'Article 5', status: 'Revision' },
+  { id: 5, title: 'Article 5', status: 'Refuser' },
+  { id: 6, title: 'Article 6', status: 'Refuser' },
 ];
 
 const ArticlesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [sortOrder, setSortOrder] = useState('asc');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
     setPage(0);
   };
-
+  
   const handleStatusFilter = (event) => {
-    setStatusFilter(event.target.value);
+    const value = event.target.value;
+    setStatusFilter(value);
     setPage(0);
-  };
-
-  const handleSortOrderChange = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, articlesData.length - page * rowsPerPage);
 
-  const renderActions = (status) => {
-    switch (status) {
-      case 'Publier':
-        return (
-          <Select label="Actions">
-            <MenuItem>Publier</MenuItem>
-            <MenuItem>Archiver</MenuItem>
-          </Select>
-        );
-      case 'En cours':
-        return (
-          <Select label="Actions">
-            <MenuItem>Continuer</MenuItem>
-          </Select>
-        );
-      case 'Verifier':
-        return (
-          <Select label="Actions">
-            <MenuItem>Vérifier</MenuItem>
-          </Select>
-        );
-      case 'Revision':
-        return (
-          <Select label="Actions">
-            <MenuItem>Réviser</MenuItem>
-          </Select>
-        );
-      default:
-        return null;
-    }
-  };
+    const renderActions = (status) => {
+      switch (status) {
+        case 'Publier':
+          return (
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Select</InputLabel>
+              <Select label="Actions">
+                <MenuItem value="Archiver">Archiver</MenuItem>
+                <MenuItem value="Supprimer">Supprimer</MenuItem>
+              </Select>
+            </FormControl>
+          );
+        case 'En cours':
+          return null; 
+        case 'Verifier':
+          return (
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Select</InputLabel>
+              <Select label="Actions">
+                <MenuItem value="Verifier">Continuer</MenuItem>
+                <MenuItem value="Supprimer">Supprimer</MenuItem>
+              </Select>
+            </FormControl>
+          );
+        case 'Refuser':
+          return (
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Select</InputLabel>
+              <Select label="Actions">
+                <MenuItem value="Reviser">Renvoyer</MenuItem>
+                <MenuItem value="Supprimer">Supprimer</MenuItem>
+              </Select>
+            </FormControl>
+          );
+        default:
+          return (
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Select</InputLabel>
+              <Select label="Actions">
+                <MenuItem value="">Sélectionner</MenuItem>
+              </Select>
+            </FormControl>
+          );
+      }
+    };
+    
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Publier':
-        return 'green';
-      case 'En cours':
-        return 'orange';
-      case 'Revision':
-        return 'red';
-      case 'Verifier':
-        return 'yellow';
-      default:
-        return 'black';
-    }
-  };
+  // ==============================|| ORDER TABLE - STATUS ||============================== //
+
+const getStatusColor = ( status ) => {
+  let color;
+  let title;
+
+  switch (status) {
+    case "Verifier":
+      color = 'warning';
+      title = 'Verified';
+      break;
+    case "Publier":
+      color = 'success';
+      title = 'Approved';
+      break;
+    case "Refuser":
+      color = 'error';
+      title = 'Rejected';
+      break;
+    case "En cours":
+      color = 'primary';
+      title = 'In process';
+      break;
+    default:
+      color = 'black';
+      title = 'None';
+  }
+
+  return (
+    <Stack direction="row" spacing={1} alignItems="center">
+      <Dot color={color} />
+      <Typography>{title}</Typography>
+    </Stack>
+  );
+};
+
+
+  
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        Mes Articles
-      </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={6}>
           <TextField
@@ -114,7 +149,7 @@ const ArticlesPage = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6} container alignItems="center">
-          <Grid item xs={6}>
+          <Grid item xs={12} >
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -126,14 +161,9 @@ const ArticlesPage = () => {
                 <MenuItem value="Publier">Publié</MenuItem>
                 <MenuItem value="En cours">En cours</MenuItem>
                 <MenuItem value="Verifier">Verifier</MenuItem>
-                <MenuItem value="Revision">Révision</MenuItem>
+                <MenuItem value="Refuser">Refuser</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <button onClick={handleSortOrderChange}>
-              {sortOrder === 'asc' ? 'Trier A-Z' : 'Trier Z-A'}
-            </button>
           </Grid>
         </Grid>
         <Grid item xs={12}>
@@ -147,36 +177,29 @@ const ArticlesPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0
-                  ? articlesData.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : articlesData
-                ).map((article) => (
-                  <TableRow
-                    key={article.id}
-                    style={{ color: getStatusColor(article.status) }}
-                  >
-                    <TableCell style={{ fontWeight: 'bold', textDecoration: 'none' }}>
-                      <Typography variant="body1">
-                        <a
-                          href={`#/${article.id}`}
-                          style={{ fontWeight: 'bold', textDecoration: 'none' }}
-                        >
-                          {article.title}
-                        </a>
-                      </Typography>
-                    </TableCell>
-                    <TableCell style={{ color: getStatusColor(article.status) }}>
-                      {article.status}
-                    </TableCell>
-                    <TableCell style={{ color: getStatusColor(article.status) }}>
-                      {renderActions(article.status)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                <TableRow style={{ height: 53 * emptyRows }}>
+              {articlesData
+                .filter((article) =>
+                  article.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                  (statusFilter === 'All' || article.status === statusFilter)
+                )
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((article) => (
+                <TableRow key={article.id}>
+                  <TableCell style={{ fontWeight: 'bold', textDecoration: 'none' }}>
+                    <Typography variant="body1">
+                      <a
+                        href={`#/${article.id}`}
+                        style={{ fontWeight: 'bold', textDecoration: 'none' }}
+                      >
+                        {article.title}
+                      </a>
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{getStatusColor(article.status)}</TableCell>
+                  <TableCell>{renderActions(article.status)}</TableCell>
+                </TableRow>
+              ))}
+                  <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={3} />
                 </TableRow>
               </TableBody>
