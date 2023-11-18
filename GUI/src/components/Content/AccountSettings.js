@@ -1,10 +1,29 @@
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react';
 
 function AccountSettings() {
+
+  const userData = localStorage.getItem('userData');  
+  const userDataObject = JSON.parse(userData);
+
+  
+
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
+
+
+  useEffect(() => {
+    if (userDataObject?.datedenaisance) {
+      const parsedDate = new Date(userDataObject.datedenaisance);
+      setDay(parsedDate.getDate().toString());
+      setMonth((parsedDate.getMonth() + 1).toString());
+      setYear(parsedDate.getFullYear().toString());
+    }
+    if (userDataObject?.sexe) {
+      setGender(userDataObject.sexe);
+    }
+  }, [userDataObject]);
 
   const handleDayChange = (event) => {
     const { value } = event.target;
@@ -31,11 +50,13 @@ function AccountSettings() {
     >
       <FormControl id="firstName">
         <FormLabel>First Name</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Tim" />
+        <Input focusBorderColor="brand.blue" type="text" placeholder="Tim"  value={userDataObject?.prenom || ''}
+/>
       </FormControl>
       <FormControl id="lastName">
         <FormLabel>Last Name</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Cook" />
+        <Input focusBorderColor="brand.blue" type="text" placeholder="Cook"  value={userDataObject?.nom || ''}
+ />
       </FormControl>
       <FormControl id="dateOfBirth" gridColumn={{ md: 'span 5' }}>
         <FormLabel>Date of Birth</FormLabel>

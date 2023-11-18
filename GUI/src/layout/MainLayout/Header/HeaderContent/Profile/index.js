@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState , useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -24,6 +24,8 @@ import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
+import { useNavigate } from 'react-router-dom'; // Ajout de Navigate
+
 
 // assets
 import avatar1 from 'assets/images/users/avatar-1.png';
@@ -55,9 +57,58 @@ function a11yProps(index) {
 
 const Profile = () => {
   const theme = useTheme();
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [userData, setUserData] = useState();
+  const navigate = useNavigate(); // Utilisation de useNavigate
+
+
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+  
+    // Vérifier si les données utilisateur existent dans le localStorage
+    if (userData && userLoggedIn) {
+      setUserData(JSON.parse(userData));
+      setUserLoggedIn(true);
+    } else {
+      const user_id = localStorage.getItem('user_id');
+      if (user_id) {
+        fetch(`http://127.0.0.1:5000/user/${user_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => {
+            if (response.status !== 200) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            setUserData(data);
+            localStorage.setItem('userData', JSON.stringify(data));
+            setUserLoggedIn(true);
+          })
+          .catch((error) => {
+            console.error('There was a problem with the fetch operation:', error);
+            localStorage.clear(); 
+            navigate("/login");
+            setUserLoggedIn(false);
+          });
+      } else {
+        setUserLoggedIn(false);
+        localStorage.clear(); 
+        navigate("/login");
+      }
+    }
+  }, []);
 
   const handleLogout = async () => {
-    // logout
+    if (userLoggedIn) {
+      localStorage.clear(); 
+      setUserLoggedIn(false);
+      navigate("/login");
+    }
   };
 
   const anchorRef = useRef(null);
@@ -98,7 +149,13 @@ const Profile = () => {
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">test test</Typography>
+          <Typography variant="subtitle1">
+          {userData && (
+            <>
+              {userData.nom} {userData.prenom}
+            </>
+          )}
+        </Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -141,9 +198,19 @@ const Profile = () => {
                           <Stack direction="row" spacing={1.25} alignItems="center">
                             <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                             <Stack>
-                              <Typography variant="h6">test test</Typography>
+                              <Typography variant="h6">
+                              {userData && (
+                                  <>
+                                    {userData.nom} {userData.prenom}
+                                  </>
+                                )}
+                              </Typography>
                               <Typography variant="body2" color="textSecondary">
-                                test test
+                              {userData && (
+                                  <>
+                                    {userData.email}
+                                  </>
+                                )}
                               </Typography>
                             </Stack>
                           </Stack>

@@ -19,6 +19,8 @@ import {
 } from '@chakra-ui/react'
 
 function Profile() {
+  const userData = localStorage.getItem('userData');  
+  const userDataObject = JSON.parse(userData);
   const [userProfile, setUserProfile] = useState(null)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -90,10 +92,10 @@ function Profile() {
       </Modal>
       <VStack spacing={1}>
         <Heading as="h3" fontSize="xl" color="brand.dark">
-          Test test
+          {userDataObject.nom} {userDataObject.prenom}
         </Heading>
         <Text color="brand.gray" fontSize="sm">
-          test of test
+          {userDataObject.email}
         </Text>
       </VStack>
     </VStack>

@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-
+import { useRef, useState , useEffect } from 'react';
+import { Link } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -9,7 +9,12 @@ import {
   IconButton,
   Paper,
   Popper,
-  useMediaQuery
+  useMediaQuery,
+  Typography,
+  ListItemButton,
+  ListItemText,
+  ListItemSecondaryAction,
+  ListItem
 } from '@mui/material';
 
 // project import
@@ -25,6 +30,34 @@ import { BellOutlined, CloseOutlined } from '@ant-design/icons';
 const Notification = () => {
   const theme = useTheme();
   const matchesXs = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [incompleteProfile, setIncompleteProfile] = useState(false);
+    const [notifications, setNotifications] = useState([]); // État pour stocker les notifications
+
+  
+
+    useEffect(() => {
+      const userData = localStorage.getItem('userData');
+  
+      if (userData) {
+        const parsedUserData = JSON.parse(userData);
+        const hasNullValues = Object.values(parsedUserData).some(value => value === null || value === '');
+  
+        if (hasNullValues) {
+          setIncompleteProfile(true);
+        } else {
+          setIncompleteProfile(false);
+        }
+      }
+  
+      const Notifications = [
+        ...(incompleteProfile
+          ? [{ message: 'Please complete your profile' , link:'/view_profile' }]
+          : [])
+      ];
+  
+      setNotifications(Notifications); 
+    }, [incompleteProfile]); 
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -54,7 +87,7 @@ const Notification = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Badge badgeContent={4} color="primary">
+        <Badge badgeContent={notifications.length} color="primary">
           <BellOutlined />
         </Badge>
       </IconButton>
@@ -101,7 +134,25 @@ const Notification = () => {
                     </IconButton>
                   }
                 >
-                    test
+                   {notifications.map((notification, index) => (
+                    <Link key={index} to={notification.link} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemButton  >
+                      <ListItem >
+                        <ListItemText
+                          primary={
+                            <Typography variant="subtitle1">
+                              {notification.message}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                     
+                      <ListItemSecondaryAction>
+                      </ListItemSecondaryAction>
+                    </ListItemButton>
+                    </Link>
+                    ))}
+
                 </MainCard>
               </ClickAwayListener>
             </Paper>

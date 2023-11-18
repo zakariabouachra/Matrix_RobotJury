@@ -1,7 +1,6 @@
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 
 import AccountSettings from './AccountSettings'
-import Actions from './Actions'
 import CompanySettings from './CoordonneSettings'
 import Notifications from './Notifications'
 import Addresses from './AddressSetting'
@@ -9,6 +8,9 @@ import SecuriteSetting from './SecuriteSetting'
 import PaiementSetting from './paiementSetting'
 
 const Content = () => {
+
+
+
   const tabs = ['Informations générales', 'Coordonnées', 'Adresses', 'Sécurité' , 'Modes de paiement' ,'Notifications']
 
   return (
@@ -46,7 +48,7 @@ const Content = () => {
 
         <TabPanels px={3} mt={5}>
           <TabPanel>
-            <AccountSettings />
+            <AccountSettings  />
           </TabPanel>
           <TabPanel>
             <CompanySettings />
@@ -66,7 +68,6 @@ const Content = () => {
         </TabPanels>
       </Tabs>
 
-      <Actions />
     </Box>
   )
 }

@@ -2,7 +2,6 @@
 import { Box, useMediaQuery } from '@mui/material';
 
 // project import
-import Search from './Search';
 import Profile from './Profile';
 import Notification from './Notification';
 import MobileSection from './MobileSection';
@@ -14,7 +13,7 @@ const HeaderContent = () => {
 
   return (
     <>
-      {!matchesXs && <Search />}
+      {!matchesXs && <Box sx={{ width: '100%', ml: { xs: 0, md: 1 } }}></Box>}
       {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
 
 

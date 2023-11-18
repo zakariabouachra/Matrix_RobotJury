@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate  } from 'react-router-dom'; // Import de la fonction navigate
 
 // material-ui
 import {
@@ -33,6 +33,7 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 const AuthLogin = () => {
   const [checked, setChecked] = React.useState(false);
+  const navigate = useNavigate(); // Utilisation de useNavigate
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -42,6 +43,7 @@ const AuthLogin = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
 
   return (
     <>
@@ -57,16 +59,35 @@ const AuthLogin = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
+            const response = await fetch('http://127.0.0.1:5000/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(values),
+            });
+  
+            if (response.status === 200) {
+              const data = await response.json();
+              console.log(data);
+              localStorage.setItem('user_id', data.user_id);
+              navigate('/dashboard/default');
+            } else {
+              const data = await response.json();
+              setErrors({ submit: data.message });
+            }
+  
             setStatus({ success: false });
             setSubmitting(false);
           } catch (err) {
+            console.error('Error:', err);
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange,handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>

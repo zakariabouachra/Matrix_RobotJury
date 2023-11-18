@@ -4,6 +4,9 @@ import Data from './Data'
 import Profile from './Profile'
 
 function Sidebar() {
+
+
+
   return (
     <Box
       as="aside"
@@ -16,8 +19,8 @@ function Sidebar() {
       borderColor="brand.light"
       style={{ transform: 'translateY(-100px)' }}
     >
-      <Profile />
-      <Data />
+      <Profile/>
+      <Data/>
     </Box>
   )
 }

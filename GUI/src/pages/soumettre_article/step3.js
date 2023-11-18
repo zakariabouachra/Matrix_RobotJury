@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   Grid,
-  MenuItem,
   IconButton,
   Box,
 } from '@mui/material';
@@ -64,19 +63,6 @@ const Step3 = ({ onPrev, onNext }) => {
         <Grid item container spacing={2} key={author.id}>
           <Grid item xs={12}>
             <Typography variant="subtitle1">Author {author.id}:</Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              select
-              label="Contact?"
-              fullWidth
-              required
-              value={author.contactType}
-              onChange={(e) => handleChangeAuthorField(author.id, 'contactType', e.target.value)}
-            >
-              <MenuItem value="Email">Email</MenuItem>
-              {/* Ajoutez d'autres options au besoin */}
-            </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField

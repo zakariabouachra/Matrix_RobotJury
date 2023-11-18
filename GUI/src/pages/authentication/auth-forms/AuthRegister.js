@@ -21,6 +21,8 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useNavigate  } from 'react-router-dom'; // Import de la fonction navigate
+
 
 // project import
 import FirebaseSocial from './FirebaseSocial';
@@ -35,6 +37,8 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 const AuthRegister = () => {
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate(); // Utilisation de useNavigate
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -71,14 +75,33 @@ const AuthRegister = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
+            const response = await fetch('http://127.0.0.1:5000/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(values),
+            });
+  
+            if (response.status === 201) {
+              const data = await response.json();
+              console.log(data);
+              localStorage.setItem('user_id', data.user_id);
+              navigate('/dashboard/default');
+            } else {
+              const data = await response.json();
+              setErrors({ submit: data.message });
+            }
+  
             setStatus({ success: false });
             setSubmitting(false);
           } catch (err) {
-            console.error(err);
+            console.error('Error:', err);
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);
           }
+
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

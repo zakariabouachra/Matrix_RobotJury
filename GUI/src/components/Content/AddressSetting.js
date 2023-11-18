@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react';
 import countriesData from './countries.json'; // Chemin vers votre fichier JSON des pays
 
 function AddressForm() {
+  const userData = localStorage.getItem('userData');
+  const userDataObject = JSON.parse(userData);
+
   const [address, setAddress] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
@@ -14,18 +17,40 @@ function AddressForm() {
     name,
   }));
 
+  useEffect(() => {
+    if (userDataObject) {
+      setAddress(userDataObject.adresse || '');
+      setPostalCode(userDataObject.postalCode || '');
+      setCity(userDataObject.city || '');
+      setSelectedCountry(userDataObject.country || '');
+    }
+  }, [userDataObject]);
+
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+  };
+
+  const handlePostalCodeChange = (e) => {
+    setPostalCode(e.target.value);
+  };
+
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
+
+  const handleCountryChange = (e) => {
+    setSelectedCountry(e.target.value);
+  };
+
   return (
-    <Grid
-      templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
-      gap={6}
-    >
+    <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }} gap={6}>
       <FormControl id="address">
         <FormLabel>Address</FormLabel>
         <Input
           focusBorderColor="brand.blue"
           type="text"
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={handleAddressChange}
           placeholder="Enter address"
         />
       </FormControl>
@@ -35,7 +60,7 @@ function AddressForm() {
           focusBorderColor="brand.blue"
           type="text"
           value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
+          onChange={handlePostalCodeChange}
           placeholder="Enter postal code"
         />
       </FormControl>
@@ -45,7 +70,7 @@ function AddressForm() {
           focusBorderColor="brand.blue"
           type="text"
           value={city}
-          onChange={(e) => setCity(e.target.value)}
+          onChange={handleCityChange}
           placeholder="Enter city"
         />
       </FormControl>
@@ -55,7 +80,7 @@ function AddressForm() {
           focusBorderColor="brand.blue"
           placeholder="Select country"
           value={selectedCountry}
-          onChange={(e) => setSelectedCountry(e.target.value)}
+          onChange={handleCountryChange}
         >
           {countries.map((country) => (
             <option key={country.code} value={country.name}>
