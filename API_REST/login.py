@@ -14,7 +14,7 @@ conn = snowflake.connector.connect(
     account='iwphmqq-ht33884',
     warehouse='COMPUTE_WH',
     database='MATRIX',
-    schema='PUBLIC'  # Remplacez par votre schéma si nécessaire
+    schema='PUBLIC'  
 )
 
 # Création d'un curseur
