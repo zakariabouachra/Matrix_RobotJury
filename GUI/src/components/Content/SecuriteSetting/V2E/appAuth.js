@@ -1,12 +1,14 @@
 import React ,{useState} from 'react';
-import { Grid, Text, VStack, Input,Button } from '@chakra-ui/react';
+import { Grid, Text, VStack, Input,Button,Box,IconButton } from '@chakra-ui/react';
+import { ArrowBackIcon  } from '@chakra-ui/icons'; // Import de l'icône de poubelle
 
 
-function AppAuth() {
+function AppAuth({setIsItemSelect}) {
     const [isValid, setIsValid] = useState(false); // État pour la validité du code
     const [authCode, setAuthCode] = useState(''); // État pour suivre le contenu de l'input
 
     const handleVerify = () => {
+      setIsItemSelect(false);
       console.log(authCode)
     };
   
@@ -14,6 +16,10 @@ function AppAuth() {
       const code = event.target.value;
       setAuthCode(code);
       setIsValid(code.trim() !== '');
+    };
+
+    const handleGoBack = () => {
+      setIsItemSelect(false);
     };
   
 
@@ -42,16 +48,27 @@ function AppAuth() {
           onChange={handleAuthCodeChange}
         />
       </VStack>
-      <Button
-        onClick={handleVerify}
-        borderRadius="full"
-        width="auto"
-        _hover={{ bg: 'brand.blue' }}
-        _active={{ bg: 'brand.blue' }}
-        isDisabled={!isValid}
+      <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+        <IconButton
+          aria-label="Retour"
+          icon={<ArrowBackIcon />}
+          onClick={handleGoBack}
+          variant="ghost"
+          colorScheme="gray"
+          bg="white" 
+          color="black" 
+        />
+        <Button
+          onClick={handleVerify}
+          borderRadius="full"
+          width="auto"
+          _hover={{ bg: 'brand.blue' }}
+          _active={{ bg: 'brand.blue' }}
+          isDisabled={!isValid}
         >
         Verify
         </Button>
+        </Box>
     </Grid>
   );
 }

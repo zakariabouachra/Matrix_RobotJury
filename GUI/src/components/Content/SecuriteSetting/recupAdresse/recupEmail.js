@@ -7,9 +7,12 @@ import {
   Alert,
   AlertIcon,
   Link,
+  IconButton,
+  Box
 } from '@chakra-ui/react';
+import {  ArrowBackIcon  } from '@chakra-ui/icons'; 
 
-function EmailValidationComponent() {
+function EmailValidationComponent({setIsButtonClicked}) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [isCodeSent, setIsCodeSent] = useState(false);
@@ -33,12 +36,19 @@ function EmailValidationComponent() {
     setCode(event.target.value);
   };
 
+  const handleGoBack = () => {
+    setIsButtonClicked(false);
+  };
+
   const handleVerifyCode = () => {
-    // Ici, tu vérifierais si le code entré correspond au code envoyé (pas implémenté ici)
-    // Tu pourrais comparer le code saisi avec un code prédéfini ou l'envoyer à un serveur pour vérification
-    // Cette fonction simule la validation du code en affichant une alerte
+    setIsButtonClicked(false);
     alert('Code validated!');
   };
+
+  const handleGoPrecedent = () => {
+    setIsCodeSent(false);
+  }
+
 
   return (
     <Grid gap={4}>
@@ -53,27 +63,42 @@ function EmailValidationComponent() {
             value={email}
             onChange={handleEmailChange}
           />
-          <Button
-            onClick={handleSendCode}
-            borderRadius="full"
-            width="auto"
-            _hover={{ bg: 'brand.blue' }}
-            _active={{ bg: 'brand.blue' }}
-            isDisabled={!isValidEmail}
-          >
-            Envoyer un nouveau code
-          </Button>
-          <Alert status="warning">
+           <Alert status="warning">
             <AlertIcon />
             Assurez-vous de fournir un e-mail valide.
           </Alert>
+          <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+            <IconButton
+              aria-label="Retour"
+              icon={<ArrowBackIcon />}
+              onClick={handleGoBack}
+              variant="ghost"
+              colorScheme="gray"
+              bg="white" 
+              color="black" 
+            />
+            <Button
+              onClick={handleSendCode}
+              borderRadius="full"
+              width="auto"
+              _hover={{ bg: 'brand.blue' }}
+              _active={{ bg: 'brand.blue' }}
+              isDisabled={!isValidEmail}
+            >
+              Envoyer un nouveau code
+            </Button>
+        </Box>
         </>
       ) : (
         <>
           <Text>
             Saisissez le code à six chiffres envoyé à l&apos;adresse {email}.
             Vous ne trouvez pas l&apos;e-mail ?{' '}
-            <Link onClick={() => setIsCodeSent(false)}>Envoyer un nouveau code</Link>
+            <Link onClick={() => setIsCodeSent(false)}
+            color="blue.500"
+            textDecoration="none"
+            _hover={{ textDecoration: 'none' }}
+            >Envoyer un nouveau code</Link>
           </Text>
           <Text>Code de validation</Text>
           <Input
@@ -83,14 +108,26 @@ function EmailValidationComponent() {
             value={code}
             onChange={handleCodeChange}
           />
-          <Button
-            onClick={handleVerifyCode}
-            width="auto"
-            _hover={{ bg: 'brand.blue' }}
-            _active={{ bg: 'brand.blue' }}
-          >
-            Valider le code
-          </Button>
+          <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+            <IconButton
+              aria-label="Retour"
+              icon={<ArrowBackIcon />}
+              onClick={handleGoPrecedent}
+              variant="ghost"
+              colorScheme="gray"
+              bg="white" 
+              color="black" 
+            />
+            <Button
+              onClick={handleVerifyCode}
+              width="auto"
+              _hover={{ bg: 'brand.blue' }}
+              _active={{ bg: 'brand.blue' }}
+              isDisabled={code.trim() === ''}
+            >
+              Valider le code
+            </Button>
+          </Box>
         </>
       )}
       

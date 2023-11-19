@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import { Grid, Text, Stack, Box, IconButton } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons'; // Import de l'icône de poubelle
+import { DeleteIcon, ArrowBackIcon  } from '@chakra-ui/icons'; // Import de l'icône de poubelle
 import {Button} from '@mui/material';
 
 import PhoneAuth from './phoneAuth';
 
 
-function PhoneAuthVerified() {
+function PhoneAuthVerified({setIsItemSelect}) {
   const verifiedPhoneNumbers = ['+1234567890', '+9876543210'];
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
@@ -19,6 +19,10 @@ function PhoneAuthVerified() {
   const handleDelete = (phoneNumber) => {
     // Logique pour supprimer le numéro
     console.log(`Supprimer le numéro : ${phoneNumber}`);
+  };
+
+  const handleGoBack = () => {
+    setIsItemSelect(false);
   };
 
   return (
@@ -50,21 +54,32 @@ function PhoneAuthVerified() {
           />
         </Box>
       ))}
-      <Box mt={4}>
-      <Button
-        onClick={handleAddAnother}
-        variant="contained"
-        color="primary"
-        style={{
-          borderRadius: '20px', 
-        }}
-      >
-        + Ajouter un téléphone secondaire
-      </Button>
+      <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+        <IconButton
+          aria-label="Retour"
+          icon={<ArrowBackIcon />}
+          onClick={handleGoBack}
+          variant="ghost"
+          colorScheme="gray"
+          bg="white" 
+          color="black" 
+        />
+        <Button
+          onClick={handleAddAnother}
+          variant="contained"
+          color="primary"
+          style={{
+            borderRadius: '20px',
+          }}
+        >
+          + Ajouter un téléphone secondaire
+        </Button>
       </Box>
       </>
     ):(
-        <><PhoneAuth setIsButtonClicked={setIsButtonClicked} /></>
+        <>
+        <PhoneAuth setIsButtonClicked={setIsButtonClicked} />
+        </>
     )}
     </Grid>
   );

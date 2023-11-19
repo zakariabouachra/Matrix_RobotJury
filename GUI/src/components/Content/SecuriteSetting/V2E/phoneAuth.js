@@ -10,12 +10,17 @@ import {
   ListItem,
   Link,
   Button,
+  IconButton,
+  Box
 } from '@chakra-ui/react';
 import Select from 'react-select';
 
+import {  ArrowBackIcon  } from '@chakra-ui/icons'; 
+
+
 import countryCodes from '../countries.json';
 
-function PhoneAuth() {
+function PhoneAuth({setIsItemSelect}) {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
@@ -30,7 +35,6 @@ function PhoneAuth() {
   };
 
   const handleSendCode = () => {
-    // Simule l'envoi du code en mettant juste le state isCodeSent à true
     setIsCodeSent(true);
   };
 
@@ -48,10 +52,18 @@ function PhoneAuth() {
     ),
   }));
 
+  const handleGoBack = () => {
+    setIsItemSelect(false);
+  };
+
   const handleVerifyCode = () => {
-    // Cette fonction simule la validation du code en affichant une alerte
+    setIsItemSelect(false);
     alert('Code validated!');
   };
+
+  const handleGoPrecedent = () => {
+    setIsCodeSent(false);
+  }
 
   return (
     <Grid gap={4}>
@@ -85,23 +97,41 @@ function PhoneAuth() {
               Assurez-vous de fournir un numéro de téléphone valide.
             </Alert>
           </Stack>
-          <Button
-            onClick={handleSendCode}
-            borderRadius="full"
-            width="auto"
-            _hover={{ bg: 'brand.blue' }}
-            _active={{ bg: 'brand.blue' }}
-            isDisabled={!selectedCountry}
-          >
-            Envoyer un nouveau code
-          </Button>
+          <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+            <IconButton
+              aria-label="Retour"
+              icon={<ArrowBackIcon />}
+              onClick={handleGoBack}
+              variant="ghost"
+              colorScheme="gray"
+              bg="white" 
+              color="black" 
+            />
+            <Button
+                onClick={handleSendCode}
+                borderRadius="full"
+                width="auto"
+                _hover={{ bg: 'brand.blue' }}
+                _active={{ bg: 'brand.blue' }}
+                isDisabled={!selectedCountry || phoneNumber.trim() === ''}
+              >
+                Envoyer un nouveau code
+            </Button>
+        </Box>
         </>
       ) : (
         <>
           <Text>
             Saisissez le code à six chiffres envoyé au numéro de téléphone {phoneNumber}.
             Vous ne trouvez pas le numéro de téléphone ?{' '}
-            <Link onClick={() => setIsCodeSent(false)}>Envoyer un nouveau code</Link>
+            <Link
+            onClick={() => setIsCodeSent(false)}
+            color="blue.500"
+            textDecoration="none"
+            _hover={{ textDecoration: 'none' }}
+          >
+            Envoyer un nouveau code
+          </Link>
           </Text>
           <Text>Code de validation</Text>
           <Input
@@ -111,15 +141,27 @@ function PhoneAuth() {
             value={code}
             onChange={handleCodeChange}
           />
-          <Button
-            onClick={handleVerifyCode}
-            borderRadius="full"
-            width="auto"
-            _hover={{ bg: 'brand.blue' }}
-            _active={{ bg: 'brand.blue' }}
-          >
-            Valider le code
-          </Button>
+          <Box mt={4} display="flex" alignItems="center" justifyContent="space-between">
+            <IconButton
+              aria-label="Retour"
+              icon={<ArrowBackIcon />}
+              onClick={handleGoPrecedent}
+              variant="ghost"
+              colorScheme="gray"
+              bg="white" 
+              color="black" 
+            />
+            <Button
+              onClick={handleVerifyCode}
+              borderRadius="full"
+              width="auto"
+              _hover={{ bg: 'brand.blue' }}
+              _active={{ bg: 'brand.blue' }}
+              isDisabled={code.trim() === ''}
+            >
+              Valider le code
+            </Button>
+        </Box>
         </>
       )}
     </Grid>

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Text, Stack, Box, IconButton, Modal,
-   ModalOverlay, ModalContent, ModalHeader,
-    ModalCloseButton, ModalBody,Flex } from '@chakra-ui/react';
+import { Grid, Text, Stack, Box, IconButton,Flex } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons'; // Import des icônes de modification et de suppression
 import RecupEmail from './recupEmail';
 
@@ -9,14 +7,10 @@ function RecupEmailVerified() {
 
   const verifiedEmailNumbers = 'zakaria@gmail.com';
   
-  const [isOpen, setIsOpen] = useState(false);
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleEdit = () => {
-    setIsOpen(true);
+    setIsButtonClicked(true);
   };
 
   const handleDelete = (email) => {
@@ -25,6 +19,8 @@ function RecupEmailVerified() {
 
   return (
     <Grid gap={4}>
+      {!isButtonClicked ? (
+        <>
         <Box borderWidth="1px" borderRadius="lg" p={4} position="relative">
           <Stack direction="column" spacing={2}>
             <Text fontWeight="bold">{verifiedEmailNumbers}</Text>
@@ -56,15 +52,12 @@ function RecupEmailVerified() {
             />
           </Flex>
         </Box>
-      <Modal isOpen={isOpen} onClose={closeModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Adresse e-mail de récupération</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody><RecupEmail setIsOpen={setIsOpen}  /></ModalBody>
-        </ModalContent>
-      </Modal>
+        </>
+      ):(
+        <><RecupEmail setIsButtonClicked={setIsButtonClicked} /></>
+      )}
     </Grid>
+      
   );
 }
 
