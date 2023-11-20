@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import {  ArrowBackIcon  } from '@chakra-ui/icons'; 
 
+
 function EmailValidationComponent({setIsButtonClicked}) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');

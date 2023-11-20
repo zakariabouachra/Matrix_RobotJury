@@ -25,6 +25,8 @@ import { Formik } from 'formik';
 // project import
 import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
+import jwt from 'jsonwebtoken'; 
+
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
@@ -66,17 +68,33 @@ const AuthLogin = () => {
               },
               body: JSON.stringify(values),
             });
-  
+        
             if (response.status === 200) {
               const data = await response.json();
-              console.log(data);
-              localStorage.setItem('user_id', data.user_id);
-              navigate('/dashboard/default');
+        
+              // Décoder le token JWT
+              const token = data.token;
+              const decodedToken = jwt.decode(token);
+
+              // Utilisation des données décodées du token
+              if (decodedToken) {
+                const { user_id, exp } = decodedToken;
+                const expiration = new Date(exp * 1000); // Convertir la date d'expiration en millisecondes
+
+                if (expiration > new Date()) {
+                  localStorage.setItem('user_id', user_id);
+                  navigate('/dashboard/default');
+                } else {
+                  console.log('Token expiré');
+                }
+              } else {
+                console.error('Erreur lors du décodage du token');
+              }
             } else {
               const data = await response.json();
               setErrors({ submit: data.message });
             }
-  
+        
             setStatus({ success: false });
             setSubmitting(false);
           } catch (err) {
@@ -86,6 +104,7 @@ const AuthLogin = () => {
             setSubmitting(false);
           }
         }}
+        
       >
         {({ errors, handleBlur, handleChange,handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>

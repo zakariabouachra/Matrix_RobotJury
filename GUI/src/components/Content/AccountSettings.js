@@ -1,29 +1,32 @@
-import { useState , useEffect} from 'react';
-import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { FormControl, FormLabel, Grid, Input, Select, Button, Box } from '@chakra-ui/react';
 
 function AccountSettings() {
-
-  const userData = localStorage.getItem('userData');  
-  const userDataObject = JSON.parse(userData);
-
-  
-
+  const userData = localStorage.getItem('userData');
+  const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-
+  const [gender, setGender] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
 
   useEffect(() => {
     if (userDataObject?.datedenaisance) {
-      const parsedDate = new Date(userDataObject.datedenaisance);
-      setDay(parsedDate.getDate().toString());
-      setMonth((parsedDate.getMonth() + 1).toString());
-      setYear(parsedDate.getFullYear().toString());
+      const [day, month, year] = userDataObject.datedenaisance.split('/');
+      setDay(day);
+      setMonth(month);
+      setYear(year);
     }
+
     if (userDataObject?.sexe) {
       setGender(userDataObject.sexe);
     }
   }, [userDataObject]);
+
+  const handleGenderChange = (event) => {
+    const { value } = event.target;
+    setGender(value);
+  };
 
   const handleDayChange = (event) => {
     const { value } = event.target;
@@ -33,30 +36,42 @@ function AccountSettings() {
   const handleMonthChange = (event) => {
     const { value } = event.target;
     setMonth(value);
+    setSelectedMonth(value);
   };
 
   const handleYearChange = (event) => {
     const { value } = event.target;
     setYear(value);
   };
-  const formattedDate = `${day}/${month}/${year}`;
 
+  const formattedMonth = month.padStart(2, '0');
+  const formattedDate = `${day}/${formattedMonth}/${year}`;
+  const isDisabled = !userDataObject.prenom || !userDataObject.nom || !formattedDate || !gender;
+
+  const handleUpdate = () => {
+    const updatedData = {
+      ...userDataObject,
+      prenom: userDataObject.prenom || '',
+      nom: userDataObject.nom || '',
+      datedenaisance: formattedDate || '',
+      sexe: gender || '',
+    };
+    console.log(updatedData)
+
+    localStorage.setItem('userData', JSON.stringify(updatedData));
+    setUserDataObject(updatedData);
+  };
 
 
   return (
-    <Grid
-      templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
-      gap={6}
-    >
+    <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }} gap={6}>
       <FormControl id="firstName">
         <FormLabel>First Name</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Tim"  value={userDataObject?.prenom || ''}
-/>
+        <Input focusBorderColor="brand.blue" type="text" placeholder="Tim" value={userDataObject?.prenom || ''}  isDisabled={userDataObject?.prenom}/>
       </FormControl>
       <FormControl id="lastName">
         <FormLabel>Last Name</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Cook"  value={userDataObject?.nom || ''}
- />
+        <Input focusBorderColor="brand.blue" type="text" placeholder="Cook" value={userDataObject?.nom || ''}  isDisabled={userDataObject?.nom}  />
       </FormControl>
       <FormControl id="dateOfBirth" gridColumn={{ md: 'span 5' }}>
         <FormLabel>Date of Birth</FormLabel>
@@ -69,6 +84,7 @@ function AccountSettings() {
               value={day}
               placeholder="DD"
               onChange={handleDayChange}
+              isDisabled={userDataObject?.datedenaisance}
             />
           </div>
           <div style={{ marginRight: '10px' }}>
@@ -76,8 +92,9 @@ function AccountSettings() {
             <Select
               focusBorderColor="brand.blue"
               placeholder="MM"
-              value={month}
+              value={selectedMonth}
               onChange={handleMonthChange}
+              isDisabled={userDataObject?.datedenaisance}
             >
               <option value="01">January</option>
               <option value="02">February</option>
@@ -95,13 +112,7 @@ function AccountSettings() {
           </div>
           <div style={{ marginRight: '10px' }}>
             <p>Year</p>
-            <Input
-              focusBorderColor="brand.blue"
-              type="text"
-              value={year}
-              placeholder="YYYY"
-              onChange={handleYearChange}
-            />
+            <Input focusBorderColor="brand.blue" type="text" value={year} placeholder="YYYY" onChange={handleYearChange}  isDisabled={userDataObject?.datedenaisance}/>
           </div>
           <div>
             <p>Date of Birth</p>
@@ -111,20 +122,37 @@ function AccountSettings() {
               value={formattedDate}
               placeholder="Select date"
               readOnly
+              isDisabled={userDataObject?.datedenaisance}
             />
           </div>
         </div>
       </FormControl>
-     
       <FormControl id="gender">
         <FormLabel>Gender</FormLabel>
-        <Select focusBorderColor="brand.blue" placeholder="Select gender">
+        <Select
+          focusBorderColor="brand.blue"
+          placeholder="Select gender"
+          value={gender}
+          onChange={handleGenderChange}
+          isDisabled={userDataObject?.sexe}
+        >
           <option value="male">Male</option>
           <option value="female">Female</option>
         </Select>
       </FormControl>
+      {!userDataObject.sexe && !userDataObject.datedenaisance  && (
+      <FormControl gridColumn={{ md: 'span 2' }}>
+        <Box mt={4}>
+          <Button colorScheme="blue" onClick={handleUpdate} isDisabled={isDisabled}>
+            Save Update
+          </Button>
+          <p style={{ marginTop: '8px', fontSize: '14px', color: 'red' }}>
+            Note: You won&apos;t be able to edit general information after this. Please contact support for any changes.
+          </p>
+        </Box>
+      </FormControl>
+      )}
     </Grid>
-      
   );
 }
 

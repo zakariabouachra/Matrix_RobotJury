@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react';
-import countriesData from './countries.json'; // Chemin vers votre fichier JSON des pays
+import { FormControl, FormLabel, Grid, Input, Select, Button } from '@chakra-ui/react';
+import countriesData from 'assets/json/countries.json'; // Chemin vers votre fichier JSON des pays
 
 function AddressForm() {
   const userData = localStorage.getItem('userData');
-  const userDataObject = JSON.parse(userData);
-
+  const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [address, setAddress] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
@@ -19,10 +18,10 @@ function AddressForm() {
 
   useEffect(() => {
     if (userDataObject) {
-      setAddress(userDataObject.adresse || '');
-      setPostalCode(userDataObject.postalCode || '');
-      setCity(userDataObject.city || '');
-      setSelectedCountry(userDataObject.country || '');
+      setAddress(userDataObject.adresse || address);
+      setPostalCode(userDataObject.postalCode || postalCode);
+      setCity(userDataObject.city || city);
+      setSelectedCountry(userDataObject.country || selectedCountry);
     }
   }, [userDataObject]);
 
@@ -41,6 +40,24 @@ function AddressForm() {
   const handleCountryChange = (e) => {
     setSelectedCountry(e.target.value);
   };
+
+  const handleSave = () => {
+    const updatedData = {
+      ...userDataObject,
+      adresse: address || '',
+      postalcode: postalCode || '',
+      city: city|| '',
+      country: selectedCountry.name || '',
+    };
+    console.log(updatedData);
+
+
+    localStorage.setItem('userData', JSON.stringify(updatedData));
+    setUserDataObject(updatedData);
+  };
+
+  const isSaveDisabled = !address || !postalCode || !city || !selectedCountry;
+
 
   return (
     <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }} gap={6}>
@@ -89,6 +106,9 @@ function AddressForm() {
           ))}
         </Select>
       </FormControl>
+      <Button colorScheme="blue" onClick={handleSave} isDisabled={isSaveDisabled}>
+        Save Update
+      </Button>
     </Grid>
   );
 }

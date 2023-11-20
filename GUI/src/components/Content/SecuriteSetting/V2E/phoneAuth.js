@@ -13,26 +13,29 @@ import {
   IconButton,
   Box
 } from '@chakra-ui/react';
-import Select from 'react-select';
 
 import {  ArrowBackIcon  } from '@chakra-ui/icons'; 
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+import { PhoneNumberUtil } from 'google-libphonenumber';
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+
+const isPhoneValid = (phone) => {
+  try {
+    return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
+  } catch (error) {
+    return false;
+  }
+};
 
 
-import countryCodes from '../countries.json';
 
-function PhoneAuth({setIsItemSelect}) {
+function PhoneAuth({setIsButtonClicked}) {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState(null);
 
-  const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
-  };
-
-  const handleCountryChange = (selectedOption) => {
-    setSelectedCountry(selectedOption);
-  };
 
   const handleSendCode = () => {
     setIsCodeSent(true);
@@ -42,22 +45,14 @@ function PhoneAuth({setIsItemSelect}) {
     setCode(event.target.value);
   };
 
-  const countryOptions = countryCodes.map((country) => ({
-    value: country.dialCode,
-    label: (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={country.flag} alt={country.isoCode} width="20" style={{ marginRight: '8px' }} />
-        {country.name} ({country.dialCode})
-      </div>
-    ),
-  }));
+
 
   const handleGoBack = () => {
-    setIsItemSelect(false);
+    setIsButtonClicked(false);
   };
 
   const handleVerifyCode = () => {
-    setIsItemSelect(false);
+    setIsButtonClicked(false);
     alert('Code validated!');
   };
 
@@ -65,26 +60,18 @@ function PhoneAuth({setIsItemSelect}) {
     setIsCodeSent(false);
   }
 
+  const isValid = isPhoneValid(phoneNumber);
+
   return (
     <Grid gap={4}>
       {!isCodeSent ? (
         <>
           <Text>Saisissez un numéro de téléphone :</Text>
           <Stack direction="row" alignItems="center">
-            <Select
-              value={selectedCountry}
-              onChange={handleCountryChange}
-              options={countryOptions}
-              placeholder="Choisissez un pays"
-              style={{ width: '200px' }}
-            />
-            <Input
-              focusBorderColor="brand.blue"
-              type="tel"
-              placeholder="Numéro de téléphone"
+            <PhoneInput
+              defaultCountry="ca"
               value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-              style={{ flex: 1 }}
+              onChange={(phoneNumber) => setPhoneNumber(phoneNumber)}
             />
           </Stack>
           <UnorderedList>
@@ -113,7 +100,7 @@ function PhoneAuth({setIsItemSelect}) {
                 width="auto"
                 _hover={{ bg: 'brand.blue' }}
                 _active={{ bg: 'brand.blue' }}
-                isDisabled={!selectedCountry || phoneNumber.trim() === ''}
+                isDisabled={!isValid}
               >
                 Envoyer un nouveau code
             </Button>
