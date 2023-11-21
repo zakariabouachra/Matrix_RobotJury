@@ -9,7 +9,7 @@ import string
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-from flask import redirect, url_for
+from flask import redirect
 
 
 app = Flask(__name__)
@@ -73,7 +73,7 @@ def send_matrix_email(email, verification_token, user_name):
             display: inline-block;
             padding: 10px 20px;
             background-color: #0066cc;
-            color: #ffffff;
+            color: white;
             text-decoration: none;
             border-radius: 5px;
           }}
@@ -90,7 +90,7 @@ def send_matrix_email(email, verification_token, user_name):
           <h1>Hello {user_name},</h1>
           <p>Your administrator has requested you to verify your email address.</p>
           <p>To complete email verification, please click the button below:</p>
-          <a href="{verification_link}" class="btn">Verify your email address</a>
+          <a href="{verification_link}" class="btn" style="color: white; text-decoration: none;">Verify your email address</a>
           <p>This link will expire in 7 days.</p>
           <p class="footer-text">Regards,<br />The Matrix Scientifique Evolution Team</p>
         </div>
@@ -125,7 +125,48 @@ conn = snowflake.connector.connect(
 
 cur = conn.cursor()
 
+def get_users(user_id):
+    cur.execute("""
+        SELECT 
+            u.*, c.*, a.*, p.*
+        FROM 
+            Utilisateur u
+        INNER JOIN 
+            Coordonnees c ON u.ID = c.id_user
+        LEFT JOIN 
+            adresse a ON u.ID = a.id_user
+        LEFT JOIN
+            PAIEMENT p ON u.ID = p.ID_USER
+        WHERE 
+            u.ID = %s
+    """, (user_id,))
+    
+    user_data = cur.fetchone()
+    if user_data:
+        user_columns = [col[0] for col in cur.description]
+        user_info = dict(zip(user_columns, user_data))
 
+        combined_info = {
+            'user_id': user_id,
+            'nom': user_info['NOM'],
+            'prenom': user_info['PRENOM'],
+            'datedenaisance': user_info['DATEDENAISANCE'],
+            'sexe': user_info['SEXE'],
+            'email': user_info['EMAIL'],
+            'phonenumber': user_info['PHONENUMBER'],
+            'email_verified': user_info['EMAIL_VERIFIED'],
+            'phone_verified': user_info['PHONE_VERIFIED'],
+            'motdepasse': user_info['MOTDEPASSE'],
+            'country': user_info['COUNTRY'],
+            'city': user_info['CITY'],
+            'adresse': user_info['ADRESSE'],
+            'codepostal': user_info['CODEPOSTAL'],
+            'credit_number': user_info['CREDITNUMBER'],
+            'name_card':user_info['NAME_CARD'],
+            'expiration_date': user_info['EXPIRATIONDATE'],
+            'cvv': user_info['CVV']
+        }
+        return combined_info
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -280,7 +321,9 @@ def update_user_information(user_id):
                     
                     conn.commit()
 
-                    return jsonify({'message': 'Informations utilisateur mises à jour'}), 200
+                    user_data = get_users(user_id)
+
+                    return jsonify({'message': 'Informations utilisateur mises à jour' , 'user_data': user_data}), 200
                 else:
                     return jsonify({'message': 'Utilisateur non trouvé'}), 404
         except jwt.ExpiredSignatureError:
@@ -306,13 +349,32 @@ def update_user_coordonnees(user_id):
                 if user_exists:
                     cur.execute("""
                         UPDATE Coordonnees 
+                        SET PHONE_VERIFIED = FALSE 
+                        WHERE id_user = %s AND phonenumber != %s
+                    """, (user_id,data.get('phonenumber')))
+
+                    conn.commit()
+
+                    cur.execute("""
+                        UPDATE Coordonnees 
+                        SET EMAIL_VERIFIED = FALSE 
+                        WHERE id_user = %s AND email != %s
+                    """, (user_id, data.get('email')))
+
+                    conn.commit()
+
+                    # Update the email and phone number
+                    cur.execute("""
+                        UPDATE Coordonnees 
                         SET email = %s, phonenumber = %s 
                         WHERE id_user = %s
                     """, (data.get('email'), data.get('phonenumber'), user_id))
 
                     conn.commit()
 
-                    return jsonify({'message': 'Informations utilisateur mises à jour'}), 200
+                    user_data = get_users(user_id)
+
+                    return jsonify({'message': 'Informations utilisateur mises à jour','user_data': user_data}), 200
                 else:
                     return jsonify({'message': 'Utilisateur non trouvé'}), 404
         except jwt.ExpiredSignatureError:
@@ -353,7 +415,9 @@ def update_address(user_id):
                         """, (user_id, data.get('adresse'), data.get('city'), data.get('codepostal'), data.get('country')))
                     
                     conn.commit()
-                    return jsonify({'message': 'Informations d\'adresse mises à jour'}), 200
+
+                    user_data = get_users(user_id)
+                    return jsonify({'message': 'Informations d\'adresse mises à jour','user_data': user_data}), 200
                 else:
                     return jsonify({'message': 'Utilisateur non trouvé'}), 404
         except jwt.ExpiredSignatureError:

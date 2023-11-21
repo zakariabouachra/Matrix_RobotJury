@@ -84,7 +84,7 @@ const AuthRegister = () => {
             });
   
             if (response.status === 201) {      
-              navigate('/login');
+              navigate('/verify_email');
             } else {
               const data = await response.json();
               setErrors({ submit: data.message });

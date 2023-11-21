@@ -31,7 +31,7 @@ const isPhoneValid = (phone) => {
 
 
 
-function PhoneAuth({setIsButtonClicked}) {
+function PhoneAuth({setIsItemSelect}) {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
@@ -48,11 +48,11 @@ function PhoneAuth({setIsButtonClicked}) {
 
 
   const handleGoBack = () => {
-    setIsButtonClicked(false);
+    setIsItemSelect(false);
   };
 
   const handleVerifyCode = () => {
-    setIsButtonClicked(false);
+    setIsItemSelect(false);
     alert('Code validated!');
   };
 
