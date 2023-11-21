@@ -16,10 +16,10 @@ const isAuthenticated = () => {
   const user_id = localStorage.getItem('user_id'); // Vérifie la présence de l'ID utilisateur dans le localStorage
   return !!user_id; // Retourne vrai si l'ID utilisateur est présent, sinon faux
 };
-
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
+  
   path: '/',
   element: isAuthenticated() ? <MainLayout /> : <Navigate to="/login" replace />, // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
   children: [

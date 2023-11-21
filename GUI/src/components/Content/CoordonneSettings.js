@@ -22,14 +22,10 @@ const isPhoneValid = (phone) => {
 };
 
 function CoordonneSettings() {
-  const [userDataObject, setUserDataObject] = useState(null);
+  const userData = localStorage.getItem('userData');
+  const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
-  useEffect(() => {
-    const userData = localStorage.getItem('userData');
-    setUserDataObject(JSON.parse(userData));
-  }, []);
 
   useEffect(() => {
     if (userDataObject?.email) {
@@ -40,15 +36,36 @@ function CoordonneSettings() {
     }
   }, [userDataObject]);
 
-  const handleUpdate = () => {
-    const updatedData = {
-      ...userDataObject,
-      email: email,
-      phonenumber: phoneNumber,
-    };
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/user_coordonnees/${userDataObject.user_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          ...userDataObject,
+          email: email,
+          phonenumber: phoneNumber,
+        }),
+      });
 
-    console.log(updatedData);
-    localStorage.setItem('userData', JSON.stringify(updatedData));
+      if (response.status === 200) {
+        const updatedUserData = {
+          ...userDataObject,
+          email: email || '',
+          phonenumber: phoneNumber || '',
+        };
+        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+        setUserDataObject(updatedUserData);
+        console.log('Données mises à jour avec succès !');
+      } else {
+        console.error('Erreur lors de la mise à jour des données');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête de mise à jour:', error);
+    }
   };
 
   const isValid = isPhoneValid(phoneNumber);

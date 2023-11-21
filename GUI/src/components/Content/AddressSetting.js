@@ -6,7 +6,7 @@ function AddressForm() {
   const userData = localStorage.getItem('userData');
   const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [address, setAddress] = useState('');
-  const [postalCode, setPostalCode] = useState('');
+  const [codepostal, setcodepostal] = useState('');
   const [city, setCity] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
 
@@ -18,8 +18,9 @@ function AddressForm() {
 
   useEffect(() => {
     if (userDataObject) {
+      console.log(userDataObject)
       setAddress(userDataObject.adresse || address);
-      setPostalCode(userDataObject.postalCode || postalCode);
+      setcodepostal(userDataObject.codepostal || codepostal);
       setCity(userDataObject.city || city);
       setSelectedCountry(userDataObject.country || selectedCountry);
     }
@@ -29,8 +30,8 @@ function AddressForm() {
     setAddress(e.target.value);
   };
 
-  const handlePostalCodeChange = (e) => {
-    setPostalCode(e.target.value);
+  const handlecodepostalChange = (e) => {
+    setcodepostal(e.target.value);
   };
 
   const handleCityChange = (e) => {
@@ -41,22 +42,42 @@ function AddressForm() {
     setSelectedCountry(e.target.value);
   };
 
-  const handleSave = () => {
-    const updatedData = {
-      ...userDataObject,
-      adresse: address || '',
-      postalcode: postalCode || '',
-      city: city|| '',
-      country: selectedCountry.name || '',
-    };
-    console.log(updatedData);
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/address/${userDataObject.user_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          adresse: address || '',
+          codepostal: codepostal || '',
+          city: city || '',
+          country: selectedCountry || '',
+        }),
+      });
 
-
-    localStorage.setItem('userData', JSON.stringify(updatedData));
-    setUserDataObject(updatedData);
+      if (response.status === 200) {
+        const updatedUserData = {
+          ...userDataObject,
+          adresse: address || '',
+          codepostal: codepostal || '',
+          city: city || '',
+          country: selectedCountry || '',
+        };
+        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+        setUserDataObject(updatedUserData);
+        console.log(response);
+      } else {
+        console.error('Erreur lors de la mise à jour des informations d\'adresse');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête de mise à jour des informations d\'adresse:', error);
+    }
   };
 
-  const isSaveDisabled = !address || !postalCode || !city || !selectedCountry;
+  const isSaveDisabled = !address || !codepostal || !city || !selectedCountry;
 
 
   return (
@@ -71,13 +92,13 @@ function AddressForm() {
           placeholder="Enter address"
         />
       </FormControl>
-      <FormControl id="postalCode">
+      <FormControl id="codepostal">
         <FormLabel>Postal Code</FormLabel>
         <Input
           focusBorderColor="brand.blue"
           type="text"
-          value={postalCode}
-          onChange={handlePostalCodeChange}
+          value={codepostal}
+          onChange={handlecodepostalChange}
           placeholder="Enter postal code"
         />
       </FormControl>

@@ -25,7 +25,6 @@ import { Formik } from 'formik';
 // project import
 import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
-import jwt from 'jsonwebtoken'; 
 
 
 // assets
@@ -71,39 +70,60 @@ const AuthLogin = () => {
         
             if (response.status === 200) {
               const data = await response.json();
-        
-              // Décoder le token JWT
               const token = data.token;
-              const decodedToken = jwt.decode(token);
-
-              // Utilisation des données décodées du token
-              if (decodedToken) {
-                const { user_id, exp } = decodedToken;
-                const expiration = new Date(exp * 1000); // Convertir la date d'expiration en millisecondes
-
-                if (expiration > new Date()) {
-                  localStorage.setItem('user_id', user_id);
+        
+              if (token) {
+                localStorage.setItem('token', token);
+                const userId = await verifyToken(token);
+        
+                if (userId) {
+                  localStorage.setItem('user_id', userId);
                   navigate('/dashboard/default');
                 } else {
-                  console.log('Token expiré');
+                  console.log('Token expiré ou invalide');
                 }
               } else {
-                console.error('Erreur lors du décodage du token');
+                console.log('Token manquant dans la réponse');
               }
             } else {
-              const data = await response.json();
-              setErrors({ submit: data.message });
+              const errorData = await response.json();
+              setErrors({ submit: errorData.message });
             }
-        
+          } catch (error) {
+            console.error('Error during login:', error);
             setStatus({ success: false });
-            setSubmitting(false);
-          } catch (err) {
-            console.error('Error:', err);
-            setStatus({ success: false });
-            setErrors({ submit: err.message });
+            setErrors({ submit: 'Something went wrong, please try again.' });
+          } finally {
             setSubmitting(false);
           }
+          async function verifyToken(token) {
+            try {
+              const response = await fetch('http://127.0.0.1:5000/verifyToken', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+          
+              if (response.status === 200) {
+                const data = await response.json();
+                const { user_id, exp } = data;
+                const expiration = new Date(exp * 1000);
+                const currentTime = new Date();
+                if (expiration > currentTime) {
+                  return user_id;
+                }
+              }
+              return null;
+            } catch (error) {
+              console.error('Error verifying token:', error);
+              return null;
+            }
+          }
+        
         }}
+        
         
       >
         {({ errors, handleBlur, handleChange,handleSubmit, isSubmitting, touched, values }) => (

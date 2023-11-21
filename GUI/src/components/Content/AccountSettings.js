@@ -5,19 +5,18 @@ function AccountSettings() {
   const userData = localStorage.getItem('userData');
   const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [gender, setGender] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
-
+  const [formattedDate, setFormattedDate] = useState('');
   useEffect(() => {
     if (userDataObject?.datedenaisance) {
-      const [day, month, year] = userDataObject.datedenaisance.split('/');
-      setDay(day);
-      setMonth(month);
-      setYear(year);
+      const dateObj = new Date(userDataObject?.datedenaisance);
+      const day = dateObj.getDate().toString().padStart(2, '0');
+      const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+      const year = dateObj.getFullYear().toString();
+      setFormattedDate(`${day}/${month}/${year}`)
     }
-
     if (userDataObject?.sexe) {
       setGender(userDataObject.sexe);
     }
@@ -35,34 +34,54 @@ function AccountSettings() {
 
   const handleMonthChange = (event) => {
     const { value } = event.target;
-    setMonth(value);
     setSelectedMonth(value);
   };
+
 
   const handleYearChange = (event) => {
     const { value } = event.target;
     setYear(value);
   };
 
-  const formattedMonth = month.padStart(2, '0');
-  const formattedDate = `${day}/${formattedMonth}/${year}`;
-  const isDisabled = !userDataObject.prenom || !userDataObject.nom || !formattedDate || !gender;
 
-  const handleUpdate = () => {
-    const updatedData = {
-      ...userDataObject,
-      prenom: userDataObject.prenom || '',
-      nom: userDataObject.nom || '',
-      datedenaisance: formattedDate || '',
-      sexe: gender || '',
-    };
-    console.log(updatedData)
+  const isDisabled = !userDataObject.prenom || !userDataObject.nom || !day || !year || !selectedMonth || !gender;
 
-    localStorage.setItem('userData', JSON.stringify(updatedData));
-    setUserDataObject(updatedData);
+  const updateUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/user_information/' + userDataObject.user_id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, 
+        },
+        body: JSON.stringify({
+          nom: userDataObject.nom || '',
+          prenom: userDataObject.prenom || '',
+          datedenaisance: `${day}/${selectedMonth}/${year}` || '',
+          sexe: gender || '',
+        }),
+      });
+
+      if (response.status === 200) {
+        console.log('Données mises à jour avec succès !');
+        const dateObject = new Date(year, selectedMonth, day);
+        const updatedUserData = {
+          ...userDataObject,
+          prenom: userDataObject.prenom || '',
+          nom: userDataObject.nom || '',
+          datedenaisance: dateObject || '',
+          sexe: gender || '',
+        };
+  
+        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+        setUserDataObject(updatedUserData);
+      } else {
+        console.error('Erreur lors de la mise à jour des données');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête de mise à jour:', error);
+    }
   };
-
-
   return (
     <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }} gap={6}>
       <FormControl id="firstName">
@@ -73,60 +92,71 @@ function AccountSettings() {
         <FormLabel>Last Name</FormLabel>
         <Input focusBorderColor="brand.blue" type="text" placeholder="Cook" value={userDataObject?.nom || ''}  isDisabled={userDataObject?.nom}  />
       </FormControl>
-      <FormControl id="dateOfBirth" gridColumn={{ md: 'span 5' }}>
-        <FormLabel>Date of Birth</FormLabel>
-        <div style={{ display: 'flex' }}>
-          <div style={{ marginRight: '10px' }}>
-            <p>Day</p>
-            <Input
-              focusBorderColor="brand.blue"
-              type="text"
-              value={day}
-              placeholder="DD"
-              onChange={handleDayChange}
-              isDisabled={userDataObject?.datedenaisance}
-            />
+      {!userDataObject?.datedenaisance ? (
+        <FormControl id="dateOfBirth" gridColumn={{ md: 'span 5' }}>
+          <FormLabel>Date of Birth</FormLabel>
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: '10px' }}>
+              <p>Day</p>
+              <Input
+                focusBorderColor="brand.blue"
+                type="text"
+                value={day}
+                placeholder="DD"
+                onChange={handleDayChange}
+                isDisabled={userDataObject?.datedenaisance}
+              />
+            </div>
+            <div style={{ marginRight: '10px' }}>
+              <p>Month</p>
+              <Select
+                focusBorderColor="brand.blue"
+                placeholder="MM"
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                isDisabled={userDataObject?.datedenaisance}
+              >
+                 <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </Select>
+            </div>
+            <div style={{ marginRight: '10px' }}>
+              <p>Year</p>
+              <Input
+                focusBorderColor="brand.blue"
+                type="text"
+                value={year}
+                placeholder="YYYY"
+                onChange={handleYearChange}
+                isDisabled={userDataObject?.datedenaisance}
+              />
+            </div>
           </div>
-          <div style={{ marginRight: '10px' }}>
-            <p>Month</p>
-            <Select
-              focusBorderColor="brand.blue"
-              placeholder="MM"
-              value={selectedMonth}
-              onChange={handleMonthChange}
-              isDisabled={userDataObject?.datedenaisance}
-            >
-              <option value="01">January</option>
-              <option value="02">February</option>
-              <option value="03">March</option>
-              <option value="04">April</option>
-              <option value="05">May</option>
-              <option value="06">June</option>
-              <option value="07">July</option>
-              <option value="08">August</option>
-              <option value="09">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </Select>
-          </div>
-          <div style={{ marginRight: '10px' }}>
-            <p>Year</p>
-            <Input focusBorderColor="brand.blue" type="text" value={year} placeholder="YYYY" onChange={handleYearChange}  isDisabled={userDataObject?.datedenaisance}/>
-          </div>
-          <div>
-            <p>Date of Birth</p>
-            <Input
-              focusBorderColor="brand.blue"
-              type="text"
-              value={formattedDate}
-              placeholder="Select date"
-              readOnly
-              isDisabled={userDataObject?.datedenaisance}
-            />
-          </div>
-        </div>
-      </FormControl>
+        </FormControl>
+      ) : (
+        <FormControl id="dateOfBirth" gridColumn={{ md: 'span 5' }}>
+          <FormLabel>Date of Birth</FormLabel>
+          <Input
+            focusBorderColor="brand.blue"
+            type="text"
+            value={formattedDate}
+            placeholder="Select date"
+            readOnly
+            isDisabled={userDataObject?.datedenaisance}
+          />
+        </FormControl>
+      )}
+
       <FormControl id="gender">
         <FormLabel>Gender</FormLabel>
         <Select
@@ -143,7 +173,7 @@ function AccountSettings() {
       {!userDataObject.sexe && !userDataObject.datedenaisance  && (
       <FormControl gridColumn={{ md: 'span 2' }}>
         <Box mt={4}>
-          <Button colorScheme="blue" onClick={handleUpdate} isDisabled={isDisabled}>
+          <Button colorScheme="blue" onClick={updateUserData} isDisabled={isDisabled}>
             Save Update
           </Button>
           <p style={{ marginTop: '8px', fontSize: '14px', color: 'red' }}>
