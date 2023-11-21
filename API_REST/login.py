@@ -104,7 +104,7 @@ def send_matrix_email(email, verification_token, user_name):
     try:
         smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
         smtp_server.starttls()
-        smtp_server.login(sender_email, 'Lilopipo09@')
+        smtp_server.login(sender_email, 'wafd vtyr aris faqj')
         smtp_server.sendmail(sender_email, receiver_email, message.as_string())
         smtp_server.quit()
         print('E-mail envoyé avec succès!')
@@ -168,7 +168,7 @@ def register():
 
     verification_token = generate_unique_verification_token()  
 
-    cur.execute("INSERT INTO Coordonnees (id_user, email, phonenumber, motdepasse,PHONE_VERIFIED,EMAIL_VERIFIED,VERIFICATION_TOKEN) VALUES (%s, %s, %s, %s, %s)",
+    cur.execute("INSERT INTO Coordonnees (id_user, email, phonenumber, motdepasse,PHONE_VERIFIED,EMAIL_VERIFIED,VERIFICATION_TOKEN) VALUES (%s, %s, %s, %s, %s, %s, %s )",
                 (user_id, data['email'], None, hashed_password,False,False, verification_token))
 
     conn.commit()
@@ -179,13 +179,15 @@ def register():
 
 @app.route('/verify/<token>', methods=['GET'])
 def verify_email(token):
-    cur.execute("SELECT * FROM Utilisateur WHERE verification_token = %s", (token,))
-    user = cur.fetchone()
+    cur.execute("SELECT * FROM Coordonnees WHERE VERIFICATION_TOKEN = %s", (token,))
+    user_id = cur.fetchone()
 
-    if user:
-        cur.execute("UPDATE Utilisateur SET EMAIL_VERIFIED = True WHERE id = %s", (user['id'],))
+    if user_id:
+        user_id = user_id[0] 
+        print(user_id)
+        cur.execute("UPDATE Coordonnees SET EMAIL_VERIFIED = TRUE WHERE ID = %s", (user_id,))
         conn.commit()
-        return redirect(url_for('http://localhost:3000/dashboard/default', message='Adresse e-mail vérifiée avec succès')), 302
+        return redirect('http://localhost:3000/dashboard/default'), 302
     else:
         return jsonify({'message': 'Le lien de vérification est invalide ou a expiré'}), 404
 
@@ -239,6 +241,8 @@ def get_user(user_id):
             'sexe': user_info['SEXE'],
             'email': user_info['EMAIL'],
             'phonenumber': user_info['PHONENUMBER'],
+            'email_verified': user_info['EMAIL_VERIFIED'],
+            'phone_verified': user_info['PHONE_VERIFIED'],
             'motdepasse': user_info['MOTDEPASSE'],
             'country': user_info['COUNTRY'],
             'city': user_info['CITY'],
