@@ -6,6 +6,7 @@ import {
   Input,
   Stack,
   Button,
+  Badge
 } from '@chakra-ui/react';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -26,6 +27,8 @@ function CoordonneSettings() {
   const [userDataObject, setUserDataObject] = useState(JSON.parse(userData || '{}'));
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isPhoneNumberVerified, setIsPhoneNumberVerified] = useState(false);
 
   useEffect(() => {
     if (userDataObject?.email) {
@@ -33,6 +36,12 @@ function CoordonneSettings() {
     }
     if (userDataObject?.phonenumber) {
       setPhoneNumber(userDataObject.phonenumber);
+    }
+    if(userDataObject?.phone_verified == true){
+      setIsPhoneNumberVerified(true);
+    }
+    if(userDataObject?.email_verified == true){
+      setIsEmailVerified(true);
     }
   }, [userDataObject]);
 
@@ -72,34 +81,55 @@ function CoordonneSettings() {
 
   return (
     <Grid gap={6}>
-      <FormControl id="email">
-        <FormLabel>Email Address</FormLabel>
-        <Input
-          focusBorderColor="brand.blue"
-          type="email"
-          placeholder="info@matrix.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </FormControl>
-      <FormControl id="phoneNumber">
-        <FormLabel>Phone Number</FormLabel>
-        <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center">
+        <FormControl id="email" flex="1">
+          <FormLabel>Email Address</FormLabel>
+          <Input
+            focusBorderColor="brand.blue"
+            type="email"
+            placeholder="info@matrix.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </FormControl>
+        {isEmailVerified ? (
+          <Badge colorScheme="green" ml={2}>
+            Verified
+          </Badge>
+        ) : (
+          <Badge colorScheme="red" ml={2}>
+            Not Verified
+          </Badge>
+        )}
+      </Stack>
+      <Stack direction="row" alignItems="center">
+        <FormControl id="phoneNumber" flex="1">
+          <FormLabel>Phone Number</FormLabel>
           <PhoneInput
             defaultCountry="ca"
             value={phoneNumber}
             onChange={(phoneNumber) => setPhoneNumber(phoneNumber)}
           />
-          <Button
-            colorScheme="blue"
-            onClick={handleUpdate}
-            isDisabled={!isValid || email.trim() === ''}
-          >
-            Save Update
-          </Button>
-        </Stack>
-      </FormControl>
+        </FormControl>
+        {isPhoneNumberVerified ? (
+          <Badge colorScheme="green" ml={2}>
+            Verified
+          </Badge>
+        ) : (
+          <Badge colorScheme="red" ml={2}>
+            Not Verified
+          </Badge>
+        )}
+      </Stack>
+      <Button
+          colorScheme="blue"
+          onClick={handleUpdate}
+          isDisabled={!isValid || email.trim() === ''}
+        >
+          Save Update
+        </Button>
     </Grid>
+
   );
 }
 
