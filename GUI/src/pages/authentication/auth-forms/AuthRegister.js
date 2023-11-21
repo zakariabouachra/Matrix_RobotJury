@@ -83,11 +83,8 @@ const AuthRegister = () => {
               body: JSON.stringify(values),
             });
   
-            if (response.status === 201) {
-              const data = await response.json();
-              console.log(data);
-              localStorage.setItem('user_id', data.user_id);
-              navigate('/dashboard/default');
+            if (response.status === 201) {      
+              navigate('/login');
             } else {
               const data = await response.json();
               setErrors({ submit: data.message });
