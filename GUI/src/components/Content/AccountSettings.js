@@ -64,17 +64,9 @@ function AccountSettings() {
 
       if (response.status === 200) {
         console.log('Données mises à jour avec succès !');
-        const dateObject = new Date(year, selectedMonth, day);
-        const updatedUserData = {
-          ...userDataObject,
-          prenom: userDataObject.prenom || '',
-          nom: userDataObject.nom || '',
-          datedenaisance: dateObject || '',
-          sexe: gender || '',
-        };
-  
-        localStorage.setItem('userData', JSON.stringify(updatedUserData));
-        setUserDataObject(updatedUserData);
+        const { user_data } = await response.json();
+        localStorage.setItem('userData', JSON.stringify(user_data));
+        setUserDataObject(user_data);
       } else {
         console.error('Erreur lors de la mise à jour des données');
       }

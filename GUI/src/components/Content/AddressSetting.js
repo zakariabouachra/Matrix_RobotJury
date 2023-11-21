@@ -18,7 +18,6 @@ function AddressForm() {
 
   useEffect(() => {
     if (userDataObject) {
-      console.log(userDataObject)
       setAddress(userDataObject.adresse || address);
       setcodepostal(userDataObject.codepostal || codepostal);
       setCity(userDataObject.city || city);
@@ -59,15 +58,13 @@ function AddressForm() {
       });
 
       if (response.status === 200) {
-        const updatedUserData = {
-          ...userDataObject,
-          adresse: address || '',
-          codepostal: codepostal || '',
-          city: city || '',
-          country: selectedCountry || '',
-        };
-        localStorage.setItem('userData', JSON.stringify(updatedUserData));
-        setUserDataObject(updatedUserData);
+        const { user_data } = await response.json();
+        setAddress(user_data.adresse);
+        setcodepostal(user_data.codepostal);
+        setCity(user_data.city);
+        setSelectedCountry(user_data.country);
+        localStorage.setItem('userData', JSON.stringify(user_data));
+        setUserDataObject(user_data);
         console.log(response);
       } else {
         console.error('Erreur lors de la mise à jour des informations d\'adresse');
