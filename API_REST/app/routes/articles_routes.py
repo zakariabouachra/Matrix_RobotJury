@@ -5,11 +5,15 @@ articles_routes = Blueprint('articles_routes', __name__)
 
 def get_last_inserted_article_id():
     result = db_service.execute_query("""
-        SELECT MAX(ID) FROM MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE
+        SELECT ID FROM ARTICLE_SCIENTIFIQUE ORDER BY ID DESC LIMIT 1;
     """)
+    return result[0]
 
-    print(result)
-    return result[0][0] if result and result[0][0] else None
+def get_last_inserted_AUTOR_id():
+    result = db_service.execute_query("""
+        SELECT ID FROM AUTOR ORDER BY ID DESC LIMIT 1;
+    """)
+    return result[0]
 
 @articles_routes.route('/article_information', methods=['POST'])
 def receive_data():
@@ -22,9 +26,7 @@ def receive_data():
             if user_id:
                 try:
                     data = request.get_json()
-                    print(data)
                     authors_data = data.get('authors', [])
-                    print(authors_data)
 
                     author_ids = []
 
@@ -35,15 +37,15 @@ def receive_data():
                             'INSTITUTION': author.get('institution', ''),
                             'COUNTRY': author.get('country', '')
                         }
-                        print(author)
-                        db_service.execute_query("""
-                            INSERT INTO MATRIX.PUBLIC.AUTOR (NOM, PRENOM, INSTITUTION, COUNTRY)
-                            VALUES (%(NOM)s, %(PRENOM)s, %(INSTITUTION)s, %(COUNTRY)s)
-                        """, author_data)
-                        db_service.commit()
-
-                        author_id = get_last_inserted_article_id()
-                        print(author_id)
+                        try:
+                            db_service.execute_query("""
+                                INSERT INTO AUTOR (NOM, PRENOM, INSTITUTION, COUNTRY)
+                                VALUES (%(NOM)s, %(PRENOM)s, %(INSTITUTION)s, %(COUNTRY)s)
+                            """, author_data)
+                            db_service.commit()
+                        except Exception as e:
+                            print(f"Erreur lors de l'insertion dans la table AUTOR : {str(e)}")
+                        author_id = get_last_inserted_AUTOR_id()
                         author_ids.append(author_id)
                         
 
@@ -55,25 +57,36 @@ def receive_data():
                         'MAINTOPIC': data['mainTopic'],
                         'CONTRIBUTIONTYPE': data['contributionType'],
                         'ABSTRACT': data['abstract'],
-                        'PDFFILE': data['selectedFile'],
+                        'PDFFILE': None,
                     }
 
-                    db_service.execute_query("""
-                        INSERT INTO MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE (
-                            NOCONTRIBUTION, TITRECONTRIBUTION, INSTITUTION, TRRACKPREFERENCE, 
-                            MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE
-                        ) VALUES (
-                            %(NOCONTRIBUTION)s, %(TITRECONTRIBUTION)s, %(INSTITUTION)s, %(TRRACKPREFERENCE)s, 
-                            %(MAINTOPIC)s, %(CONTRIBUTIONTYPE)s, %(ABSTRACT)s, %(PDFFILE)s
-                        )
-                    """, article_data)
-                    db_service.commit()
+                    print(article_data)
+
+                    try:
+                        result = db_service.execute_query("""
+                            INSERT INTO MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE (
+                                NOCONTRIBUTION, TITRECONTRIBUTION, INSTITUTION, TRRACKPREFERENCE, 
+                                MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE
+                            ) VALUES (
+                                %(NOCONTRIBUTION)s, %(TITRECONTRIBUTION)s, %(INSTITUTION)s, %(TRRACKPREFERENCE)s, 
+                                %(MAINTOPIC)s, %(CONTRIBUTIONTYPE)s, %(ABSTRACT)s, %(PDFFILE)s
+                            )
+                        """, article_data)
+                        db_service.commit()
+
+                        if result:
+                            print("Insertion dans la table ARTICLE_SCIENTIFIQUE réussie!")
+                        else:
+                            print("Échec de l'insertion dans la table ARTICLE_SCIENTIFIQUE.")
+                    except Exception as e:
+                        print(f"Erreur lors de l'insertion dans la table ARTICLE_SCIENTIFIQUE : {str(e)}")
+
 
                     article_id = get_last_inserted_article_id()
 
                     for author_id in author_ids:
                         db_service.execute_query("""
-                            INSERT INTO MATRIX.PUBLIC.ARTICLE_AUTOR_RELATION (ARTICLE_ID, AUTOR_ID)
+                            INSERT INTO ARTICLE_AUTOR_RELATION (ARTICLE_ID, AUTOR_ID)
                             VALUES (%(ARTICLE_ID)s, %(AUTOR_ID)s)
                         """, {'ARTICLE_ID': article_id, 'AUTOR_ID': author_id})
                         db_service.commit()
