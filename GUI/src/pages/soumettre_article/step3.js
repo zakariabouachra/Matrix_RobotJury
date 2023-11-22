@@ -56,6 +56,18 @@ const Step3 = ({ onPrev, onNext }) => {
       )
     );
   };
+  const handleNextStep = () => {
+    // Vérifiez si le formulaire de l'étape est valide avant de passer à l'étape suivante
+    if (isFormValid()) {
+      // Créer un objet formData avec les valeurs de chaque auteur
+      const formData = { authors };
+      onNext(formData);
+      console.log(formData)
+    } else {
+      // Gérer le cas où le formulaire n'est pas valide (par exemple, afficher un message d'erreur)
+      console.error('Le formulaire n\'est pas valide.');
+    }
+  };
 
   return (
     <Grid container spacing={2}>
@@ -127,7 +139,7 @@ const Step3 = ({ onPrev, onNext }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={onNext}
+            onClick={handleNextStep}
             disabled={!isFormValid()}
           >
             Suivant

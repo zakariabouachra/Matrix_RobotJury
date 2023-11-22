@@ -11,8 +11,10 @@ const steps = ['Information Generale', 'Soumission', 'Author', 'Abstract', 'Uplo
 
 const WizardForm = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState({});
 
-  const handleNext = () => {
+  const handleNext = (stepData) => {
+    setFormData((prevData) => ({ ...prevData, ...stepData }));
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -21,8 +23,30 @@ const WizardForm = () => {
   };
 
   const handleFinish = () => {
-    console.log('Formulaire soumis avec succès !');
+    console.log(formData);
+     // Envoyer les données au backend en utilisant fetch
+     fetch('http://localhost:5000/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify(formData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Réponse du backend :', data);
+      })
+      .catch(error => {
+        console.error('Erreur lors de l\'envoi des données au backend :', error);
+      });
   };
+
+ 
 
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
