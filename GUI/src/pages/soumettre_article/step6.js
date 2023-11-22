@@ -34,11 +34,7 @@ const Step6 = ({ onPrev, onFinish }) => {
   const handleSubmit = () => {
     if (isChecked && parseInt(userAnswer, 10) === robotResult) {
       setLoading(true); 
-  
-      setTimeout(() => {
-        setLoading(false); 
-        onFinish(); 
-      }, 7000);
+      onFinish(setLoading); 
     } else {
       setErrorCount(errorCount + 1);
       if (errorCount >= 2) {

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, json
-from app.services import db_service, tn_service, pd_service
+from app.services import db_service, tn_service, pd_service, at_service
 import os
 import tempfile
 
@@ -101,13 +101,16 @@ def receive_data():
                         db_service.execute_query("""
                             INSERT INTO USER_ARTICLE (IDUSER, IDARTICLE, STATUS)
                             VALUES (%(IDUSER)s, %(IDARTICLE)s, %(STATUS)s)
-                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'In process'})
+                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'Rejected'})
                         db_service.commit()
+
+                        
+
                         print("Insertion dans la table USER_ARTICLE réussie!")
                     except Exception as e:
                         print(f"Erreur lors de l'insertion dans la table USER_ARTICLE : {str(e)}")
-
-                    return jsonify({'message': 'Données insérées avec succès'}), 200
+                    articles = at_service.get_articles(user_id)
+                    return jsonify({'message': 'Données insérées avec succès','articles':articles}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -122,35 +125,9 @@ def get_articles():
         decoded_token = tn_service.verify_token(token)
         if decoded_token:
             user_id = decoded_token.get('user_id')
-            if user_id:
-                try:
-                    user_articles = db_service.execute_query_all("""
-                        SELECT IDARTICLE, STATUS FROM USER_ARTICLE WHERE IDUSER = %(user_id)s;
-                    """, {'user_id': user_id})
-                    
-                    articles_data = []
-
-                    for article in user_articles:
-                        article_id = article[0]
-                        article_status = article[1]
-
-                        try:
-                            article_info = db_service.execute_query("""
-                                SELECT * FROM ARTICLE_SCIENTIFIQUE WHERE ID = %(article_id)s;
-                            """, {'article_id': article_id})
-
-                            if article_info:
-                                article_columns = [col[0] for col in db_service.description()]
-                                article_dict = dict(zip(article_columns, article_info))
-                                article_dict['status'] = article_status  # Ajout du statut à l'objet article
-                                articles_data.append(article_dict)
-                        except Exception as e:
-                            print(f"Erreur lors de la récupération de l'article {article_id}: {str(e)}")
-                    
-                    formatted_articles = [{'id': article['ID'], 'title': article['TITRECONTRIBUTION'], 'status': article['status']} for article in articles_data]
-                    return jsonify({'articles': formatted_articles}), 200
-                except Exception as e:
-                    return jsonify({'error': str(e)}), 500
+            formatted_articles = at_service.get_articles(user_id)
+            return jsonify({'articles': formatted_articles}), 200
+              
     return jsonify({'message': 'Token manquant'}), 401
 
 

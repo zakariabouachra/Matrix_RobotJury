@@ -21,32 +21,37 @@ import {
 import Dot from 'components/@extended/Dot';
 
 const ArticlesPage = () => {
-  const [articlesData, setArticlesData] = useState([]);
-
+  const [articlesData, setArticlesData] = useState(() => {
+    const localData = localStorage.getItem('articlesData');
+    return localData ? JSON.parse(localData) : [];
+  });
 
   const fetchArticlesData = async () => {
     try {
       const requestOptions = {
-        method: 'GET', 
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       };
-  
+
       const response = await fetch('http://localhost:5000/articles', requestOptions);
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération des articles');
       }
       const data = await response.json();
       setArticlesData(data.articles);
+      localStorage.setItem('articlesData', JSON.stringify(data.articles));
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchArticlesData();
+    if (!articlesData.length) {
+      fetchArticlesData();
+    }
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');

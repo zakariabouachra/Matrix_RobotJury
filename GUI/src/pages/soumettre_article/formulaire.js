@@ -22,7 +22,7 @@ const Formulaire = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleFinish = async () => {
+  const handleFinish = async ({setLoading}) => {
     try {
       const articleData = new FormData();
       articleData.append('file', formData.selectedFile);
@@ -37,15 +37,18 @@ const Formulaire = () => {
       });
   
       if (!response.ok) {
+        setLoading(false);
         throw new Error(`Erreur HTTP! Statut: ${response.status}`);
       }
       else{
         const data = await response.json();
-        console.log('Réponse du backend :', data);
+        console.log('Réponse du backend :', data.message);
+        localStorage.setItem('articlesData', JSON.stringify(data.articles));
         localStorage.removeItem('formData');
         localStorage.removeItem('authors');
         localStorage.removeItem('formDataStep4');
         setActiveStep(0);
+        setLoading(false);
       }
       
     } catch (error) {
