@@ -13,7 +13,6 @@ import RemoveIcon from '@mui/icons-material/Remove';
 const Step3 = ({ onPrev, onNext }) => {
   const [authors, setAuthors] = useState([
     {
-      id: 1,
       contactType: 'Email',
       firstName: '',
       lastName: '',
@@ -35,7 +34,6 @@ const Step3 = ({ onPrev, onNext }) => {
 
   const handleAddAuthor = () => {
     const newAuthor = {
-      id: authors.length + 1,
       contactType: 'Email',
       firstName: '',
       lastName: '',

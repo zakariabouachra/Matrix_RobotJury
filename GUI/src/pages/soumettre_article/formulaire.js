@@ -7,9 +7,9 @@ import Step4 from './step4';
 import Step5 from './step5';
 import Step6 from './step6';
 
-const steps = ['Information Generale', 'Soumission', 'Author', 'Abstract', 'Upload File', 'Submit'];
+const steps = ['Information Generale', 'Contribution', 'Author', 'Abstract', 'Upload File', 'Submit'];
 
-const WizardForm = () => {
+const Formulaire = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({});
 
@@ -25,10 +25,11 @@ const WizardForm = () => {
   const handleFinish = () => {
     console.log(formData);
      // Envoyer les données au backend en utilisant fetch
-     fetch('http://localhost:5000/submit', {
+     fetch('http://localhost:5000/article_information', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`, 
       },
       body: JSON.stringify(formData),
     })
@@ -83,4 +84,4 @@ const WizardForm = () => {
   );
 };
 
-export default WizardForm;
+export default Formulaire;

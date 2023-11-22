@@ -2,15 +2,13 @@ from flask import Blueprint
 from app.routes.auth_routes import login, register
 from app.routes.user_routes import get_user, update_user_information, update_user_coordonnees, update_address
 from app.routes.articles_routes import receive_data
-# Création des blueprints pour les routes d'authentification et utilisateur
-auth_routes = Blueprint('auth_routes', __name__)
-user_routes = Blueprint('user_routes', __name__)
-articles_routes = Blueprint('articles_routes', __name__)
 from app.routes.verify_routes import verify_email, verify_token, send_verifyMail , send_verifyPhone, verify_phone
 
 auth_routes = Blueprint('auth_routes', __name__)
 user_routes = Blueprint('user_routes', __name__)
 verify_routes = Blueprint('verify_routes', __name__)
+articles_routes = Blueprint('articles_routes', __name__)
+
 
 # Ajout des routes aux blueprints
 auth_routes.add_url_rule('/login', view_func=login, methods=['POST'])
@@ -30,6 +28,6 @@ user_routes.add_url_rule('/user_coordonnees/<int:user_id>', view_func=update_use
 user_routes.add_url_rule('/address/<int:user_id>', view_func=update_address, methods=['PUT'])
 
 
-articles_routes.add_url_rule('/submit',view_func=receive_data, methods=['POST'])
+articles_routes.add_url_rule('/article_information',view_func=receive_data, methods=['POST'])
 
 
