@@ -42,7 +42,7 @@ function VerifyEmail({ email, sendEmailVerification }) {
           onClick={handleResendEmail}
           disabled={!canResend}
         >
-          {canResend ? 'Renvoyer l\'email' : `Attendez ${timer} secondes avant de renvoyer l'email`}
+          {canResend ? 'Renvoyer l\'email' : `Attendez ${timer}s`}
         </Link>
       </Text>
     </Box>
