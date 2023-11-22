@@ -102,11 +102,7 @@ function CoordonneSettings() {
 
   const isValid = isPhoneValid(phoneNumber);
 
-  const handlePhoneVerification = () =>{
-    setIsModalOpen(true);
-    setModalTitle('Phone Verification');
-    setModalContent(<VerifyPhone  phoneNumber={phoneNumber} />);
-  }
+  
 
   const sendEmailVerification = async () => {
     setIsLoading(true);
@@ -132,9 +128,42 @@ function CoordonneSettings() {
     }
     setIsLoading(false);
   };
-  
-  
-  
+
+  const sendPhoneVerification = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/send_verifyPhone/${userDataObject.user_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Code de vérification envoyé avec succès:', data.message);
+        setIsModalOpen(true);
+        setModalTitle('Phone Verification');
+        setModalContent(
+        <VerifyPhone 
+           user_id={data.user_id}
+           phoneNumber={phoneNumber} 
+           sendPhoneVerification={sendPhoneVerification} 
+           setIsPhoneNumberVerified={setIsPhoneNumberVerified} 
+           setIsModalOpen={setIsModalOpen}
+           />);
+      } else {
+        console.error('Erreur lors de l\'envoi du code de vérification du téléphone');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête d\'envoi du code de vérification du téléphone:', error);
+    }
+    setIsLoading(false);
+  };
+
+  const handlePhoneVerification = () =>{
+    sendPhoneVerification()
+  } 
 
   const handleEmailVerification = () =>{
     sendEmailVerification()
