@@ -18,6 +18,13 @@ class DatabaseService:
         else:
             self.cur.execute(query)
         return self.cur.fetchone()
+    
+    def execute_query_all(self, query, params=None):
+        if params:
+            self.cur.execute(query, params)
+        else:
+            self.cur.execute(query)
+        return self.cur.fetchall()
 
     def commit(self):
         self.conn.commit()

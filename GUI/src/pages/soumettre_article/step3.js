@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Typography,
   TextField,
@@ -11,15 +11,24 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 const Step3 = ({ onPrev, onNext }) => {
-  const [authors, setAuthors] = useState([
-    {
-      contactType: 'Email',
-      firstName: '',
-      lastName: '',
-      institution: '',
-      country: '',
-    },
-  ]);
+  const [authors, setAuthors] = useState(() => {
+    const savedAuthors = localStorage.getItem('authors');
+    return savedAuthors ? JSON.parse(savedAuthors) : [
+      {
+        id: 1,
+        contactType: 'Email',
+        firstName: '',
+        lastName: '',
+        institution: '',
+        country: '',
+      },
+    ];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('authors', JSON.stringify(authors));
+  }, [authors]);
+  
 
   const isFormValid = () => {
     return authors.every(
@@ -34,6 +43,7 @@ const Step3 = ({ onPrev, onNext }) => {
 
   const handleAddAuthor = () => {
     const newAuthor = {
+      id: authors.length + 1,
       contactType: 'Email',
       firstName: '',
       lastName: '',

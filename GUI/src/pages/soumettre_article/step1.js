@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, Grid, Box } from '@mui/material';
 
 const Step1 = ({ onNext }) => {
@@ -8,16 +8,25 @@ const Step1 = ({ onNext }) => {
     institution: '',
   });
 
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('formData');
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
+  }, []);
+
   const isFormValid = () => {
     return Object.values(formData).every(value => value !== '');
   };
 
   const handleChange = event => {
     const { id, value } = event.target;
-    setFormData(prevData => ({
-      ...prevData,
+    const updatedFormData = {
+      ...formData,
       [id]: value,
-    }));
+    };
+    setFormData(updatedFormData);
+    localStorage.setItem('formData', JSON.stringify(updatedFormData));
   };
   const handleNextStep = () => {
     if (isFormValid()) {

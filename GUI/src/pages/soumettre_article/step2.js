@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, Grid, MenuItem, Box } from '@mui/material';
 
 const Step2 = ({ onPrev, onNext }) => {
@@ -7,39 +7,57 @@ const Step2 = ({ onPrev, onNext }) => {
   const [contributionType, setContributionType] = useState('');
   const [contentType, setContentType] = useState('');
 
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('formData');
+    if (savedFormData) {
+      const parsedData = JSON.parse(savedFormData);
+      setTrackPreference(parsedData.trackPreference || '');
+      setMainTopic(parsedData.mainTopic || '');
+      setContributionType(parsedData.contributionType || '');
+      setContentType(parsedData.contentType || '');
+    }
+  }, []);
+
   const isFormValid = () => {
-
     return trackPreference !== '' && mainTopic !== '' && contributionType !== '' && contentType !== '';
-
   };
 
   const handleTrackPreferenceChange = event => {
     setTrackPreference(event.target.value);
+    updateLocalStorage({ trackPreference: event.target.value });
   };
 
   const handleMainTopicChange = event => {
     setMainTopic(event.target.value);
+    updateLocalStorage({ mainTopic: event.target.value });
   };
 
   const handleContributionTypeChange = event => {
     setContributionType(event.target.value);
+    updateLocalStorage({ contributionType: event.target.value });
   };
 
   const handleContentTypeChange = event => {
     setContentType(event.target.value);
+    updateLocalStorage({ contentType: event.target.value });
   };
+
+  const updateLocalStorage = updatedData => {
+    const existingFormData = JSON.parse(localStorage.getItem('formData')) || {};
+    const newFormData = { ...existingFormData, ...updatedData };
+    localStorage.setItem('formData', JSON.stringify(newFormData));
+  };
+
   const handleNextStep = () => {
     if (isFormValid()) {
-       // Créer un objet formData avec les valeurs actuelles
-       const formData = {
+      const formData = {
         trackPreference,
         mainTopic,
         contributionType,
         contentType,
       };
-      // Appeler la fonction onNext du composant supérieur (WizardForm) avec les données du formulaire de cette étape
       onNext(formData);
-      console.log(formData)
+      console.log(formData);
     } else {
       console.error('Le formulaire n\'est pas valide.');
     }

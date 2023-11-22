@@ -1,27 +1,8 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-
-// material-ui
 import { Box, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-
-// third-party
-import NumberFormat from 'react-number-format';
-
-// project import
 import Dot from 'components/@extended/Dot';
-
-function createData(name, status) {
-  return { name, status };
-}
-
-const rows = [
-  createData('Article 1', "Publier"),
-  createData('Article 2 ', 'En cours' ),
-  createData('Article 3', 'Publier'),
-  createData('Article 4', 'Verifier'),
-  createData('Article 5', 'Refuser')
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -49,8 +30,6 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-// ==============================|| ORDER TABLE - HEADER CELL ||============================== //
-
 const headCells = [
   {
     id: 'name',
@@ -65,8 +44,6 @@ const headCells = [
     label: 'Status'
   }
 ];
-
-// ==============================|| ORDER TABLE - HEADER ||============================== //
 
 function ArticleTableHead({ order, orderBy }) {
   return (
@@ -92,26 +69,24 @@ ArticleTableHead.propTypes = {
   orderBy: PropTypes.string
 };
 
-// ==============================|| ORDER TABLE - STATUS ||============================== //
-
 const ArticleStatus = ({ status }) => {
   let color;
   let title;
 
   switch (status) {
-    case "Verifier":
+    case 'Verified':
       color = 'warning';
       title = 'Verified';
       break;
-    case "Publier":
+    case 'Published':
       color = 'success';
       title = 'Published';
       break;
-    case "Refuser":
+    case 'Rejected':
       color = 'error';
       title = 'Rejected';
       break;
-    case "En cours":
+    case 'In process':
       color = 'primary';
       title = 'In process';
       break;
@@ -129,12 +104,10 @@ const ArticleStatus = ({ status }) => {
 };
 
 ArticleStatus.propTypes = {
-  status: PropTypes.number
+  status: PropTypes.string
 };
 
-// ==============================||  TABLE ||============================== //
-
-export default function ArticleTable() {
+export default function ArticleTable({ articlesData }) {
   const [order] = useState('asc');
   const [orderBy] = useState('name');
   const [selected] = useState([]);
@@ -166,7 +139,7 @@ export default function ArticleTable() {
         >
           <ArticleTableHead order={order} orderBy={orderBy} />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
+            {stableSort(articlesData, getComparator(order, orderBy)).map((row, index) => {
               const isItemSelected = isSelected(row.name);
               const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -177,20 +150,16 @@ export default function ArticleTable() {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   aria-checked={isItemSelected}
                   tabIndex={-1}
-                  key={row.name}
+                  key={row.id} // Change the key to the unique identifier of the article
                   selected={isItemSelected}
                 >
                   <TableCell component="th" id={labelId} scope="row" align="left">
                     <Link color="secondary" component={RouterLink} to="">
-                      {row.name}
+                      {row.title} {/* Use the appropriate property for the article title */}
                     </Link>
                   </TableCell>
                   <TableCell align="left">
                     <ArticleStatus status={row.status} />
-                  </TableCell>
-                  <TableCell align="right">{row.totalOrder}</TableCell>
-                  <TableCell align="right">
-                    <NumberFormat value={row.totalAmount} displayType="text" thousandSeparator prefix="$" />
                   </TableCell>
                 </TableRow>
               );

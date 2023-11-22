@@ -22,30 +22,37 @@ const Formulaire = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleFinish = () => {
-    console.log(formData);
-     // Envoyer les données au backend en utilisant fetch
-     fetch('http://localhost:5000/article_information', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`, 
-      },
-      body: JSON.stringify(formData),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP! Statut: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Réponse du backend :', data);
-      })
-      .catch(error => {
-        console.error('Erreur lors de l\'envoi des données au backend :', error);
+  const handleFinish = async () => {
+    try {
+      const articleData = new FormData();
+      articleData.append('file', formData.selectedFile);
+      articleData.append('otherData', JSON.stringify(formData));
+  
+      const response = await fetch('http://localhost:5000/article_information', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: articleData,
       });
+  
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+      }
+      else{
+        const data = await response.json();
+        console.log('Réponse du backend :', data);
+        localStorage.removeItem('formData');
+        localStorage.removeItem('authors');
+        localStorage.removeItem('formDataStep4');
+        setActiveStep(0);
+      }
+      
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi des données au backend :', error);
+    }
   };
+  
 
  
 

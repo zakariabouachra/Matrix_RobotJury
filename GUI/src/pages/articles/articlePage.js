@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextField,
   Typography,
@@ -20,16 +20,35 @@ import {
 } from '@mui/material';
 import Dot from 'components/@extended/Dot';
 
-const articlesData = [
-  { id: 1, title: 'Article 1', status: 'Publier' },
-  { id: 2, title: 'Article 2', status: 'En cours' },
-  { id: 3, title: 'Article 3', status: 'Publier' },
-  { id: 4, title: 'Article 4', status: 'Verifier' },
-  { id: 5, title: 'Article 5', status: 'Refuser' },
-  { id: 6, title: 'Article 6', status: 'Refuser' },
-];
-
 const ArticlesPage = () => {
+  const [articlesData, setArticlesData] = useState([]);
+
+
+  const fetchArticlesData = async () => {
+    try {
+      const requestOptions = {
+        method: 'GET', 
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      };
+  
+      const response = await fetch('http://localhost:5000/articles', requestOptions);
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des articles');
+      }
+      const data = await response.json();
+      setArticlesData(data.articles);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticlesData();
+  }, []);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [page, setPage] = useState(0);
@@ -52,7 +71,7 @@ const ArticlesPage = () => {
 
     const renderActions = (status) => {
       switch (status) {
-        case 'Publier':
+        case 'Published':
           return (
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
@@ -62,9 +81,9 @@ const ArticlesPage = () => {
               </Select>
             </FormControl>
           );
-        case 'En cours':
+        case 'In process':
           return null; 
-        case 'Verifier':
+        case 'Verified':
           return (
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
@@ -74,7 +93,7 @@ const ArticlesPage = () => {
               </Select>
             </FormControl>
           );
-        case 'Refuser':
+        case 'Rejected':
           return (
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
@@ -104,19 +123,19 @@ const getStatusColor = ( status ) => {
   let title;
 
   switch (status) {
-    case "Verifier":
+    case "Verified":
       color = 'warning';
       title = 'Verified';
       break;
-    case "Publier":
+    case "Published":
       color = 'success';
       title = 'Published';
       break;
-    case "Refuser":
+    case "Rejected":
       color = 'error';
       title = 'Rejected';
       break;
-    case "En cours":
+    case "In process":
       color = 'primary';
       title = 'In process';
       break;
@@ -158,10 +177,10 @@ const getStatusColor = ( status ) => {
                 label="Status"
               >
                 <MenuItem value="All">Tous</MenuItem>
-                <MenuItem value="Publier">Publié</MenuItem>
-                <MenuItem value="En cours">En cours</MenuItem>
-                <MenuItem value="Verifier">Verifier</MenuItem>
-                <MenuItem value="Refuser">Refuser</MenuItem>
+                <MenuItem value="Published">Publié</MenuItem>
+                <MenuItem value="In process">En cours</MenuItem>
+                <MenuItem value="Verified">Verifier</MenuItem>
+                <MenuItem value="Rejected">Refuser</MenuItem>
               </Select>
             </FormControl>
           </Grid>

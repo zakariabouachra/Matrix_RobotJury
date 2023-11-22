@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, Grid, Box } from '@mui/material';
 
 const Step4 = ({ onPrev, onNext }) => {
-  const [formData, setFormData] = useState({
-    abstract: '',
+  const [formData, setFormData] = useState(() => {
+    const savedFormData = localStorage.getItem('formDataStep4');
+    return savedFormData ? JSON.parse(savedFormData) : { abstract: '' };
   });
 
+  useEffect(() => {
+    localStorage.setItem('formDataStep4', JSON.stringify(formData));
+  }, [formData]);
+
   const isFormValid = () => {
-    return formData.abstract !== '';
+    return formData.abstract.trim() !== '';
   };
 
   const handleChange = event => {
@@ -17,10 +22,11 @@ const Step4 = ({ onPrev, onNext }) => {
       [id]: value,
     }));
   };
+
   const handleNextStep = () => {
     if (isFormValid()) {
       onNext(formData);
-      console.log(formData)
+      console.log(formData);
     } else {
       console.error('Le formulaire n\'est pas valide.');
     }
