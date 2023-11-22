@@ -22,6 +22,7 @@ const Step4 = ({ onPrev, onNext }) => {
     if (isFormValid()) {
       // Appeler la fonction onNext du composant supérieur (WizardForm) avec les données du formulaire de cette étape
       onNext(formData);
+      console.log(formData)
     } else {
       // Gérer le cas où le formulaire n'est pas valide (par exemple, afficher un message d'erreur)
       console.error('Le formulaire n\'est pas valide.');

@@ -8,7 +8,9 @@ const Step2 = ({ onPrev, onNext }) => {
   const [contentType, setContentType] = useState('');
 
   const isFormValid = () => {
+
     return trackPreference !== '' && mainTopic !== '' && contributionType !== '' && contentType !== '';
+
   };
 
   const handleTrackPreferenceChange = event => {
@@ -28,7 +30,16 @@ const Step2 = ({ onPrev, onNext }) => {
   };
   const handleNextStep = () => {
     if (isFormValid()) {
+       // Créer un objet formData avec les valeurs actuelles
+       const formData = {
+        trackPreference,
+        mainTopic,
+        contributionType,
+        contentType,
+      };
+      // Appeler la fonction onNext du composant supérieur (WizardForm) avec les données du formulaire de cette étape
       onNext(formData);
+      console.log(formData)
     } else {
       console.error('Le formulaire n\'est pas valide.');
     }
