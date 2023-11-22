@@ -56,6 +56,16 @@ const Step3 = ({ onPrev, onNext }) => {
       )
     );
   };
+  const handleNextStep = () => {
+    // Vérifiez si le formulaire de l'étape est valide avant de passer à l'étape suivante
+    if (isFormValid()) {
+      // Appeler la fonction onNext du composant supérieur (WizardForm) avec les données du formulaire de cette étape
+      onNext(authors);
+    } else {
+      // Gérer le cas où le formulaire n'est pas valide (par exemple, afficher un message d'erreur)
+      console.error('Le formulaire n\'est pas valide.');
+    }
+  };
 
   return (
     <Grid container spacing={2}>
@@ -127,7 +137,7 @@ const Step3 = ({ onPrev, onNext }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={onNext}
+            onClick={handleNextStep}
             disabled={!isFormValid()}
           >
             Suivant

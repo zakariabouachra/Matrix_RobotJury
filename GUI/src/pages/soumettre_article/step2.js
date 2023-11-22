@@ -26,6 +26,13 @@ const Step2 = ({ onPrev, onNext }) => {
   const handleContentTypeChange = event => {
     setContentType(event.target.value);
   };
+  const handleNextStep = () => {
+    if (isFormValid()) {
+      onNext(formData);
+    } else {
+      console.error('Le formulaire n\'est pas valide.');
+    }
+  };
 
   return (
     <Grid container spacing={2}>
@@ -123,7 +130,7 @@ const Step2 = ({ onPrev, onNext }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={onNext}
+            onClick={handleNextStep}
             disabled={!isFormValid()}
           >
             Suivant

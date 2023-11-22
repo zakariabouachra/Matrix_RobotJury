@@ -11,8 +11,10 @@ const steps = ['Information Generale', 'Soumission', 'Author', 'Abstract', 'Uplo
 
 const WizardForm = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState({});
 
   const handleNext = () => {
+    setFormData((prevData) => ({ ...prevData, ...formData }));
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -21,7 +23,7 @@ const WizardForm = () => {
   };
 
   const handleFinish = () => {
-    console.log('Formulaire soumis avec succès !');
+    console.log(formData);
   };
 
   const getStepContent = (stepIndex) => {
