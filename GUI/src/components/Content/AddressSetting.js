@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Grid, Input, Select, Button } from '@chakra-ui/react';
+import { FormControl, FormLabel, Grid, Input, Select, Button, Spinner } from '@chakra-ui/react';
 import countriesData from 'assets/json/countries.json'; // Chemin vers votre fichier JSON des pays
 
 function AddressForm() {
@@ -9,6 +9,8 @@ function AddressForm() {
   const [codepostal, setcodepostal] = useState('');
   const [city, setCity] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // Extraire les données des pays du fichier JSON
   const countries = Object.entries(countriesData).map(([code, name]) => ({
@@ -42,6 +44,7 @@ function AddressForm() {
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`http://localhost:5000/address/${userDataObject.user_id}`, {
         method: 'PUT',
@@ -72,6 +75,7 @@ function AddressForm() {
     } catch (error) {
       console.error('Erreur lors de la requête de mise à jour des informations d\'adresse:', error);
     }
+    setIsLoading(false);
   };
 
   const isSaveDisabled = !address || !codepostal || !city || !selectedCountry;
@@ -124,9 +128,14 @@ function AddressForm() {
           ))}
         </Select>
       </FormControl>
+      {isLoading ? (
+          <Spinner/>
+      ) : (
+        
       <Button colorScheme="blue" onClick={handleSave} isDisabled={isSaveDisabled}>
         Save Update
       </Button>
+      )}
     </Grid>
   );
 }

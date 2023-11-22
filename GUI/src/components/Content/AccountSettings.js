@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Grid, Input, Select, Button, Box } from '@chakra-ui/react';
+import { FormControl, FormLabel, Grid, Input, Select, Button, Box , Spinner} from '@chakra-ui/react';
 
 function AccountSettings() {
   const userData = localStorage.getItem('userData');
@@ -9,6 +9,8 @@ function AccountSettings() {
   const [gender, setGender] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
   const [formattedDate, setFormattedDate] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     if (userDataObject?.datedenaisance) {
       const dateObj = new Date(userDataObject?.datedenaisance);
@@ -47,6 +49,7 @@ function AccountSettings() {
   const isDisabled = !userDataObject.prenom || !userDataObject.nom || !day || !year || !selectedMonth || !gender;
 
   const updateUserData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('http://localhost:5000/user_information/' + userDataObject.user_id, {
         method: 'PUT',
@@ -73,6 +76,7 @@ function AccountSettings() {
     } catch (error) {
       console.error('Erreur lors de la requête de mise à jour:', error);
     }
+    setIsLoading(false);
   };
   return (
     <Grid templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }} gap={6}>
@@ -165,12 +169,18 @@ function AccountSettings() {
       {!userDataObject.sexe && !userDataObject.datedenaisance  && (
       <FormControl gridColumn={{ md: 'span 2' }}>
         <Box mt={4}>
+          {isLoading ? (
+              <Spinner/>
+            ) : (
+              <>
           <Button colorScheme="blue" onClick={updateUserData} isDisabled={isDisabled}>
             Save Update
           </Button>
           <p style={{ marginTop: '8px', fontSize: '14px', color: 'red' }}>
             Note: You won&apos;t be able to edit general information after this. Please contact support for any changes.
           </p>
+          </>
+          )}
         </Box>
       </FormControl>
       )}
