@@ -1,11 +1,33 @@
-import React from 'react';
-import {
-  Box,
-  Text,
-  Link
-} from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Link } from '@chakra-ui/react';
 
-function VerifyEmail({ email }) {
+function VerifyEmail({ email, sendEmailVerification }) {
+  const [canResend, setCanResend] = useState(true);
+  const [timer, setTimer] = useState(60);
+
+  const handleResendEmail = () => {
+    if (canResend) {
+      sendEmailVerification();
+      setCanResend(false);
+      setTimer(60);
+    }
+  };
+
+  useEffect(() => {
+    let countdown;
+    if (canResend) {
+      return;
+    }
+
+    if (timer > 0) {
+      countdown = setTimeout(() => setTimer((prevTimer) => prevTimer - 1), 1000);
+    } else {
+      setCanResend(true);
+    }
+
+    return () => clearTimeout(countdown);
+  }, [canResend, timer]);
+
   return (
     <Box>
       <Text>
@@ -17,8 +39,10 @@ function VerifyEmail({ email }) {
           color="blue.500"
           textDecoration="none"
           _hover={{ textDecoration: 'none' }}
+          onClick={handleResendEmail}
+          disabled={!canResend}
         >
-          Renvoyer l&apos;email
+          {canResend ? 'Renvoyer l\'email' : `Attendez ${timer} secondes avant de renvoyer l'email`}
         </Link>
       </Text>
     </Box>

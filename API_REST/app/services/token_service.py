@@ -23,7 +23,7 @@ class TokenService:
         except jwt.InvalidTokenError:
             return None
 
-    def generate_unique_verification_token(length=30):
+    def generate_unique_verification_token(self, length=30):
         alphabet = string.ascii_letters + string.digits
         token = ''.join(secrets.choice(alphabet) for _ in range(length))
         return token
