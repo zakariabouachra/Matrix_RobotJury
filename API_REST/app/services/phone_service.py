@@ -1,8 +1,16 @@
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class PhoneService:
-    def __init__(self, account_sid='AC0c76d0d744f8895b95de670a3a45298e', auth_token='bc82bc8313e7fdcfee3f84f81d396ac1', verify_sid='VA1791c076d647f635b1042470055b00dc'):
+    def __init__(self):
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        verify_sid = os.getenv('TWILIO_VERIFY_SID')
+
         self.client = Client(account_sid, auth_token)
         self.verify_sid = verify_sid
 

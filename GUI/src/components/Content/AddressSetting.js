@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Grid, Input, Select, Button, Spinner } from '@chakra-ui/react';
+import { FormControl, FormLabel, Grid, Input, Select, Button, Spinner,Box } from '@chakra-ui/react';
 import countriesData from 'assets/json/countries.json'; // Chemin vers votre fichier JSON des pays
 
 function AddressForm() {
@@ -131,10 +131,13 @@ function AddressForm() {
       {isLoading ? (
           <Spinner/>
       ) : (
-        
+        <>
+        <Box display="flex" justifyContent="flex-end">
       <Button colorScheme="blue" onClick={handleSave} isDisabled={isSaveDisabled}>
         Save Update
       </Button>
+      </Box>
+      </>
       )}
     </Grid>
   );
