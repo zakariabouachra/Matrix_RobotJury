@@ -56,6 +56,26 @@ const AuthRegister = () => {
     changePassword('');
   }, []);
 
+  const sendEmailVerification = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/send_verifyMail/${userDataObject.user_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Email de vérification envoyé avec succès:', data.message);
+      } else {
+        console.error('Erreur lors de l\'envoi de l\'email de vérification');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête d\'envoi de l\'email');
+    }
+  };
+
   return (
     <>
       <Formik
@@ -85,6 +105,7 @@ const AuthRegister = () => {
   
             if (response.status === 201) {      
               navigate('/verify_email');
+              sendEmailVerification();
             } else {
               const data = await response.json();
               setErrors({ submit: data.message });

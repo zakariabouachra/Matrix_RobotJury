@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services import db_service, tn_service, el_service
+from app.services import db_service, tn_service, el_service , ur_service
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 from flask import redirect
@@ -43,9 +43,27 @@ def register():
 
     db_service.commit()
 
-    el_service.send_verification_email(data['email'], verification_token, data['firstname'])
-
     return jsonify({'message': 'Compte créé avec succès'}), 201  # Created
+
+
+@auth_routes.route('/send_verifyMail/<int:user_id>', methods=['POST'])
+def send_verifyMail(user_id):
+    try:
+        print("Received user_id:", user_id)
+        result = db_service.execute_query("SELECT VERIFICATION_TOKEN FROM Coordonnees WHERE id_user = %s", (user_id,))
+        
+        if result and result[0]:
+            verification_token = result[0]
+            data = ur_service.get_user_info(user_id)
+            print(data)
+            print("Sending email to:", data['email'])
+            el_service.send_verification_email(data['email'], verification_token, data['prenom'])
+            return jsonify({'message': 'Email de vérification envoyé avec succès'}), 200
+        return jsonify({'message': "Utilisateur non trouvé"}), 404
+    except Exception as e:
+        return jsonify({'message': "Erreur lors de l'envoi de l'email de vérification", 'error': str(e)}), 500
+
+
 
 @auth_routes.route('/verify/<token>', methods=['GET'])
 def verify_email(token):

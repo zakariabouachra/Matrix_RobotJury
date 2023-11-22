@@ -11,7 +11,8 @@ import {
   ModalBody,
   ModalOverlay,
   ModalCloseButton,
-  ModalContent
+  ModalContent,
+  Spinner 
 } from '@chakra-ui/react';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -40,6 +41,8 @@ function CoordonneSettings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalContent, setModalContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdate , setUpdate] = useState(false);
 
 
   useEffect(() => {
@@ -64,6 +67,7 @@ function CoordonneSettings() {
   }, [userDataObject]);
 
   const handleUpdate = async () => {
+    setUpdate(true);
     try {
       const response = await fetch(`http://localhost:5000/user_coordonnees/${userDataObject.user_id}`, {
         method: 'PUT',
@@ -93,6 +97,7 @@ function CoordonneSettings() {
     } catch (error) {
       console.error('Erreur lors de la requête de mise à jour:', error);
     }
+    setUpdate(false);
   };
 
   const isValid = isPhoneValid(phoneNumber);
@@ -100,14 +105,40 @@ function CoordonneSettings() {
   const handlePhoneVerification = () =>{
     setIsModalOpen(true);
     setModalTitle('Phone Verification');
-    setModalContent(<VerifyPhone  phoneNumber={phoneNumber}/>);
+    setModalContent(<VerifyPhone  phoneNumber={phoneNumber} />);
   }
 
+  const sendEmailVerification = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/send_verifyMail/${userDataObject.user_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Email de vérification envoyé avec succès:', data.message);
+        setIsModalOpen(true);
+        setModalTitle('Email Verification');
+        setModalContent(<VerifyEmail email={email} sendEmailVerification={sendEmailVerification}/>);
+      } else {
+        console.error('Erreur lors de l\'envoi de l\'email de vérification');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête d\'envoi de l\'email');
+    }
+    setIsLoading(false);
+  };
+  
+  
+  
 
   const handleEmailVerification = () =>{
-    setIsModalOpen(true);
-    setModalTitle('Email Verification');
-    setModalContent(<VerifyEmail email={email}/>);
+    sendEmailVerification()
+
   }
 
   const closeModal = () => {
@@ -134,15 +165,19 @@ function CoordonneSettings() {
           <FormLabel>Email Address</FormLabel>
           {isEmailVerified ? (
             <Box display="flex" alignItems="center">
-              <Badge colorScheme="green" ml={2}>
+                <Badge colorScheme="green" ml={2}>
                 Verified
-              </Badge>
+                </Badge>
             </Box>
-          ) : (
-            <Button colorScheme="blue" onClick={handleEmailVerification} ml={2}>
-              Verify Email
-            </Button>
-          )}
+            ) : (
+            isLoading ? (
+                <Spinner/>
+            ) : (
+                <Button colorScheme="blue" onClick={handleEmailVerification} ml={2}>
+                    Verify Email
+                </Button>
+            )
+            )}
         </Grid>
         <Input
           focusBorderColor="brand.blue"
@@ -176,6 +211,9 @@ function CoordonneSettings() {
       </FormControl>
         
       <Box display="flex" justifyContent="flex-end">
+      {isUpdate ? (
+            <Spinner/>
+        ) : (
       <Button
         color="primary"
         onClick={handleUpdate}
@@ -190,6 +228,7 @@ function CoordonneSettings() {
       >
         Save Update
       </Button>
+      )}
       </Box>
 
       {isModalOpen && (

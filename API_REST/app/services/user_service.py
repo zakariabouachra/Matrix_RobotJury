@@ -34,7 +34,6 @@ class UserService:
                 'phonenumber': user_info['PHONENUMBER'],
                 'email_verified': user_info['EMAIL_VERIFIED'],
                 'phone_verified': user_info['PHONE_VERIFIED'],
-                'verification_token' : user_info['VERIFICATION_TOKEN'],
                 'motdepasse': user_info['MOTDEPASSE'],
                 'country': user_info['COUNTRY'],
                 'city': user_info['CITY'],

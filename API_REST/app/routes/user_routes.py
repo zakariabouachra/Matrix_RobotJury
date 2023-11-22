@@ -70,12 +70,13 @@ def update_user_coordonnees(user_id):
                 db_service.commit()
 
                 verification_token = tn_service.generate_unique_verification_token()
-                
+
+
                 db_service.execute_query("""
                     UPDATE Coordonnees 
                     SET email = %s, phonenumber = %s , VERIFICATION_TOKEN = %s
                     WHERE id_user = %s
-                """, (data.get('email'), data.get('phonenumber'),verification_token, user_id))
+                """, (data.get('email'), data.get('phonenumber'), verification_token, user_id))
 
                 db_service.commit()
 
@@ -124,3 +125,5 @@ def update_address(user_id):
 
     else:
         return jsonify({'message': 'Token manquant'}), 401  # Unauthorized
+    
+
