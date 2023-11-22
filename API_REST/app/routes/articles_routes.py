@@ -5,7 +5,7 @@ bcrypt = Bcrypt()
 from flask import redirect
 articles_routes = Blueprint('articles_routes', __name__)
 
-articles_routes('/submit', methods=['POST'])
+@articles_routes.route('/submit', methods=['POST'])
 def receive_data():
     try:
         data = request.get_json()
