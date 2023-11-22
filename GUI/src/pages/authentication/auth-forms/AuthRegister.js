@@ -56,9 +56,9 @@ const AuthRegister = () => {
     changePassword('');
   }, []);
 
-  const sendEmailVerification = async () => {
+  const sendEmailVerification = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/send_verifyMail/${userDataObject.user_id}`, {
+      const response = await fetch(`http://localhost:5000/send_verifyMail/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,9 +103,10 @@ const AuthRegister = () => {
               body: JSON.stringify(values),
             });
   
-            if (response.status === 201) {      
+            if (response.status === 201) {  
+              const user_data  = await response.json();    
               navigate('/verify_email');
-              sendEmailVerification();
+              sendEmailVerification(user_data.user_id);
             } else {
               const data = await response.json();
               setErrors({ submit: data.message });

@@ -43,7 +43,7 @@ def register():
 
     db_service.commit()
 
-    return jsonify({'message': 'Compte créé avec succès'}), 201  # Created
+    return jsonify({'message': 'Compte créé avec succès',"user_id" : user_id}), 201  # Created
 
 
 @auth_routes.route('/send_verifyMail/<int:user_id>', methods=['POST'])
