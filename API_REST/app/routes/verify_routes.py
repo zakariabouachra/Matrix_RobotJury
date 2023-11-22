@@ -25,7 +25,9 @@ def send_verifyPhone(user_id):
         result = ur_service.get_user_info(user_id)
         if result :
             phone_number = result['phonenumber']
+            print(phone_number)
             verification = ph_service.initiate_verification(phone_number)
+            print(verification)
             if verification.status == 'pending':
                 return jsonify({'message': 'Code de vérification envoyé avec succès', 'user_id':user_id}), 200
             else:
