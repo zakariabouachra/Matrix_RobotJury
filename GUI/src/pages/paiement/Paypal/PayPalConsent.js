@@ -6,17 +6,54 @@ function Message({ content }) {
   return <p>{content}</p>;
 }
 
-function App() {
+function App({articleId, prix, handleCloseDialog}) {
   const initialOptions = {
     "client-id": "AZmbw_PBE3LgbOUNzzSoSnbgIve6prbaRdCz4Z7FYqFkLfNEFZMTX3Tc2pny1ksYOGmDZhvipoYTy3dA",
-    "enable-funding": "paylater,venmo,card",
-    "disable-funding": "",
+    "enable-funding": "venmo,card",
+    "disable-funding": "paylater",
     "data-sdk-integration-source": "integrationbuilder_sc",
   };
+
+
+  // Récupérez l'identifiant de l'utilisateur depuis localStorage
+  const userData = localStorage.getItem("userData");
+  const userId = userData ? JSON.parse(userData).user_id : null;
+  const prixAsString = prix.toString();
+  console.log(prixAsString)
+
 
   const basicAuth = btoa('AZmbw_PBE3LgbOUNzzSoSnbgIve6prbaRdCz4Z7FYqFkLfNEFZMTX3Tc2pny1ksYOGmDZhvipoYTy3dA:EIP-CocnC5Di3GQQcCYgeZk1YCGFunw6LlTIlIDQ2iSQn3B-tjQ9xm1NWMi687ixQnGNxzSXIPHXdkcO');
 
   const [message, setMessage] = useState("");
+
+  const requestId = `article-${userId}-${articleId}`;
+  console.log(requestId)
+
+  async function updatePaymentStatus(orderID) {
+    try {
+      const response = await fetch(`http://localhost:5000/update-payment-status/${orderID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          status: 'Published',
+        }),
+      });
+  
+      if (response.ok) {
+        console.log('Statut de paiement mis à jour avec succès dans la base de données.');
+        const data = await response.json();
+        localStorage.setItem('articlesData', JSON.stringify(data.articles));
+      } else {
+        console.error('Échec de la mise à jour du statut de paiement dans la base de données.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut de paiement :', error);
+    }
+  }
+  
 
   return (
     <div className="App">
@@ -33,7 +70,7 @@ function App() {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    'PayPal-Request-Id': '1',
+                    'PayPal-Request-Id': requestId,
                     'Authorization': `Basic ${basicAuth}`,
                 },
         
@@ -43,7 +80,7 @@ function App() {
                     {
                       amount: {
                         currency_code: 'USD',
-                        value: '0.01' 
+                        value:prixAsString
                       }
                     }
                   ]
@@ -75,23 +112,17 @@ function App() {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
-                    'PayPal-Request-Id': '7b92603e-77ed-4896-8e78-5dea205047',
+                    'PayPal-Request-Id': '7b92603e-77ed-4896-8e78-5dea205048',
                     'Authorization': `Basic ${basicAuth}`,
                 },
                 },
               );
 
               const orderData = await response.json();
-              // Three cases to handle:
-              //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-              //   (2) Other non-recoverable errors -> Show a failure message
-              //   (3) Successful transaction -> Show confirmation or thank you message
 
               const errorDetail = orderData?.details?.[0];
 
               if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-                // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                // recoverable state, per https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
                 return actions.restart();
               } else if (errorDetail) {
                 // (2) Other non-recoverable errors -> Show a failure message
@@ -99,12 +130,13 @@ function App() {
                   `${errorDetail.description} (${orderData.debug_id})`,
                 );
               } else {
-                // (3) Successful transaction -> Show confirmation or thank you message
-                // Or go to another URL:  actions.redirect('thank_you.html');
+                await updatePaymentStatus(articleId);
+                handleCloseDialog;
+                window.location.reload();
                 const transaction =
                   orderData.purchase_units[0].payments.captures[0];
                 setMessage(
-                  `Transaction ${transaction.status}: ${transaction.id}. See console for all available details`,
+                  `Transaction ${transaction.status}: ${transaction.id}.`,
                 );
                 console.log(
                   "Capture result",
@@ -112,6 +144,7 @@ function App() {
                   JSON.stringify(orderData, null, 2),
                 );
               }
+              
             } catch (error) {
               console.error(error);
               setMessage(

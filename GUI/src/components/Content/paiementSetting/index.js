@@ -11,7 +11,7 @@ import {
 import { ListItemButton, ListItemText, ListItemIcon, List } from '@mui/material';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import CardPayment from './cardPayment'
-import Paypal from './Paypal'
+//import Paypal from './Paypal'
 
 
 
@@ -32,10 +32,7 @@ function PaiementSetting() {
  const modalContent = {
     'Card Payment': (
       <CardPayment/>
-    ),
-    'Paypal Payment': (
-        <Paypal/>
-      )
+    )
  };
 
  return (

@@ -1,11 +1,10 @@
 import PayPalConsent from './PayPalConsent';
 
-function PaymentMethodManagement() {
+function PaymentMethodManagement({articleId,prix, handleCloseDialog } ) {
  
 
   return (
-    <PayPalConsent />
-
+    <PayPalConsent articleId={articleId} prix={prix} handleCloseDialog={handleCloseDialog}/>
   );
 }
 
