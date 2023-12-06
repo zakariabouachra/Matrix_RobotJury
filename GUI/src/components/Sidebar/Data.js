@@ -6,6 +6,7 @@ const statusColors = {
   'Rejected': 'red',
   'In process': 'blue',
   'Verified': 'yellow',
+  'Paid':'green'
 };
 
 function Data() {

@@ -6,11 +6,13 @@ import {
     DialogContentText,
     Button,
   } from '@mui/material';
-  import Payment from 'pages/paiement'
+  import Payment from './paiement'
+  import SoummissionFinal from './publier'
 
 const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
       
     let dialogContent;
+    let maxWidth = 'xs';
     switch (dialogInfo.action) {
         case 'Payer':
         dialogContent = (
@@ -52,6 +54,7 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
         );
         break;
         case 'Reviser':
+        maxWidth = 'md';
         dialogContent = (
             <DialogContent>
             <DialogContentText>
@@ -64,6 +67,14 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
                 Reviser
                 </Button>
             </DialogActions>
+            </DialogContent>
+        );
+        break;
+        case 'Publier':
+        maxWidth = 'md';
+        dialogContent = (
+            <DialogContent>
+                <SoummissionFinal articleId={dialogInfo.articleId} handleCloseDialog={handleCloseDialog}/>
             </DialogContent>
         );
         break;
@@ -83,7 +94,7 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
         <Dialog
           open={dialogInfo.open}
           onClose={handleCloseDialog}
-          maxWidth="xs"
+          maxWidth={maxWidth}
           fullWidth
         >
           <DialogTitle>{dialogInfo.action}</DialogTitle>
