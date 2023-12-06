@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, json
 from app.services import db_service, tn_service, pd_service, at_service, el_service, ur_service
 import os
 import tempfile
-
+from RobotJury.prediction import Prediction
 articles_routes = Blueprint('articles_routes', __name__)
 
 @articles_routes.route('/article_information', methods=['POST'])
@@ -45,7 +45,6 @@ def receive_data():
                         s3_link = pd_service.upload_pdf(temp_file.name, file.filename)
 
                     os.remove(temp_file.name)
-
                     article_data = {
                         'NOCONTRIBUTION': at_service.generate_unique_contribution_number(),
                         'TITRECONTRIBUTION': other_data_dict.get('contributionTitle', ''),
@@ -89,23 +88,71 @@ def receive_data():
                         db_service.execute_query("""
                             INSERT INTO USER_ARTICLE (IDUSER, IDARTICLE, STATUS, PAYER)
                             VALUES (%(IDUSER)s, %(IDARTICLE)s, %(STATUS)s, False)
-                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'Verified'})
+                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'In process'})
                         db_service.commit()
 
                         
 
                         print("Insertion dans la table USER_ARTICLE réussie!")
+                       
                     except Exception as e:
                         print(f"Erreur lors de l'insertion dans la table USER_ARTICLE : {str(e)}")
                     articles = at_service.get_articles(user_id)
                     user_data= ur_service.get_user_info(user_id)
                     el_service.send_confirmation_email(user_data['email'],article_data,user_data['prenom'])
-                    return jsonify({'message': 'Données insérées avec succès','articles':articles}), 200
+                    return jsonify({'message': 'Données insérées avec succès','articles':articles,'articleId':article_id}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
     return jsonify({'message': 'Token manquant'}), 401  # Unauthorized
+
+@articles_routes.route('/predict_status/<article_id>', methods=['POST'])
+def predict_status(article_id):
+    try:
+        token = request.headers.get('Authorization')
+        if token:
+            token = token.split(" ")[1]
+            decoded_token = tn_service.verify_token(token)
+            if decoded_token:
+                user_id = decoded_token.get('user_id')
+                if user_id:
+                    file = request.files['file']
+                    predicted_status = "In process"
+                    try:
+                        temp_file_path = tempfile.NamedTemporaryFile(delete=False).name
+                        file.save(temp_file_path)
+                        prediction = Prediction(temp_file_path)
+                        if prediction == [0]:
+                            predicted_status = "Verified"
+                        else:
+                            predicted_status = "Rejected"
+                    except Exception as prediction_error:
+                        print(f"Erreur lors de la prédiction : {str(prediction_error)}")
+                    
+                    os.remove(temp_file_path)
+
+                    try:
+                        db_service.execute_query("""
+                            UPDATE USER_ARTICLE
+                            SET STATUS = %(STATUS)s
+                            WHERE IDARTICLE = %(ARTICLE_ID)s
+                        """, {'ARTICLE_ID': article_id, 'STATUS': predicted_status})
+                        db_service.commit()
+
+                        print("Mise à jour du statut dans la table USER_ARTICLE réussie!")
+                        user_data= ur_service.get_user_info(user_id)
+                        el_service.send_article_processed_email(user_data['email'],user_data['prenom'])
+                    except Exception as e:
+                        print(f"Erreur lors de la mise à jour dans la table USER_ARTICLE : {str(e)}")
+
+                    articles = at_service.get_articles(user_id)
+                    return jsonify({'message': 'Article updated successfully', 'articles': articles}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    return jsonify({'message': 'Token manquant'}), 401
 
 @articles_routes.route('/articles', methods=['GET'])
 def get_articles():
@@ -297,7 +344,6 @@ def update_article_data(article_id):
         print("Mise à jour du statut dans la table USER_ARTICLE réussie!")
     except Exception as e:
         print(f"Erreur lors de la mise à jour dans la table USER_ARTICLE : {str(e)}")
-        db_service.rollback()
 
     articles = at_service.get_articles(user_id)
     db_service.commit()
