@@ -27,7 +27,7 @@ const CheckoutPage = ({articleId}) => {
         <Grid item xs={12} >
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="h3">Titre: {article.title}</Typography>
+              <Typography variant="h3">{article.title}</Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="body">Numero de contribution: {article.nocontribution}</Typography>
               <Divider sx={{ my: 2 }} />
@@ -36,7 +36,7 @@ const CheckoutPage = ({articleId}) => {
               <Divider sx={{ my: 2 }} />
               <Typography variant="h5">Order Total: ${orderTotal.toFixed(2)}</Typography>
               <Divider sx={{ my: 2 }} />
-              <Paypal/>
+              <Paypal articleId={articleId} prix={orderTotal.toFixed(2)}/>
             </CardContent>
           </Card>
         </Grid>

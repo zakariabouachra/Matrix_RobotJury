@@ -44,7 +44,7 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
         case 'Payer':
         dialogContent = (
             <DialogContent>
-                <Payment articleId={dialogInfo.articleId}/>
+                <Payment articleId={dialogInfo.articleId} handleCloseDialog={handleCloseDialog}/>
             </DialogContent>
         );
         break;

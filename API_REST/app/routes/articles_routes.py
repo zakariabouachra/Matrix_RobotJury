@@ -87,8 +87,8 @@ def receive_data():
 
                     try:
                         db_service.execute_query("""
-                            INSERT INTO USER_ARTICLE (IDUSER, IDARTICLE, STATUS)
-                            VALUES (%(IDUSER)s, %(IDARTICLE)s, %(STATUS)s)
+                            INSERT INTO USER_ARTICLE (IDUSER, IDARTICLE, STATUS, PAYER)
+                            VALUES (%(IDUSER)s, %(IDARTICLE)s, %(STATUS)s, False)
                         """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'Verified'})
                         db_service.commit()
 
@@ -120,6 +120,34 @@ def get_articles():
               
     return jsonify({'message': 'Token manquant'}), 401
 
+@articles_routes.route('/update-payment-status/<string:orderID>', methods=['POST'])
+def update_payment_status(orderID):
+    try:
+        token = request.headers.get('Authorization')
+        if token:
+            token = token.split(" ")[1]
+            decoded_token = tn_service.verify_token(token)
+            if decoded_token:
+                user_id = decoded_token.get('user_id')
+                if user_id:
+                    data = request.get_json()
+                    new_status = data.get('status')
+
+                    try:
+                        db_service.execute_query("""
+                            UPDATE USER_ARTICLE
+                            SET STATUS = %(new_status)s,
+                                PAYER = TRUE
+                            WHERE IDARTICLE = %(orderID)s
+                        """, {'new_status': new_status, 'orderID': orderID})
+                        db_service.commit()
+                    except Exception as e:
+                        return jsonify({'error': f'Erreur lors de la mise à jour du statut de paiement : {str(e)}'}), 500
+                    articles = at_service.get_articles(user_id)
+                    # Répondez avec un succès si la mise à jour a réussi
+                    return jsonify({'message': 'Statut de paiement et PAYER mis à jour avec succès dans la base de données.','articles':articles}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 
