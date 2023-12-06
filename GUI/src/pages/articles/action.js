@@ -8,8 +8,9 @@ import {
   } from '@mui/material';
   import Payment from 'pages/paiement'
 
-const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
-      //------hnaya ndir la fonction besh nsuprimier -----//
+const RenderDialog = ({dialogInfo,articlesData,handleCloseDialog}) => {
+
+  //------hnaya ndir la fonction besh nsuprimier -----//
   const handleDelete = async (articleId) => {
     try {
       const requestOptions = {
@@ -19,24 +20,26 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       };
-
-      const response = await fetch(`http://localhost:5000/articles/supprimerarticle/${articleId}`, requestOptions);
-
+  
+      const response = await fetch(`http://localhost:5000/supprimerarticle/${articleId}`, requestOptions);
+  
       if (response.ok) {
         console.log(`Article avec ID ${articleId} supprimé avec succès.`);
-
+  
         // Mettez à jour localement la liste des articles après la suppression
         const updatedArticles = articlesData.filter((article) => article.id !== articleId);
-        setArticlesData(updatedArticles);
         localStorage.setItem('articlesData', JSON.stringify(updatedArticles));
+  
+        // Appeler la fonction de fermeture du dialogue avec le nouvel état
+        handleCloseDialog(updatedArticles);
       } else {
         console.error(`Échec de la suppression de l'article avec ID ${articleId}.`);
       }
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'article', error);
     }
-
-    handleCloseDialog();
+  
+   
   };
       
     let dialogContent;
@@ -74,7 +77,7 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
             <DialogActions>
                 <Button onClick={handleCloseDialog}>Annuler</Button>
                 <Button onClick={() => { handleDelete(dialogInfo.articleId); }} color="primary">
-                Supprimer
+                         Supprimer
                 </Button>
             </DialogActions>
             </DialogContent>

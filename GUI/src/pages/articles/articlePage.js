@@ -83,42 +83,17 @@ const ArticlesPage = () => {
 
 
   const handleActionClick = (action, articleId) => {
-    setDialogInfo({ open: true, articleId, action });
+    setDialogInfo({ open: true, articleId, action,articlesData });
   };
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = (updatedArticles) => {
     setDialogInfo({ open: false, articleId: null, action: null });
-  };
-
-  //------hnaya ndir la fonction besh nsuprimier -----//
-  const handleDelete = async (articleId) => {
-    try {
-      const requestOptions = {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      };
-
-      const response = await fetch(`http://localhost:5000/articles/supprimerarticle/${articleId}`, requestOptions);
-
-      if (response.ok) {
-        console.log(`Article avec ID ${articleId} supprimé avec succès.`);
-
-        // Mettez à jour localement la liste des articles après la suppression
-        const updatedArticles = articlesData.filter((article) => article.id !== articleId);
-        setArticlesData(updatedArticles);
-        localStorage.setItem('articlesData', JSON.stringify(updatedArticles));
-      } else {
-        console.error(`Échec de la suppression de l'article avec ID ${articleId}.`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la suppression de l\'article', error);
+    if (updatedArticles) {
+      setArticlesData(updatedArticles);
     }
-
-    handleCloseDialog();
   };
+
+
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, articlesData.length - page * rowsPerPage);
 
@@ -130,7 +105,7 @@ const ArticlesPage = () => {
               <InputLabel>Select</InputLabel>
               <Select label="Actions">
                 <MenuItem value="Archiver" onClick={() => handleActionClick('Archiver', articleId)}>Archiver</MenuItem>
-                <MenuItem value="Supprimer" onClick={() => handleDelete(articleId)}>Supprimer</MenuItem>
+                <MenuItem value="Supprimer" onClick={() =>handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
               </Select>
             </FormControl>
           );
@@ -297,6 +272,7 @@ const ArticlesPage = () => {
       </Grid>
       <RenderDialog 
         dialogInfo={dialogInfo}
+        articlesData={articlesData}  
         handleCloseDialog={handleCloseDialog}
       />
 

@@ -1,4 +1,3 @@
-// material-ui
 import {
     Grid
   } from '@mui/material';
