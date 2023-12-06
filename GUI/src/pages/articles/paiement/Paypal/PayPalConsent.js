@@ -38,7 +38,7 @@ function App({articleId, prix, handleCloseDialog}) {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          status: 'Published',
+          status: 'Paid',
         }),
       });
   

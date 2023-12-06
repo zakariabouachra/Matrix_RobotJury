@@ -22,7 +22,7 @@ const Formulaire = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleFinish = async ({setLoading}) => {
+  const handleFinish = async ({ setLoading }) => {
     try {
       const articleData = new FormData();
       articleData.append('file', formData.selectedFile);
@@ -39,8 +39,7 @@ const Formulaire = () => {
       if (!response.ok) {
         setLoading(false);
         throw new Error(`Erreur HTTP! Statut: ${response.status}`);
-      }
-      else{
+      } else {
         const data = await response.json();
         console.log('Réponse du backend :', data.message);
         localStorage.setItem('articlesData', JSON.stringify(data.articles));
@@ -48,9 +47,31 @@ const Formulaire = () => {
         localStorage.removeItem('authors');
         localStorage.removeItem('formDataStep4');
         setActiveStep(0);
+  
+        const predictionData = new FormData();
+        predictionData.append('file', formData.selectedFile);
+  
+        const articleId = data.articleId;
+        console.log('Article ID:', articleId);
+  
+        const predictionResponse = await fetch(`http://localhost:5000/predict_status/${articleId}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: predictionData,
+        });
+  
+        if (predictionResponse.ok) {
+          const predictionResult = await predictionResponse.json();
+          console.log('Réponse du backend :', predictionResult.message);
+          localStorage.setItem('articlesData', JSON.stringify(predictionResult.articles));
+          window.location.reload();
+        } else {
+          console.error('Erreur lors de la prédiction :', predictionResponse.statusText);
+        }
         setLoading(false);
       }
-      
     } catch (error) {
       console.error('Erreur lors de l\'envoi des données au backend :', error);
     }

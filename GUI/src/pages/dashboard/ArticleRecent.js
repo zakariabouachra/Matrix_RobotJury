@@ -82,6 +82,10 @@ const ArticleStatus = ({ status }) => {
       color = 'success';
       title = 'Published';
       break;
+    case 'Paid':
+      color = 'success';
+      title = 'Paid';
+      break;
     case 'Rejected':
       color = 'error';
       title = 'Rejected';
@@ -108,11 +112,17 @@ ArticleStatus.propTypes = {
 };
 
 export default function ArticleTable({ articlesData }) {
-  const [order] = useState('asc');
-  const [orderBy] = useState('name');
-  const [selected] = useState([]);
+  const [order] = useState('desc'); // Tri par ordre décroissant
+  const [orderBy] = useState('createdAt'); // Remplacez 'createdAt' par la propriété appropriée
+  const [selected] = useState([]); // Définir la variable selected
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  // Triez les articles par ordre décroissant en fonction de 'createdAt'
+  const sortedArticles = stableSort(articlesData, getComparator(order, orderBy));
+
+  // Utilisez slice pour obtenir les 5 derniers articles
+  const latestArticles = sortedArticles.slice(-5);
 
   return (
     <Box>
@@ -139,7 +149,7 @@ export default function ArticleTable({ articlesData }) {
         >
           <ArticleTableHead order={order} orderBy={orderBy} />
           <TableBody>
-            {stableSort(articlesData, getComparator(order, orderBy)).map((row, index) => {
+            {latestArticles.map((row, index) => {
               const isItemSelected = isSelected(row.name);
               const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -150,12 +160,12 @@ export default function ArticleTable({ articlesData }) {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   aria-checked={isItemSelected}
                   tabIndex={-1}
-                  key={row.id} // Change the key to the unique identifier of the article
+                  key={row.id}
                   selected={isItemSelected}
                 >
                   <TableCell component="th" id={labelId} scope="row" align="left">
                     <Link color="secondary" component={RouterLink} to="">
-                      {row.title} {/* Use the appropriate property for the article title */}
+                      {row.title}
                     </Link>
                   </TableCell>
                   <TableCell align="left">

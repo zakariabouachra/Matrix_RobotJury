@@ -116,7 +116,17 @@ const ArticlesPage = () => {
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
               <Select label="Actions">
-                <MenuItem value="Payer" onClick={() => handleActionClick('Payer', articleId)}>Payer et Publier</MenuItem>
+                <MenuItem value="Payer" onClick={() => handleActionClick('Payer', articleId)}>Payer</MenuItem>
+                <MenuItem value="Supprimer" onClick={() => handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
+              </Select>
+            </FormControl>
+          );
+        case 'Paid':
+          return (
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Select</InputLabel>
+              <Select label="Actions">
+                <MenuItem value="Publier" onClick={() => handleActionClick('Publier', articleId)}>Publier</MenuItem>
                 <MenuItem value="Supprimer" onClick={() => handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
               </Select>
             </FormControl>
@@ -159,6 +169,10 @@ const ArticlesPage = () => {
       case "Published":
         color = 'success';
         title = 'Published';
+        break;
+      case "Paid":
+        color = 'success';
+        title = 'Paid';
         break;
       case "Rejected":
         color = 'error';
@@ -211,6 +225,7 @@ const ArticlesPage = () => {
                 <MenuItem value="In process">En cours</MenuItem>
                 <MenuItem value="Verified">Verifier</MenuItem>
                 <MenuItem value="Rejected">Refuser</MenuItem>
+                <MenuItem value="Paid">Payer</MenuItem>
               </Select>
             </FormControl>
           </Grid>

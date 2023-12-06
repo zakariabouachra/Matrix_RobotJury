@@ -174,3 +174,70 @@ class EmailService:
                 print('E-mail envoyé avec succès!')
             except Exception as e:
                 print(f'Erreur lors de l\'envoi de l\'e-mail : {str(e)}')
+    
+    def send_article_processed_email(self, email, user_name):
+        receiver_email = email
+        subject = 'Notification: Votre article a été traité - Matrix Scientifique Evolution'
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = subject
+        message["From"] = self.sender_email
+        message["To"] = receiver_email
+
+        # Body of the message in HTML
+        html = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f7f7f7;
+                    margin: 0;
+                    padding: 20px;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }}
+                h1 {{
+                    color: #333333;
+                    font-size: 24px;
+                }}
+                p {{
+                    font-size: 16px;
+                    color: #555555;
+                    margin-bottom: 15px;
+                }}
+                .footer-text {{
+                    font-style: italic;
+                    color: #999999;
+                    margin-top: 20px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Bonjour {user_name},</h1>
+                <p>Votre article a été traité avec succès.</p>
+                <p>Veuillez vérifier votre tableau de bord pour les détails et le statut de votre article.</p>
+                <p class="footer-text">Cordialement,<br />L'équipe Matrix Scientifique Evolution</p>
+            </div>
+        </body>
+        </html>
+        """
+
+        html_part = MIMEText(html, "html")
+        message.attach(html_part)
+        try:
+            smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
+            smtp_server.starttls()
+            smtp_server.login(self.sender_email, 'wafd vtyr aris faqj')
+            smtp_server.sendmail(self.sender_email, receiver_email, message.as_string())
+            smtp_server.quit()
+            print('E-mail envoyé avec succès!')
+        except Exception as e:
+            print(f'Erreur lors de l\'envoi de l\'e-mail : {str(e)}')
