@@ -9,6 +9,35 @@ import {
   import Payment from 'pages/paiement'
 
 const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
+      //------hnaya ndir la fonction besh nsuprimier -----//
+  const handleDelete = async (articleId) => {
+    try {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      };
+
+      const response = await fetch(`http://localhost:5000/articles/supprimerarticle/${articleId}`, requestOptions);
+
+      if (response.ok) {
+        console.log(`Article avec ID ${articleId} supprimé avec succès.`);
+
+        // Mettez à jour localement la liste des articles après la suppression
+        const updatedArticles = articlesData.filter((article) => article.id !== articleId);
+        setArticlesData(updatedArticles);
+        localStorage.setItem('articlesData', JSON.stringify(updatedArticles));
+      } else {
+        console.error(`Échec de la suppression de l'article avec ID ${articleId}.`);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'article', error);
+    }
+
+    handleCloseDialog();
+  };
       
     let dialogContent;
     switch (dialogInfo.action) {
@@ -44,7 +73,7 @@ const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
             </DialogContentText>
             <DialogActions>
                 <Button onClick={handleCloseDialog}>Annuler</Button>
-                <Button onClick={() => { /* implémenter la logique de suppression ici */ }} color="primary">
+                <Button onClick={() => { handleDelete(dialogInfo.articleId); }} color="primary">
                 Supprimer
                 </Button>
             </DialogActions>
