@@ -1,21 +1,9 @@
 from flask import Blueprint, request, jsonify, json
-from app.services import db_service, tn_service, pd_service, at_service
+from app.services import db_service, tn_service, pd_service, at_service, el_service, ur_service
 import os
 import tempfile
 
 articles_routes = Blueprint('articles_routes', __name__)
-
-def get_last_inserted_article_id():
-    result = db_service.execute_query("""
-        SELECT ID FROM ARTICLE_SCIENTIFIQUE ORDER BY ID DESC LIMIT 1;
-    """)
-    return result[0]
-
-def get_last_inserted_AUTOR_id():
-    result = db_service.execute_query("""
-        SELECT ID FROM AUTOR ORDER BY ID DESC LIMIT 1;
-    """)
-    return result[0]
 
 @articles_routes.route('/article_information', methods=['POST'])
 def receive_data():
@@ -49,7 +37,7 @@ def receive_data():
                             db_service.commit()
                         except Exception as e:
                             print(f"Erreur lors de l'insertion dans la table AUTOR : {str(e)}")
-                        author_id = get_last_inserted_AUTOR_id()
+                        author_id = at_service.get_last_inserted_AUTOR_id()
                         author_ids.append(author_id)
 
                     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
@@ -59,7 +47,7 @@ def receive_data():
                     os.remove(temp_file.name)
 
                     article_data = {
-                        'NOCONTRIBUTION': other_data_dict.get('contributionNumber', ''),
+                        'NOCONTRIBUTION': at_service.generate_unique_contribution_number(),
                         'TITRECONTRIBUTION': other_data_dict.get('contributionTitle', ''),
                         'INSTITUTION': other_data_dict.get('institution', ''),
                         'TRRACKPREFERENCE': other_data_dict.get('trackPreference', ''),
@@ -88,7 +76,7 @@ def receive_data():
                     except Exception as e:
                         print(f"Erreur lors de l'insertion dans la table ARTICLE_SCIENTIFIQUE : {str(e)}")
 
-                    article_id = get_last_inserted_article_id()
+                    article_id = at_service.get_last_inserted_article_id()
 
                     for author_id in author_ids:
                         db_service.execute_query("""
@@ -101,7 +89,7 @@ def receive_data():
                         db_service.execute_query("""
                             INSERT INTO USER_ARTICLE (IDUSER, IDARTICLE, STATUS)
                             VALUES (%(IDUSER)s, %(IDARTICLE)s, %(STATUS)s)
-                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'Rejected'})
+                        """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'Verified'})
                         db_service.commit()
 
                         
@@ -110,6 +98,8 @@ def receive_data():
                     except Exception as e:
                         print(f"Erreur lors de l'insertion dans la table USER_ARTICLE : {str(e)}")
                     articles = at_service.get_articles(user_id)
+                    user_data= ur_service.get_user_info(user_id)
+                    el_service.send_confirmation_email(user_data['email'],article_data,user_data['prenom'])
                     return jsonify({'message': 'Données insérées avec succès','articles':articles}), 200
 
     except Exception as e:

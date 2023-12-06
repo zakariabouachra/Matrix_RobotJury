@@ -11,8 +11,8 @@ const Content = () => {
 
 
 
-  const tabs = ['Informations générales', 'Coordonnées', 'Adresses', 'Sécurité' , 'Modes de paiement' ,'Notifications']
-
+  const tabs = ['Informations générales', 'Coordonnées', 'Adresses', 'Sécurité'] //, 'Modes de paiement' ,'Notifications']
+  
   return (
     <Box
       as="main"

@@ -47,7 +47,8 @@ const MainRoutes = {
     {
       path: 'view_profile',
       element: isAuthenticated() ? <ViewProfile /> : <Navigate to="/login" replace />, // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
-    },
+    }
+    
   ],
 };
 

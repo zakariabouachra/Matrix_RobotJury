@@ -15,6 +15,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import cover from 'assets/images/cover.jpg'
 
 export default function Cover() {
   const [coverImage, setCoverImage] = useState(null)
@@ -44,7 +45,7 @@ export default function Cover() {
         w="full"
         h="full"
         objectFit="cover"
-        src={coverImage ? coverImage : '/img/cover.jpg'}
+        src={coverImage ? coverImage : cover}
         alt="Cover"
       />
       <Button

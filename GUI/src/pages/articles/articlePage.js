@@ -16,10 +16,10 @@ import {
   TableRow,
   TableCell,
   TablePagination,
-  Stack
+  Stack,
 } from '@mui/material';
 import Dot from 'components/@extended/Dot';
-
+import RenderDialog from './action';
 const ArticlesPage = () => {
   const [articlesData, setArticlesData] = useState(() => {
     const localData = localStorage.getItem('articlesData');
@@ -43,6 +43,7 @@ const ArticlesPage = () => {
       const data = await response.json();
       setArticlesData(data.articles);
       localStorage.setItem('articlesData', JSON.stringify(data.articles));
+      
     } catch (error) {
       console.error(error);
     }
@@ -52,6 +53,7 @@ const ArticlesPage = () => {
     if (!articlesData.length) {
       fetchArticlesData();
     }
+    console.log(articlesData)
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,18 +73,32 @@ const ArticlesPage = () => {
     setPage(0);
   };
 
+  const [dialogInfo, setDialogInfo] = useState({
+    open: false,
+    articleId: null,
+    action: null,
+  });
+
+
+  const handleActionClick = (action, articleId) => {
+    setDialogInfo({ open: true, articleId, action });
+  };
+
+  const handleCloseDialog = () => {
+    setDialogInfo({ open: false, articleId: null, action: null });
+  };
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, articlesData.length - page * rowsPerPage);
 
-    const renderActions = (status) => {
+    const renderActions = (status, articleId) => {
       switch (status) {
         case 'Published':
           return (
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
               <Select label="Actions">
-                <MenuItem value="Archiver">Archiver</MenuItem>
-                <MenuItem value="Supprimer">Supprimer</MenuItem>
+                <MenuItem value="Archiver" onClick={() => handleActionClick('Archiver', articleId)}>Archiver</MenuItem>
+                <MenuItem value="Supprimer" onClick={() => handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
               </Select>
             </FormControl>
           );
@@ -93,8 +109,8 @@ const ArticlesPage = () => {
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
               <Select label="Actions">
-                <MenuItem value="Verifier">Continuer</MenuItem>
-                <MenuItem value="Supprimer">Supprimer</MenuItem>
+                <MenuItem value="Payer" onClick={() => handleActionClick('Payer', articleId)}>Payer et Publier</MenuItem>
+                <MenuItem value="Supprimer" onClick={() => handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
               </Select>
             </FormControl>
           );
@@ -103,8 +119,8 @@ const ArticlesPage = () => {
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
               <Select label="Actions">
-                <MenuItem value="Reviser">Renvoyer</MenuItem>
-                <MenuItem value="Supprimer">Supprimer</MenuItem>
+                <MenuItem value="Reviser" onClick={() => handleActionClick('Reviser', articleId)}>Renvoyer</MenuItem>
+                <MenuItem value="Supprimer" onClick={() => handleActionClick('Supprimer', articleId)}>Supprimer</MenuItem>
               </Select>
             </FormControl>
           );
@@ -120,48 +136,50 @@ const ArticlesPage = () => {
       }
     };
     
+    
 
   // ==============================|| ORDER TABLE - STATUS ||============================== //
 
-const getStatusColor = ( status ) => {
-  let color;
-  let title;
+  const getStatusColor = ( status ) => {
+    let color;
+    let title;
 
-  switch (status) {
-    case "Verified":
-      color = 'warning';
-      title = 'Verified';
-      break;
-    case "Published":
-      color = 'success';
-      title = 'Published';
-      break;
-    case "Rejected":
-      color = 'error';
-      title = 'Rejected';
-      break;
-    case "In process":
-      color = 'primary';
-      title = 'In process';
-      break;
-    default:
-      color = 'black';
-      title = 'None';
-  }
+    switch (status) {
+      case "Verified":
+        color = 'warning';
+        title = 'Verified';
+        break;
+      case "Published":
+        color = 'success';
+        title = 'Published';
+        break;
+      case "Rejected":
+        color = 'error';
+        title = 'Rejected';
+        break;
+      case "In process":
+        color = 'primary';
+        title = 'In process';
+        break;
+      default:
+        color = 'black';
+        title = 'None';
+    }
 
-  return (
-    <Stack direction="row" spacing={1} alignItems="center">
-      <Dot color={color} />
-      <Typography>{title}</Typography>
-    </Stack>
-  );
-};
+    return (
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Dot color={color} />
+        <Typography>{title}</Typography>
+      </Stack>
+    );
+  };
 
-
-  
 
   return (
-    <Container>
+    <Container style={{ paddingBottom: '20px' }}>
+
+        <Typography variant="h5" style={{ marginBottom: '20px' }}>Mes Articles</Typography>
+
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={6}>
           <TextField
@@ -202,25 +220,27 @@ const getStatusColor = ( status ) => {
               </TableHead>
               <TableBody>
               {articlesData
-                .filter((article) =>
-                  article.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                  .filter((article) =>
+                  (article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  (article.nocontribution && article.nocontribution.toString().toLowerCase().includes(searchTerm.toLowerCase()))) &&
                   (statusFilter === 'All' || article.status === statusFilter)
                 )
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((article) => (
                 <TableRow key={article.id}>
                   <TableCell style={{ fontWeight: 'bold', textDecoration: 'none' }}>
-                    <Typography variant="body1">
-                      <a
-                        href={`#/${article.id}`}
-                        style={{ fontWeight: 'bold', textDecoration: 'none' }}
-                      >
-                        {article.title}
-                      </a>
-                    </Typography>
+                  <Typography variant="body1">
+                    <a
+                      href={`#/${article.id}`}
+                      style={{ fontWeight: 'bold', textDecoration: 'none' }}
+                    >
+                      {article.title}
+                      <span style={{ visibility: 'hidden' }}>{" (" + article.nocontribution + ")"}</span>
+                    </a>
+                  </Typography>
                   </TableCell>
                   <TableCell>{getStatusColor(article.status)}</TableCell>
-                  <TableCell>{renderActions(article.status)}</TableCell>
+                  <TableCell>{renderActions(article.status, article.id)}</TableCell>
                 </TableRow>
               ))}
                   <TableRow style={{ height: 53 * emptyRows }}>
@@ -243,6 +263,11 @@ const getStatusColor = ( status ) => {
           />
         </Grid>
       </Grid>
+      <RenderDialog 
+        dialogInfo={dialogInfo}
+        handleCloseDialog={handleCloseDialog}
+      />
+
     </Container>
   );
 };

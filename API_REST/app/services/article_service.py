@@ -1,4 +1,5 @@
 from app.services import DatabaseService
+import random
 
 class ArticleService:
     def __init__(self):
@@ -29,5 +30,26 @@ class ArticleService:
                 except Exception as e:
                     print(f"Erreur lors de la récupération de l'article {article_id}: {str(e)}")
             
-            formatted_articles = [{'id': article['ID'], 'title': article['TITRECONTRIBUTION'], 'status': article['status']} for article in articles_data]
+            formatted_articles = [{'id': article['ID'], 'title': article['TITRECONTRIBUTION'], 'status': article['status'], 'nocontribution': article['NOCONTRIBUTION']} for article in articles_data]
             return formatted_articles
+
+    def get_last_inserted_article_id(self):
+        result = self.db_service.execute_query("""
+            SELECT ID FROM ARTICLE_SCIENTIFIQUE ORDER BY ID DESC LIMIT 1;
+        """)
+        return result[0]
+
+    def get_last_inserted_AUTOR_id(self):
+        result = self.db_service.execute_query("""
+            SELECT ID FROM AUTOR ORDER BY ID DESC LIMIT 1;
+        """)
+        return result[0]
+
+    def generate_unique_contribution_number(self):
+        while True:
+            random_number = random.randint(10000, 99999)
+            exists = self.db_service.execute_query("""
+                SELECT COUNT(*) FROM ARTICLE_SCIENTIFIQUE WHERE NOCONTRIBUTION = %s;
+            """, (str(random_number),))
+            if exists[0] == 0:
+                return str(random_number)

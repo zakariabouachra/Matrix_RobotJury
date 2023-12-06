@@ -1,45 +1,35 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
-
-const list = [
-  {
-    id: 1,
-    name: 'Article published',
-    value: 5,
-    status: 'published',
-  },
-  {
-    id: 2,
-    name: 'Article Rejected',
-    value: 6,
-    status: 'Rejected',
-  },
-  {
-    id: 3,
-    name: 'Article In process',
-    value: 1,
-    status: 'Inprocess',
-  },
-  {
-    id: 4,
-    name: 'Article verified',
-    value: 6,
-    status: 'verified',
-  },
-];
+import { useEffect, useState } from 'react';
 
 const statusColors = {
-  published: 'green',
-  Rejected: 'red',
-  Inprocess: 'blue',
-  verified: 'yellow',
+  'Published': 'green',
+  'Rejected': 'red',
+  'In process': 'blue',
+  'Verified': 'yellow',
 };
 
 function Data() {
+  const [statusCounts, setStatusCounts] = useState({});
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('articlesData');
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+
+      const counts = {};
+      parsedData.forEach((item) => {
+        counts[item.status] = counts[item.status] ? counts[item.status] + 1 : 1;
+      });
+
+      setStatusCounts(counts);
+    }
+  }, []);
+
   return (
     <VStack as="ul" spacing={0} listStyleType="none" width="100%">
-      {list.map((item) => (
+      {Object.keys(statusCounts).map((status) => (
         <Box
-          key={item.id}
+          key={status}
           as="li"
           width="100%"
           py={3}
@@ -50,9 +40,9 @@ function Data() {
           borderBottomWidth={1}
           borderColor="brand.light"
         >
-          <Text color="brand.dark">{item.name}</Text>
-          <Text color={`brand.${statusColors[item.status]}`} fontWeight="bold">
-            {item.value}
+          <Text color="brand.dark">{`Articles ${status}`}</Text>
+          <Text color={`brand.${statusColors[status]}`} fontWeight="bold">
+            {statusCounts[status]}
           </Text>
         </Box>
       ))}

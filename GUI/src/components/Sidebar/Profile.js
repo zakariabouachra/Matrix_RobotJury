@@ -17,6 +17,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
+import avatar4 from 'assets/images/users/avatar-1.png'; 
 
 function Profile() {
   const userData = localStorage.getItem('userData');  
@@ -50,7 +51,7 @@ function Profile() {
         name="Test Test"
         cursor="pointer"
         onClick={openChooseImage}
-        src={userProfile ? userProfile : '../assets/images/user/avatar-4.png'}
+        src={userProfile ? userProfile : avatar4}
       >
         <AvatarBadge bg="brand.blue" boxSize="1em">
           <svg width="0.4em" fill="currentColor" viewBox="0 0 20 20">

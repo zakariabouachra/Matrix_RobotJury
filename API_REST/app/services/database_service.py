@@ -5,7 +5,7 @@ class DatabaseService:
         self.conn = snowflake.connector.connect(
             user='zakariabouachra',
             password='Lilopipo09@',
-            account='iwphmqq-ht33884',
+            account='txxfsfx-pj88617',
             warehouse='COMPUTE_WH',
             database='MATRIX',
             schema='PUBLIC'
