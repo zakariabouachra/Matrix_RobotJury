@@ -111,7 +111,7 @@ const ArticlesPage = () => {
           );
         case 'In process':
           return null; 
-        case 'Verified':
+        case 'Accepted':
           return (
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Select</InputLabel>
@@ -162,9 +162,9 @@ const ArticlesPage = () => {
     let title;
 
     switch (status) {
-      case "Verified":
+      case "Accepted":
         color = 'warning';
-        title = 'Verified';
+        title = 'Accepted';
         break;
       case "Published":
         color = 'success';
@@ -223,7 +223,7 @@ const ArticlesPage = () => {
                 <MenuItem value="All">Tous</MenuItem>
                 <MenuItem value="Published">Publié</MenuItem>
                 <MenuItem value="In process">En cours</MenuItem>
-                <MenuItem value="Verified">Verifier</MenuItem>
+                <MenuItem value="Accepted">Accepter</MenuItem>
                 <MenuItem value="Rejected">Refuser</MenuItem>
                 <MenuItem value="Paid">Payer</MenuItem>
               </Select>
@@ -253,7 +253,7 @@ const ArticlesPage = () => {
                   <TableCell style={{ fontWeight: 'bold', textDecoration: 'none' }}>
                   <Typography variant="body1">
                     <a
-                      href={`#/${article.id}`}
+                      href={`/article/${article.id}`}
                       style={{ fontWeight: 'bold', textDecoration: 'none' }}
                     >
                       {article.title}

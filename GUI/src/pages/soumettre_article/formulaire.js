@@ -48,9 +48,6 @@ const Formulaire = () => {
         localStorage.removeItem('formDataStep4');
         setActiveStep(0);
   
-        const predictionData = new FormData();
-        predictionData.append('file', formData.selectedFile);
-  
         const articleId = data.articleId;
         console.log('Article ID:', articleId);
   
@@ -59,7 +56,6 @@ const Formulaire = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-          body: predictionData,
         });
   
         if (predictionResponse.ok) {

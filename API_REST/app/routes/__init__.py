@@ -1,7 +1,7 @@
 from flask import Blueprint
 from app.routes.auth_routes import login, register
 from app.routes.user_routes import get_user, update_user_information, update_user_coordonnees, update_address
-from app.routes.articles_routes import receive_data , get_articles, update_payment_status , get_article_data, update_article_data , predict_status
+from app.routes.articles_routes import receive_data , get_articles, update_payment_status , get_article_data, update_article_data , predict_status , supprimer_article
 from app.routes.verify_routes import verify_email, verify_token, send_verifyMail , send_verifyPhone, verify_phone
 
 auth_routes = Blueprint('auth_routes', __name__)
@@ -34,3 +34,4 @@ articles_routes.add_url_rule('/update-payment-status/<string:orderID>',view_func
 articles_routes.add_url_rule('/get_article_data/<int:article_id>',view_func=get_article_data, methods=['GET'])
 articles_routes.add_url_rule('/update_article_data/<article_id>',view_func=update_article_data, methods=['POST'])
 articles_routes.add_url_rule('/predict_status/<article_id>',view_func=predict_status, methods=['POST'])
+articles_routes.add_url_rule('/supprimerarticle/<int:article_id>',view_func=supprimer_article, methods=['DELETE'])

@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify, json
-from app.services import db_service, tn_service, pd_service, at_service, el_service, ur_service
+from app.services import db_service, tn_service, aw_service, at_service, el_service, ur_service
 import os
 import tempfile
-from RobotJury.prediction import Prediction
+from ..services.grobid_service import process_documents
+ 
+
 articles_routes = Blueprint('articles_routes', __name__)
 
 @articles_routes.route('/article_information', methods=['POST'])
@@ -40,9 +42,15 @@ def receive_data():
                         author_id = at_service.get_last_inserted_AUTOR_id()
                         author_ids.append(author_id)
 
-                    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    with tempfile.NamedTemporaryFile(delete=False,suffix=".pdf") as temp_file:
                         file.save(temp_file.name)
-                        s3_link = pd_service.upload_pdf(temp_file.name, file.filename)
+                        pdf_s3_link = aw_service.upload(temp_file.name, file.filename,"pdf")
+                        print(file.filename)
+                        filename_base, _ = os.path.splitext(file.filename)
+                        filename_with_xml_extension = filename_base + ".xml"
+                        xml_s3_link , json_s3_link = process_documents(temp_file.name,filename_with_xml_extension)
+                        print(xml_s3_link)
+                        print(json_s3_link)
 
                     os.remove(temp_file.name)
                     article_data = {
@@ -53,17 +61,19 @@ def receive_data():
                         'MAINTOPIC': other_data_dict.get('mainTopic', ''),
                         'CONTRIBUTIONTYPE': other_data_dict.get('contributionType', ''),
                         'ABSTRACT': other_data_dict.get('abstract', ''),
-                        'PDFFILE': s3_link
+                        'PDFFILE': pdf_s3_link,
+                        'XMLFILE': xml_s3_link,
+                        'JSONFILE' : json_s3_link
                     }
 
                     try:
                         result = db_service.execute_query("""
                             INSERT INTO MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE (
                                 NOCONTRIBUTION, TITRECONTRIBUTION, INSTITUTION, TRRACKPREFERENCE, 
-                                MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE
+                                MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE , XMLFILE , JSONFILE
                             ) VALUES (
                                 %(NOCONTRIBUTION)s, %(TITRECONTRIBUTION)s, %(INSTITUTION)s, %(TRRACKPREFERENCE)s, 
-                                %(MAINTOPIC)s, %(CONTRIBUTIONTYPE)s, %(ABSTRACT)s, %(PDFFILE)s
+                                %(MAINTOPIC)s, %(CONTRIBUTIONTYPE)s, %(ABSTRACT)s, %(PDFFILE)s, %(XMLFILE)s , %(JSONFILE)s
                             )
                         """, article_data)
                         db_service.commit()
@@ -91,8 +101,6 @@ def receive_data():
                         """, {'IDUSER': user_id, 'IDARTICLE': article_id, 'STATUS': 'In process'})
                         db_service.commit()
 
-                        
-
                         print("Insertion dans la table USER_ARTICLE réussie!")
                        
                     except Exception as e:
@@ -117,21 +125,16 @@ def predict_status(article_id):
             if decoded_token:
                 user_id = decoded_token.get('user_id')
                 if user_id:
-                    file = request.files['file']
                     predicted_status = "In process"
                     try:
-                        temp_file_path = tempfile.NamedTemporaryFile(delete=False).name
-                        file.save(temp_file_path)
-                        prediction = Prediction(temp_file_path)
+                        prediction = [0]
                         if prediction == [0]:
-                            predicted_status = "Verified"
+                            predicted_status = "Accepted"
                         else:
                             predicted_status = "Rejected"
                     except Exception as prediction_error:
                         print(f"Erreur lors de la prédiction : {str(prediction_error)}")
                     
-                    os.remove(temp_file_path)
-
                     try:
                         db_service.execute_query("""
                             UPDATE USER_ARTICLE
@@ -166,6 +169,8 @@ def get_articles():
             return jsonify({'articles': formatted_articles}), 200
               
     return jsonify({'message': 'Token manquant'}), 401
+
+
 
 @articles_routes.route('/update-payment-status/<string:orderID>', methods=['POST'])
 def update_payment_status(orderID):
@@ -211,13 +216,14 @@ def get_article_data(article_id):
                     article_query = """
                         SELECT
                             ID, NOCONTRIBUTION, TITRECONTRIBUTION, INSTITUTION,
-                            TRRACKPREFERENCE, MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE
+                            TRRACKPREFERENCE, MAINTOPIC, CONTRIBUTIONTYPE, ABSTRACT, PDFFILE , XMLFILE , JSONFILE
                         FROM
                             MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE
                         WHERE
                             ID = %(article_id)s
                     """
                     article_data = db_service.execute_query(article_query, {'article_id': article_id})
+                    print(article_data)
                     article_dict = {
                         'ID': article_data[0],
                         'NOCONTRIBUTION': article_data[1],
@@ -227,7 +233,9 @@ def get_article_data(article_id):
                         'MAINTOPIC': article_data[5],
                         'CONTRIBUTIONTYPE': article_data[6],
                         'ABSTRACT': article_data[7],
-                        'PDFFILE': article_data[8]
+                        'PDFFILE': article_data[8],
+                        'XMLFILE':article_data[9],
+                        'JSONFILE': article_data[10]
                     }
                 except Exception as e:
                     return jsonify({'error': f'Failed to retrieve article data: {str(e)}'}), 500
@@ -325,7 +333,7 @@ def update_article_data(article_id):
     if file:
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             file.save(temp_file.name)
-            s3_link = pd_service.upload_pdf(temp_file.name, file.filename)
+            s3_link = aw_service.upload(temp_file.name, file.filename)
         os.remove(temp_file.name)
         db_service.execute_query("""
             UPDATE MATRIX.PUBLIC.ARTICLE_SCIENTIFIQUE
@@ -348,3 +356,23 @@ def update_article_data(article_id):
     articles = at_service.get_articles(user_id)
     db_service.commit()
     return jsonify({'message': 'Article updated successfully', 'articles': articles}), 200
+
+@articles_routes.route('/supprimerarticle/<int:article_id>', methods=['DELETE'])
+def supprimer_article(article_id):
+    try:
+        token = request.headers.get('Authorization')
+        if token:
+            token = token.split(" ")[1]
+            decoded_token = tn_service.verify_token(token)
+            if decoded_token:
+                user_id = decoded_token.get('user_id')
+                if user_id:
+                    at_service.supprimer_article(article_id)
+                    articles = at_service.get_articles(user_id)
+
+                    return jsonify({'message': f'Article avec ID {article_id} supprimé avec succès','articles': articles}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+ 
+    return jsonify({'message': 'Token manquant'}), 401  # Unauthorized
+

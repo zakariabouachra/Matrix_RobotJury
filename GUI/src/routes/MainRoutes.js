@@ -10,6 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 const Articles = Loadable(lazy(() => import('pages/articles')));
 const SoumettreArticles = Loadable(lazy(() => import('pages/soumettre_article')));
 const ViewProfile = Loadable(lazy(() => import('layout/MainLayout/Header/HeaderContent/Profile/viewProfile')));
+const XmlDisplayPage = Loadable(lazy(() => import('pages/articles/articleDetails')));
 
 // Fonction pour vérifier l'authentification à l'aide du localStorage
 const isAuthenticated = () => {
@@ -39,6 +40,10 @@ const MainRoutes = {
     {
       path: 'articles',
       element: isAuthenticated() ? <Articles /> : <Navigate to="/login" replace />, // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
+    },
+    {
+      path: '/article/:articleId',
+      element: isAuthenticated() ? <XmlDisplayPage /> : <Navigate to="/login" replace />, // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
     },
     {
       path: 'soumettre_un_article',

@@ -1,0 +1,2839 @@
+{
+    "Langue": "en",
+    "title": "Generalized network-based dimensionality analysis",
+    "Publie par": {
+        "publisher": null,
+        "date": null
+    },
+    "Information": {
+        "issn": null,
+        "eissn": null,
+        "publisher": null,
+        "volume": null,
+        "issue": null,
+        "page": null,
+        "date de publication": null,
+        "DOI": "10.1016/j.eswa.2023.121779",
+        "Note": "Received 1 February 2023; Received in revised form 20 September 2023; Accepted 20 September 2023"
+    },
+    "Auteurs": {
+        "Auteur 1": {
+            "ORCID": null,
+            "prenom": "Zsolt",
+            "nom": "Kosztyán"
+        },
+        "Auteur 2": {
+            "ORCID": null,
+            "prenom": "Attila",
+            "nom": "Katona"
+        },
+        "Auteur 3": {
+            "ORCID": null,
+            "prenom": "Marcell",
+            "nom": "Kurbucz"
+        },
+        "Auteur 4": {
+            "ORCID": null,
+            "prenom": "Zoltán",
+            "nom": "Lantos"
+        },
+        "Auteur 5": {
+            "ORCID": null,
+            "prenom": "Ahmed",
+            "nom": "Ali"
+        },
+        "Auteur 6": {
+            "ORCID": null,
+            "prenom": null,
+            "nom": "Rehman"
+        }
+    },
+    "Keywords": [],
+    "Abstract": "Network analysis opens new horizons for data analysis methods, as the results of ever-developing network science can be integrated into classical data analysis techniques.\nThis paper presents the generalized version of network-based dimensionality reduction and analysis (NDA).\nThe main contributions of this paper are as follows: (1) The proposed generalized dimensionality reduction and analysis (GNDA) method already handles low-dimensional high-sample-size (LDHSS) and high-dimensional and low-sample-size (HDLSS) at the same time.\nIn addition, compared with existing methods, we show that only the proposed GNDA method adequately estimates the number of latent variables (LVs).\n( \n(3) The proposed prefiltering and resolution parameters provide the hierarchical version of GNDA to check the robustness of LVs.\nThe proposed GNDA method is compared with traditional dimensionality reduction methods on various simulated and real-world datasets.",
+    "Structure": {
+        "Introduction": [
+            {
+                "title": [
+                    "1.",
+                    "Introduction"
+                ],
+                "text": [
+                    "In recent years, handling high-dimensional data that contain tens of thousands of variables has become an increasingly frequent and important problem in many fields of modern scientific research (see, e.g., ",
+                    "However, the disadvantages of working in such a high-dimensional space are the increased prediction error, difficult interpretability, and high computational costs ",
+                    "To avoid these problems, or in other words, to alleviate the ''curse of dimensionality'' ",
+                    "In practice, this challenging task is mainly performed by traditional -typically linear -methods such as Principal Component Analysis (PCA) ",
+                    "Therefore, they are not working on any asymmetric similarities, such as semipartial correlations, which determine whether indirect effects between variables should be filtered ",
+                    "To fill this gap, in this paper, a generalized version of NDA, called Generalized Network-based Dimensionality Analysis (GNDA), is presented and compared with traditional dimensionality reduction methods on various simulated and real-life datasets.",
+                    "First, the proposed method calculates the similarity network of the indicators (i.e., either variables or observations) and then groups them by using modularity-based community detection.",
+                    "By combining the eigenvector centrality (EVC) of the indicators, a LV is specified for each module.",
+                    "Finally, variable selection is optimally performed based on the relationship of variables to their LVs.",
+                    "According to the results, the proposed method can be effectively applied to both LDHSS and HDLSS data structures; meanwhile, it extends the original NDA with a hierarchical version of dimensionality reduction; it generalizes the applicable similarity functions between indicators; and identifies the proper number of LVs.",
+                    "The main contributions of the paper are listed below:",
+                    "• The paper proposes a novel method called GNDA that can handle different types of datasets, such as LDHSS and HDLSS, extends similarity measures, and estimates the number of LVs accurately.",
+                    "• The paper introduces a prefiltering and resolution parameter that can split communities and provide a hierarchical version of GNDA, which offers subcategories of indicators and a robustness check for LVs.",
+                    "• The paper compares GNDA with several existing dimensionality reduction methods in simulated and real-life databases and shows that GNDA produces the clearest set of indicators.",
+                    "The remainder of this paper is organized as follows.",
+                    "Section 2 presents the background of the literature.",
+                    "Section 3 shows the employed methods.",
+                    "Section 4 presents the simulated and real-world datasets and methods employed in this study.",
+                    "Sections 5 and 6 compare and discuss the results of GNDA with traditional dimensionality reduction methods.",
+                    "Section 7 provides a summary and conclusions.",
+                    "Finally, future research directions are suggested in Section 8."
+                ],
+                "references": [
+                    "Li, Li, Lian, & Tong, 2017;",
+                    "Stippinger et al., 2023)",
+                    "(Gao, Song, Liu, Shao, Liu, & Shao, 2017;",
+                    "Migenda, Möller, & Schenck, 2021)",
+                    "(Bellman, 1957)",
+                    "(Abdi & Williams, 2010;",
+                    "Aversano, Li, Gicquel, & Parente, 2018;",
+                    null,
+                    "(Pop, Ciulca, et al., 2013)"
+                ]
+            }
+        ],
+        "Conclusion": [],
+        "Other": [
+            {
+                "title": [
+                    "2.",
+                    "Background"
+                ],
+                "text": [
+                    "Dimensionality reduction techniques play a crucial role in transforming high-dimensional data into a more manageable form while retaining essential information.",
+                    "Among these techniques, both Explanatory Factor Analysis (EFA) ",
+                    "EFA and PCA both seek to capture LVs, which succinctly represents the common variance shared among a set of original variables.",
+                    "The primary focus of EFA lies in determining whether the data conform to a predefined structure, making it a powerful tool for uncovering the underlying factors influencing the observed variables.",
+                    "On the other hand, PCA condenses the original variables into a smaller number of components, enabling effective dimensionality reduction and simplification of complex data.",
+                    "A variation of EFA is Common Factor Analysis (CFA), also known as PFA ",
+                    "PFA strikes a balance between Factor Analysis (FA) and PCA, aiming to identify a minimal set of factors that account for the shared variance among variables.",
+                    "In PFA, the relationship between factors and observed variables is expressed through the equation  = +, where  is the original data matrix,  is the factor score matrix,  is the factor loading matrix, and  captures unique variances.",
+                    "Unlike PCA, which emphasizes maximizing common variance, PFA acknowledges the presence of unique variances and focuses on explaining the correlation between variables.",
+                    "Estimating the appropriate number of latent variables is a pivotal step in both PCA and PFA.",
+                    "Various methods have been proposed for this purpose, each with its own heuristics and rules.",
+                    "Commonly used criteria include Kaiser's Rule (K1), Minimum Average Partial (MAP) correlation ",
+                    "It is recommended to employ multiple methods to determine a suitable number of LVs, given their tendency to suggest different solutions.",
+                    "While traditional methods such as EFA and PCA have been foundational in dimensionality reduction, recent advancements have introduced more versatile techniques, such as neural networks.",
+                    "These newer approaches offer unique advantages, addressing limitations posed by linear assumptions.",
+                    "The t-distributed stochastic neighbor embedding (t-SNE) leverages a nonlinear approach to mapping high-dimensional data into a lower-dimensional space ",
+                    "As nonlinear extensions of PCA, Kernel Principal Component Analysis (KPCA) ",
+                    "Sparse Principal Component Analysis (SPCA) enforces sparsity constraints on principal components ",
+                    "Non-Negative Matrix Factorization (NNMF) factorizes matrices into lower-rank nonnegative components, offering an alternative perspective on dimensionality reduction ",
+                    "Feature representation and dimensionality reduction are outstandingly important in machine learning problems such as image classification.",
+                    null,
+                    "Later, ",
+                    "In machine learning approaches, the representation of the training and testing set can also be enhanced by the Block-Diagonal Low-Rank Representation (BDLRR) method, which enables the elimination of correlation between different classes and improves the accuracy of classification.",
+                    "Although these methods have proven to be very effective in image classification, they focus on supervised or semisupervised problems, and the extension to unsupervised problems has not yet been provided.",
+                    "While these recent methods present promising alternatives, they may lack robust mechanisms for determining the optimal number of latent variables.",
+                    "Moreover, they might not fully accommodate the complexities of both the LDHSS and HDLSS datasets.",
+                    "Additionally, some techniques, such as VAE and NNMF, may require users to specify the number of dimensions or factors.",
+                    "Introducing the proposed GNDA, which uniquely fulfills multiple requirements: (1) determination of suitable latent variable count, (2) applicability to diverse datasets, (3) accommodation of symmetric and nonsymmetric similarities, and (4) incorporation of an Automated Feature Selection (AFS) procedure.",
+                    "By addressing these aspects, GNDA presents a comprehensive and flexible solution for dimensional reduction analysis.",
+                    "Given the ubiquity of PCA and PFA as standard approaches for dimensionality reduction and their compatibility with various data types, it is prudent to benchmark the proposed GNDA against these methods.",
+                    "This comparison is justified by the extensive body of research supporting PCA and PFA in different scenarios, including their performance with LDHSS and HDLSS datasets ",
+                    "Moreover, the existence of AFS procedures for PCA and PFA "
+                ],
+                "references": [
+                    "(Fabrigar & Wegener, 2011)",
+                    "(Kim, 2008)",
+                    "(Velicer, 1976)",
+                    "(Velicer, Eaton, & Fava, 2000)",
+                    "(Hair, William, Barry, & Rolph, 2020)",
+                    "(Liu et al., 2021)",
+                    "(Schölkopf, Smola, & Müller, 1997",
+                    ", 1998)",
+                    "(Zhang, d'Aspremont, & El Ghaoui, 2012)",
+                    "(Wang & Zhang, 2012)",
+                    "Zhang et al. (2017)",
+                    "Zhang et al. (2017)",
+                    "(Jung & Marron, 2009)",
+                    "(Abonyi, Czvetkó, Kosztyán, & Héberger, 2022)",
+                    "(Van Der Maaten, Postma, & Van den Herik, 2009)"
+                ]
+            },
+            {
+                "title": [
+                    "3.",
+                    "Methods"
+                ],
+                "text": [
+                    "In this section, GNDA is presented in detail and then compared with two traditional dimensional reduction methods, PCA and PFA.",
+                    "Since these two methods are widely applied in statistical analyses, in this section, we focus only on their main features.",
+                    "The proposed GNDA has five steps (see Fig. ",
+                    "The last two steps are optional, and these steps support feature selection.",
+                    "After specifying hyper and prefiltering parameters (step 0), the similarity graph of variables is specified (step 1) and communities of variables are determined (step 2).",
+                    "In step 3, LV is specified in each community based on the EVC of the standardized variable in the similarity graph.",
+                    "In the last steps, outliers are detected and dropped from the communities.",
+                    "In this paper, we generalize the original method and therefore propose several extensions.",
+                    "We extend NDA to make a hierarchical decision forest of latent variables.",
+                    "GNDA generalizes the phase of identifying modules of variables to consider directed relationships.",
+                    "This extension allows specifying LVs on partial and semipartial correlation or regression networks.",
+                    "Step 1. Specification of the similarity graph.",
+                    "Let ( , , ) be a directed/unidirectional weighted graph of the similarity graph, where  is the node set,  is the arc set, and  is the weight set.",
+                    "Each node  ∈  represents a variable ,  = 1, 2, … , .",
+                    "The weight of an arc  , ∈  is a positive similarity function between two variables, such as the square correlation  , =  , ∈ .",
+                    "A minimal similarity value  min can be specified to make the graph sparse and to ignore low correlations.",
+                    "Loops ( , ∉ ) are neglected.",
+                    "The original NDA implemented four kinds of correlation: Pearson, Spearman, Kendall, and distance correlation, while GNDA extended them to partial and semipartial versions and handled both symmetric and asymmetric distance matrices.",
+                    "Pearson correlation is suitable for interval variables and detects linear relationships, while Spearman's and Kendall's correlations detect monotonic relationships and can be used for ordinal variables.",
+                    "Distance correlation has the advantage that it is zero if and only if the variables are independent ",
+                    "PCA, PFA, and GNDA can use correlation matrices instead of indicators; therefore, any symmetric distance function can be used.",
+                    "GNDA also handles nonsymmetric similarities/distances, such as partial correlations, regressions, and other structural equation models.",
+                    "In this case, we use the term similarity graph instead of correlation graph.",
+                    "Nonsymmetric similarities provide a directed graph; however, all steps of the original NDA can be extended to handle it.",
+                    "The proposed GNDA allows the specification of minimal similarity weights as a threshold.",
+                    "The increase in the minimal similarity value provides a sparser graph and more communities in the second step; hence, more latent variables are obtained.",
+                    "The set of latent variables can be organized into a dendrogram of latent variables.",
+                    "Step 2: Community detection.",
+                    "Modularity-based community detection algorithms minimize Eq. (1).",
+                    "where  is the modularity value;  , is the edge weight between node  and node ; r, is the expected weight based on the null model of ",
+                    "For directed similarity graphs, Eq. ( ",
+                    "The result of community detection is a partition of the graph.",
+                    "Isolated nodes and low-correlated variables are grouped in small communities; therefore, the minimal community size ( The  parameter controls the resolution of community detection.",
+                    "Modularity optimization with the null model r, has a resolution limit, which means it fails to identify small communities in large networks and communities with less than ( √ ∕2-1) internal links ",
+                    "Reichardt and Bornholdt (RB) generalized the modularity function by introducing an adjustable  parameter ",
+                    "The identified communities depend on the null model and the resolution parameter ().",
+                    "The null model of ",
+                    "The adjacency matrix of a null model is a contingency table of conditional independence.",
+                    "Therefore, modules identify communities where the connections (i.e., similarities) between nodes (i.e., variables) are denser than expected.",
+                    "Moreover, increasing the resolution coefficient (), such as increasing the threshold of minimal similarities, makes a sparse graph and breaks down the communities.",
+                    "In this way, a hierarchy of communities can be provided, which specifies a dendrogram.",
+                    "Thus, all the employed Louvain ",
+                    "Step 3: Specification of the latent variables.",
+                    "LV  is specified within module  as a linear combination of the EVC value and the standardized variable   (see Eq. ( ",
+                    "where   is the LV for module   ;   is the EVC value of variable   and   = (  -   )∕   is the standardized variable of variable   .",
+                    "EVC is preferred because of its beneficial properties, such as anonymity,",
+                    "In addition, in directed and undirected graphs, EVC can be calculated.",
+                    "Let  = ( , ) be the adjacency matrix.",
+                    "The EVC,   , and the score of vertex  can be defined as:",
+                    "where () is a set of neighbors of , and  is a constant.",
+                    "Both the EVC value and the eigenvalue in PCA are based on eigenvalues and eigenvectors, which are used to analyze complex systems.",
+                    "An eigenvector of a matrix is a nonzero vector that changes by a scalar factor when multiplied by the matrix.",
+                    "The scalar factor is the eigenvalue.",
+                    "In eigenvector centrality, the eigenvector measures the importance of a node in a network.",
+                    "It is obtained by finding the eigenvector corresponding to the largest eigenvalue of the network's adjacency matrix.",
+                    "The larger the eigenvector centrality value of a node is, the more important that node is in the network.",
+                    "In PCA, the eigenvalue measures the strength of the relationship between variables in a dataset.",
+                    "It is obtained by representing the dataset as a matrix, where the rows are data points and the columns are variables.",
+                    "The larger the eigenvalue is, the stronger the relationship between the variables in the dataset.",
+                    "The similarity between the eigenvector centrality value and the eigenvalue in PCA is that both are based on eigenvalues and eigenvectors, and both measure the importance or strength of a relationship in a complex system.",
+                    "However, they are used and measured in different contexts.",
+                    "Step 4: Periphery analysis (optional).",
+                    "AFSs suggest two phases of variable selection.",
+                    "First, variables with EVC values below a threshold  min are dropped, and LVs are recalculated without peripheral nodes.",
+                    "These nodes are at the edge of the network, which results in low centrality values.",
+                    "However, this does not imply that these variables are unimportant but only that their influence on the latent variable is low.",
+                    "Therefore, similar to omitting variables with low communality in PCA, we also omit those variables that do not fit the latent variable or have low contributions to it.",
+                    "One of the advantages of EVC is that it works for both directed and undirected graphs.",
+                    "Moreover, the interpretation of EVC is close to the interpretation of factor loadings in PCA or PFA, so this value is an ideal weight for calculating latent variables.",
+                    "A higher centrality value indicates a higher weight for the indicator.",
+                    "Importantly, this step does not depend on any correlation calculation.",
+                    "The removal of peripheral nodes (i.e., , indicators) of modules of the similarity graph can be interpreted similarly as dropping indicators with low communalities in a squared correlation graph.",
+                    "Step 5: Communality analysis (optional).",
+                    "Step 5 has two substeps and requires the similarities between the indicators to be correlations.",
+                    "The communality value for indicator  is the highest square correlation between  and any LV.",
+                    "Iteratively, the indicator with the lowest communality value below a threshold (ℎ min ) is dropped, and all LVs are recalculated.",
+                    "Then, all square correlations between each indicator and each LV are analyzed.",
+                    "If the difference between the two highest square correlations for indicator  is below a threshold ( min ),  is a common indicator.",
+                    "The common indicators with the lowest communality value are dropped one by one in an iterative manner, and LVs are recalculated.",
+                    "This step is optional and should be skipped if the correlation between indicators cannot be calculated or is meaningless for this analysis.",
+                    "This step can be used in both PCA and PFA (see an application for AFS in ",
+                    "Step 0: Prefiltering (optional).",
+                    "The number of latent variables is not affected by the thresholds of the minimal EVC value ( min ), minimal communality value (ℎ min ), or common communality value ( min ).",
+                    "However, the thresholds of the minimal correlation (or similarity) value ( min ) and resolution value of the null model () can specify more communities and latent variables.",
+                    "Increasing ( min ) drops connections or ignores similarities between nodes below this threshold.",
+                    "The graph becomes sparse and splits into more components.",
+                    "Therefore, communities are also split, and more latent variables can be specified.",
+                    "Similarly, the increase in  detects smaller communities and splits the original communities into smaller ones ",
+                    "These two parameters are called prefiltering parameters.",
+                    "The increasing value of these (hyper)parameters provides a dendrogram of GNDA and provides a hierarchical version of GNDA, revealing the hierarchical structure of the latent variables."
+                ],
+                "references": [
+                    "1",
+                    "(Székely & Rizzo, 2013)",
+                    "Newman (2006)",
+                    "2",
+                    "(Fortunato & Barthélemy, 2007)",
+                    "(Reichardt & Bornholdt, 2004",
+                    ", 2006)",
+                    "Newman (2006)",
+                    "(Blondel, Guillaume, Lambiotte, & Lefebvre, 2008)",
+                    "(Traag, Waltman, & van Eck, 2019)",
+                    "3",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "Abonyi et al., 2022)",
+                    "(Reichardt & Bornholdt, 2004",
+                    ", 2006)"
+                ]
+            },
+            {
+                "title": [
+                    "4.",
+                    "Experimentation"
+                ],
+                "text": [
+                    "We tested the proposed method on two datasets.",
+                    "The first contains simulated samples to test dimensionality reduction methods, such as PCA, PFA, and GNDA, while the second is a real-world dataset called Communities and Crime ",
+                    "me(accessed: 13 April 2023).",
+                    "This dataset includes variables relevant to per capita violent crime rates in different communities of the United States.",
+                    "Generating simulation dataset.",
+                    "Our goal in generating the simulation database was to generate matrices where the number of independent components can be known in advance.",
+                    "Therefore, given the number of observations (), we can obtain  independent orthogonal vectors by dividing the n-element vector into  blocks.",
+                    "Then, choosing a block, we write ones in that block and zeros in the others.",
+                    "These will be our basis vectors (see Eq. ( ",
+                    "(5)",
+                    "These vectors are orthogonal.",
+                    "All dimensionality reduction methods must identify these vectors as independent vectors.",
+                    "We obtain a block matrix if each basis vector is copied ⌈∕⌉ times, where  is the number of variables.",
+                    "The proposed simulation dataset contains generated block matrices.",
+                    "At the generated block matrices, the number of rows () (i.e., the number of observations), the number of columns () (i.e., the number of variables), and the number of blocks () (i.e., the number of factors) can be specified.",
+                    "Eq. ( ",
+                    "Suppose all values are equal to 1 within all  blocks, but the remaining values are 0. In that case, the block matrix specifies  uncorrelated factors since both the vectors of columns and rows provide orthogonal vectors.",
+                    "Note that the rows and columns of the block matrices can be interchanged during the analysis.",
+                    "Within a block, the row and column vectors are the same, while between blocks, the rows and columns are orthogonal.",
+                    "Thus, for  ≫ , we obtain a binary LDHSS dataset, while its transpose becomes a binary HDLSS dataset.",
+                    "Eq. ( ",
+                    "where  is the result block matrix,  is an  by  0-1 block matrix, where the number of blocks is ;  (×) is the  by  is a random matrix, where values follow a  (0, 1) uniform distribution; • represents the elementwise multiplication of matrices; and  ∈ R is the so-called exponent of exponential smoothing."
+                ],
+                "references": [
+                    "(Redmond & Baveja, 2002)",
+                    "5",
+                    "6",
+                    "7"
+                ]
+            },
+            {
+                "title": [
+                    "𝑏"
+                ],
+                "text": [
+                    ". The noise follows the uniform distribution scaled by 1/exp().",
+                    "Changing  sets the noise level.",
+                    "PCA and PFA are very sensitive to outliers.",
+                    "However, there are no extreme outliers due to employing a uniform distribution.",
+                    "Fig. ",
+                    "The correlogram shows that Fig. ",
+                    "A dimensional reduction method should find these groups of variables.",
+                    "The goodness of the dimension reduction methods can be compared in terms of how many LVs (which represent a group of variables) are found and whether adequate original variables belong to the adequate LV.",
+                    "Employing a real-life dataset.",
+                    "In the case of the Communities and Crime dataset, the per capita number of violent crimes was considered a dependent variable ().",
+                    "This variable was separated from the dataset.",
+                    "The remaining (independent) variables ( = 124) were grouped into LVs by the PCA, PFA, and GNDA methods.",
+                    "These variables characterize the community with population and law enforcement data, such as the per capita number of police officers or the percentage of officers assigned to drug units.",
+                    "The per capita violent crime variable was calculated using population, and the sum of crime variables considered violent crimes in the United States: murder, rape, robbery, and assault.",
+                    "There was apparently some controversy in some states concerning the counting of rapes.",
+                    "These resulted in missing values for rape, which resulted in incorrect values for per capita violent crime.",
+                    "These cities are not included in the dataset.",
+                    "Many of these omitted communities were in the midwestern United States.",
+                    "All numeric data were normalized into the decimal range of 0.00 to 1.00.",
+                    "Attributes retained their distribution and skew.",
+                    "All cities were geo-coded to visualize the spatial distribution of the score values.",
+                    "Although GNDA proposed several extensions and generalizations of the original NDA, some of these new features cannot be compared with traditional dimensionality reduction methods, such as PCA and PFA; therefore, Section 5.1 focuses on the applications in both the HDLSS and LDHSS cases.",
+                    "In both cases, one of the most crucial steps of the analysis is to estimate the number of LVs.",
+                    "To be able to compare which method estimates the adequate number of LVs, LDHSS and HDLSS datasets, i.e., block matrices, were generated.",
+                    "In these cases, the number of LVs was known in advance.",
+                    "In this way, we can accomplish two tasks: (1) determine which method estimates the adequate number of LVs in the case of different noises and (2) assess whether the indicators were assigned to appropriate LVs by the methods or not.",
+                    "This result shows that only the proposed GNDA method finds adequate numbers of LVs.",
+                    "In Sections 5.2 and 5.3, the results of the proposed GNDA and those of the traditional PCA and PFA on the real-world dataset are compared.",
+                    "Because GNDA provides the number of latent variables and the simulated data, this estimate seemed more reliable; therefore, we consider the number of LVs recommended by GNDA as a guideline for the other methods as well.",
+                    "Section 5.4 introduces the opportunity for hierarchical analysis by tuning prefiltering parameters.",
+                    "All results are compared with the PCA and PFA methods.",
+                    "However, since only GNDA can handle nonsymmetric similarities, these results are shown in the appendix.",
+                    "The original NDA was implemented in R and has been accepted by the CRAN community (see https://cran.r-project.org/web/",
+                    "packages/nda/index.html,",
+                    "accessed: 13 April 2023).",
+                    "The GNDA can be downloaded from GitHub (see https://github.com/kzst/nda,",
+                    "accessed: 13 April 2023)."
+                ],
+                "references": [
+                    "2",
+                    "6",
+                    "2",
+                    "2(a-b",
+                    "2(c-d"
+                ]
+            },
+            {
+                "title": [
+                    "5.",
+                    "Results"
+                ],
+                "text": [],
+                "references": []
+            },
+            {
+                "title": [
+                    "5.1.",
+                    "Comparing dimension reductions for simulated block matrices"
+                ],
+                "text": [
+                    "In the first simulation, four block matrices, such as  ((=)×(=))"
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "𝐛=2,𝜆=𝟏"
+                ],
+                "text": [
+                    ","
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "𝐛=𝟓,𝜆=-𝟏"
+                ],
+                "text": [
+                    ", are generated (see their correlation matrices in Fig. ",
+                    "Fig. ",
+                    "Fig. ",
+                    "The most commonly used method, Kaiser's rule, is used in the case of PCA and PFA.",
+                    "Fig. ",
+                    "In both cases, the number of blocks is five ( = 5), which must be estimated."
+                ],
+                "references": [
+                    "2",
+                    "3",
+                    "4",
+                    "4(a)",
+                    "4(b)"
+                ]
+            },
+            {
+                "title": [
+                    "Z.T. Kosztyán et al."
+                ],
+                "text": [],
+                "references": []
+            },
+            {
+                "title": [
+                    "Table 1"
+                ],
+                "text": [
+                    "Estimated number of LVs ( = 500,  = 5,  ∈ {-1, 1})."
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "Methods"
+                ],
+                "text": [
+                    "  50 250 500 1000 5000",
+                    "Notes: (!) : Results with warnings.",
+                    "Fig. ",
+                    "In the case of HDLSS (see Fig. ",
+                    "Although the number of factors (or the number of LVs) is a required parameter both for PCA and for PFA, too, which should be specified before running these methods.",
+                    "The scree plot can help to estimate the number of factors because the eigenvalues of the factors should be greater than 1 (K1).",
+                    "Fig. ",
+                    "Nevertheless, in contrast to PCA and PFA, GNDA provides the number of LVs well (see Fig. ",
+                    "Fig. "
+                ],
+                "references": [
+                    "4",
+                    "4(b)",
+                    "3",
+                    "5",
+                    "5"
+                ]
+            },
+            {
+                "title": [
+                    "𝟓,𝟏"
+                ],
+                "text": [
+                    ",  (×)   ,- ,  (×)"
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "𝟓,𝟏"
+                ],
+                "text": [
+                    ",  (×)   ,- matrices.",
+                    "Fig. ",
+                    "GNDA always finds an adequate number of factors, and all variables are associated with the right LV.",
+                    "Moreover, if no more than 30% of the observations were left out randomly, then after 100 runs, in the case of  = -1, for both LDHSS and HDLSS data, the GNDA correctly identified the five latent variables in all cases, as well as the variables 99.6% in the case of LDHSS, and 98.2% in the case of HDLSS correctly assigned to an appropriate latent variable.",
+                    "GNDA already work on asymmetric similarities between indicators.",
+                    "Fig. ",
+                    "Since semipartial correlation provides an asymmetric correlation matrix, the correlation graph will be directed; nevertheless, the modules right back the group of variables as modules (i.e., communities).",
+                    "Due to both partial and semipartial correlation filter indirect effects, Fig. ",
+                    "However, in these simulations, thanks to the generated block matrices, the number of blocks (here factors) was correctly determined for all smoothing parameters () and all examined row/column ratios.",
+                    "In the real case, filtering out indirect effects makes the network sparser and thus can increase the number of found modules.",
+                    "Table ",
+                    "The generation, the number of blocks ( = 5), and the number of observations ( = 500) are fixed, but the number of columns (variables) was a tenth ( = 50), half ( = 250), the same ( = 500), double ( = 1000), and tenfold ( = 5000).",
+                    "Two exponents are applied, such as  = 1 and  = -1.",
+                    "The applied psych package in R (see v. 2.2.9 Revelle, 2022) can be used to implement the newest version of PCA and PFA, and we also obtained results with warnings for the high number of variables.",
+                    "However, both methods in all cases over-or underestimate the number of LVs.",
+                    "The use of both PCA and PFA results in the determinant of the smoothed correlation being zero.",
+                    "Chi-square of observed residuals, and the result is unreliable.",
+                    "GNDA always specified the number of variables unambiguously.",
+                    "In addition, if the number of LV for all PCA and PFA was restricted to five, the accuracy of PCA and PFA was between and 85%, depending on the smoothing factor, while the accuracy of GNDA was 100% in all cases."
+                ],
+                "references": [
+                    "5",
+                    "1",
+                    "6",
+                    "6(a)",
+                    "6(b)",
+                    "6",
+                    "1"
+                ]
+            },
+            {
+                "title": [
+                    "5.2.",
+                    "Results on the real-world dataset"
+                ],
+                "text": [
+                    "Fig. ",
+                    "Fig. ",
+                    "Many factors may also be because there are more than just linear relationships between the variables.",
+                    "Thus, a better estimate can be obtained by calculating the possible number of variables with a monotonic (such as Spearman's and Kendall's) or general (such as distance) relationship-based correlation (see Table ",
+                    "Since GNDA indicates three LVs for Spearman's, Kendall's, and distance correlations, to compare results, three LVs are assumed for all dimension reduction methods.",
+                    "Because of the great number of variables, the information content of the biplots (Figs.",
+                    null,
+                    "Nevertheless, all Figs.",
+                    "7(b,c) show that neither PCA nor PFA can separate all variables into three groups.",
+                    "Variables in the diagonals of biplots correlate with at least two factors/components.",
+                    "Table ",
+                    "Table ",
+                    "Since distance correlation can detect general relationships between variables, this correlation method is applied instead of the linear correlation method.",
+                    "Moreover, in 12% of the runs, the GNDA method also identified three latent variables in the case of Pearson correlation, while using the other correlations, the GNDA method identified three latent variables even if 30% of the observations were randomly removed.",
+                    "Since GNDA detected three factors when all methods were compared, the number of factors was assumed to be three.",
+                    "In contrast to the generated example, where we knew the correct number of LVs in advance, here we did not know how many LVs were worth examining.",
+                    "Different methods suggested different kinds of LVs.",
+                    null,
+                    "That is why we calculated the five highest communality indicators of the first 20 variables determined by the PCA and PFA methods, as well as their possible interpretations, as shown in the appendix.",
+                    "However, MCVE shows that the first LV explained more than 60% of the variance, and GNDA only suggested 3 to 4 LVs.",
+                    "Since nonlinear correlations were employed, to handle ordinal values and nonlinear connections between variables, three LVs were assumed, and all methods were compared for three LVs.",
+                    "The different dimension reduction methods can only be compared if the same LV number was employed for each method.",
+                    "Even with the same number of LVs, their interpretation may differ depending on which indicators characterize the LVs or vice versa.",
+                    "Nevertheless, in the case of different LVs, the variable groups and the interpretation of the latent variables cannot correspond to each other.",
+                    "Therefore, we assume three LVs in each method, which was suggested by GNDA.",
+                    "In the main text, we only compare the results of the correlation-based methods, such as PCA and PFA, with the results given by GNDA.",
+                    "However, in the appendix, recent methods, such as the results of NNMF, SPCA, KPCA, t-SNE, can also be found (see ",
+                    "At the same time, their reduction mechanism is either significantly different from correlation-based methods (e.g., NNMF, t-SNE), and/or there is no known method that would determine the number of LV.",
+                    "Therefore, the three latent variables estimated by GNDA can only be considered here with a possible assumption.",
+                    "Fig. ",
+                    "Colorful terms represent the top 10% words, and the size of the font is proportional to their frequencies.",
+                    "The frequencies of terms can help to interpret LVs.",
+                    "Fig. ",
+                    "However, these terms were involved in other groups of variables (other factors) with high frequency.",
+                    "Fig. ",
+                    "The applied default  = 0.3 parameter is only used when plotting the variable correlation network to speed up the layout calculated by the Force Atlas algorithm.",
+                    "A higher value provides fewer connected graphs but faster calculation, while a lower threshold provides fewer components.",
+                    "At the same time, the calculation of the final layout requires more computational time.",
+                    "Without variable (i.e., feature) selection, the most frequent terms were income, police, and people.",
+                    "The correlation graph shows that LV 1 (income) and LV 2 (police presence) appeared cleaner, while the last one was mixed.",
+                    "Table ",
+                    "Based on the top five indicators (which had the greatest communality values), the three LVs were as follows: (1) income, (2) police presence, and (3) immigrants.",
+                    "The word cloud also detected the related term of immigration, but the people word was more frequent in the description.",
+                    "At the same time, since the top five indicators were related to immigration, LV 3 is referred to as immigration.",
+                    "The first row in every block represents Pearson's correlation between LV and the output variable (crimes per population).",
+                    "None of these methods claim to increase the correlation between the latent and output variables.",
+                    "Nevertheless, the comparison of the sign and the value of the correlations helps to validate the content of the latent variables.",
+                    "Significant differences and even the sign change in correlations between the given latent and the outcome variables indicate different contents.",
+                    "Compared to the word clouds of indicators (see , which were based on the frequency of terms of the variable descriptions, the analysis of the top five indicators (see Table ",
+                    "The LVs could be interpreted as the (family/household) income, police presence, and immigrants.",
+                    "PCA and PFA found exactly the same top five indicators.",
+                    "Only Pearson's correlations between the given LV and the output variables were slightly different.",
+                    "The sign of the pairs of correlations between a given LV and the outcome variable was the same in all dimension reduction methods.",
+                    "There was no significant difference between correlation values between methods in the cases of LV 2 and LV 3 , while GNDA provided a lower correlation value between LV 1 and the output variable than PCA and PFA.",
+                    "GNDA suggested several new indicators in addition to the groups of top five indicators, such as ''population for the community'' (LV 1 ); ''percent of police officers that are Caucasian/African American'', and sworn full-time police officers in field operations (LV 2 ); and ''percent of people who have immigrated within the last 5 years'', and ''percent of family households that are large (6 or more)''.",
+                    "In this way, we obtained cleaner LV 2 (police presence) and LV 3 (immigrants) than PCA or PFA provided.",
+                    "At the same time, except for the first indicator (population for community) of LV 1 in GNDA, all top indicators were related to income."
+                ],
+                "references": [
+                    "7",
+                    "7(b,",
+                    "c",
+                    "7",
+                    "2",
+                    "7(b,",
+                    "c",
+                    "2",
+                    "2",
+                    "K1, and MAP, and MAP(2000)",
+                    "Table A.8)",
+                    "8",
+                    "8",
+                    "9",
+                    "3",
+                    "3"
+                ]
+            },
+            {
+                "title": [
+                    "5.3.",
+                    "Employing feature selection"
+                ],
+                "text": [
+                    "Feature selection is optional if the question is simply which indicators belong to which LVs.",
+                    "At the same time, interpretation is facilitated if those variables that are less correlated to other variables, or in other words, are located on the periphery in a correlation graph measured by EVC, are lower than a threshold ( min , only in GNDA) and will be dropped.",
+                    "Variables can also be dropped if the square correlation (communality values) between LV and the indicator (original variable) is lower than a threshold (ℎ min ).",
+                    "If this (square) correlation is equally great between a given indicator and more than one LV, then the indicator is a common indicator; therefore, it should be dropped if the difference between the communality is lower than a threshold ( min ).",
+                    "Fig. ",
+                    "Later, income, police presence, and people/ immigrants can be identified by both PCA and PFA.",
+                    "Fig. ",
+                    "The hyper parameters suggested by ",
+                    "In Fig. ",
+                    "The head row indicates the interpretation of the 3 LVs, namely, (1) income, (2) police presence, and (3) immigrants.",
+                    "The first row in every block displays Pearson's correlation between LV and the output variable (crimes per population).",
+                    "After feature selection, PCA and PFA provided similar results but not the same top five indicators.",
+                    "The main difference was their ranks.",
+                    "The signs of correlations for given LVs were the same, but PFA provided the highest absolute correlation value for LV 1 and LV 2 .",
+                    "GNDA provided the highest correlation value for LV 3 .",
+                    "GNDA provided more balanced correlations between the LVs and the outcome variables.",
+                    "To be able to compare the results of the given interpretation of LVs (see the head of Table ",
+                    "Nevertheless, only in the case of GNDA did feature selection provide a clean set of indicators.",
+                    "The negative correlation value between income and the output variable (crimes per population) indicated that cities with lower household incomes had higher levels of crime.",
+                    "While police presence increased most of the detected crimes in the population, the increase in the number of immigrants increased the number of crimes per population.",
+                    "GNDA also highlights that these three LV are sufficient to characterize the set of indicators.",
+                    "Fig. ",
+                    "The map in Fig. ",
+                    "Table ",
+                    "Despite differences in the top five cities, both the highest income and the highest challenges related to immigration occurred in California (CA) County.",
+                    "Police presence was high in large cities, such as Los Angeles, New York, Philadelphia, Miami, and Washington; however, in these cities, the detected crimes per population were also high."
+                ],
+                "references": [
+                    "10",
+                    "11(a-c",
+                    "Kosztyán et al. (2022)",
+                    "11(d",
+                    "4",
+                    "4",
+                    "12",
+                    "12",
+                    "5"
+                ]
+            },
+            {
+                "title": [
+                    "5.4.",
+                    "Effects of filtering"
+                ],
+                "text": [
+                    "Although GNDA is a nonparametric method, neither hyperparameter ( min , ℎ min ,  min ) used for feature selection influences the proposed number of LVs.",
+                    "Nevertheless, there are two options to filter or mitigate the values of connection between indicators.",
+                    "Instead of using square correlation, a square of partial and semipartial correlations can be used as a similarity measure between indicators.",
+                    "These types of correlations filter the indirect effects between indicators.",
+                    "They measure the degree of association between two indicators, with the effect of a set of controlling indicators removed.",
+                    "Therefore, partial and semipartial correlations are not greater than correlations between indicators.",
+                    "The filtering indirect effects make the similarity graph sparser and it  ).",
+                    "This analysis is worthwhile if indirect effects must be filtered.",
+                    "In this case, the examination of the abandoned variables becomes more valuable since the variables thus left-alone variables and small communities do not directly correlate with any other variables; median household income a measure of the racial match between the community and the police force percent of the population who have immigrated within the last 5 years 3. rental housing -median rent percent of sworn full-time police officers on patrol percent of the population who have immigrated within the last 10 years 4.",
+                    "rental housing -upper quartile rent number of sworn full-time police officers in field operations percent of the population who have immigrated within the last 8 years 5.",
+                    "median gross rent percent of police that are caucasian percent of the population who have immigrated within the last 3 years The other option is to increase the minimal (square) correlation ( 2 min ) value between variables.",
+                    "This leads to a similar situation: the number of modules can be increased.",
+                    "In this way, the original modules can be separated.",
+                    "However, this method has two advantages.",
+                    "First, communality analysis (Step 5) can be used further.",
+                    "Second, this prefiltering provides hierarchical clustering, which can be used to test the robustness of the community of indicators.",
+                    "Fig. ",
+                    "If the minimal variables in a latent variables should be more than ten, both GNDAs provide seven groups of LVs; however, GNDA without feature selections dropped variables, which became isolated nodes after prefiltering.",
+                    "If the minimum number of variables in a module is reduced, as the prefiltering parameter increases, we obtain not only isolated points (cluster marked 0) but also variable groups with a small number of indicators (see Fig. ",
+                    "The most frequent terms in groups were living, income, police, kids, people, immigrated, and age.",
+                    null,
+                    "Fig. ",
+                    "Fig. ",
+                    "In all levels of the hierarchical GNDA forest, three LVs, namely, immigrants, income, and police presence, were significantly correlated with the output (crimes per population) variable (see Fig. ",
+                    "Fig. ",
+                    "These charts provide an opportunity to check the cross-migration of variables between modules.",
+                    "The results showed that this cross-migration is lower than 3%.",
+                    "Nevertheless, in this case, the structure of the correlation graph is also changing because low-correlated arcs are eliminated.",
+                    "When the minimum square correlation between variables is increased, a separation of LVs is observed, as shown in Fig. "
+                ],
+                "references": [
+                    "13",
+                    "13(a)",
+                    "13(b",
+                    "14(b)",
+                    "However,",
+                    "Fig. 13(b)",
+                    "14(a)",
+                    "14",
+                    "13",
+                    "14",
+                    "14(a)"
+                ]
+            },
+            {
+                "title": [
+                    "6.",
+                    "Discussion"
+                ],
+                "text": [
+                    "For unsupervised machine learning problems, we usually do not know exactly how many groups of variables and, in this way, how many LVs should be specified.",
+                    "Therefore, even recent methods, such as SPCA ",
+                    "However, the specification of the adequate number of LVs has a major impact on the interpretability of the results, especially when the data contain many variables HDLSS or many observations LDHSS.",
+                    "Procedures for estimating the number of latent variables are mainly found in the PCA and PFA methods.",
+                    "However, they identify a different number of factors (see Figs. ",
+                    "The paper proposes a method to generate either HDLSS or LDHSS block matrices to compare estimates of latent variables from dimensionality reduction methods.",
+                    "The results showed that GNDA was the only method that always found the exact number of latent variables.",
+                    "All variables are assigned to the adequate LVs (see Fig. ",
+                    "In the real database, we also find that different methods overestimate the number of LVs (see Fig. ",
+                    "Nevertheless, recent methods are still debtor as to how many LVs can be run with.",
+                    "The estimates of correlation-based (PCA, PFA) methods and the result of GNDA can only be used as a guide.",
+                    "Assuming that the number of latent variables is correctly given by the GNDA method, the results show that the PCA and PFA methods define latent variables with similar content (compare Figs. ",
+                    "Importantly, the analysis was not designed to identify latent variables that correlate as closely as possible with the explained variable, which in this case was crime per population.",
+                    "For this reason, we did not select variables that increase the correlation between latent variables and the outcome variable the least.",
+                    "This would be a different supervised learning task, which is not part of this study.",
+                    "Here, the omission of variables was justified if they did not fit the latent variables.",
+                    "However, it should be noted that AFS increased the correlation in all cases.",
+                    "GNDA provided the clearest set of variables ",
+                    "In other words, if a supervised learning version of the GNDA method is constructed, then other mechanisms for variable selection must be found than testing the fit to the latent variable.",
+                    "The GNDA method predetermines the number of latent variables.",
+                    "The number of groups is not affected by the hyperparameters used in AFS.",
+                    "However, two parameters ( and  min ) can increase the number of latent variables.",
+                    "Increasing  increases the resolution of the modules, and increasing the prefiltering parameter ( min ) makes the correlation graph sparser; therefore, the original modules, and in this way, the LVs, are split down (see Figs. ",
+                    "Even though the examination of missing data was not the subject of our study, if the data are missing, then correlation relationships between variables are dropped from the correlation graph in the same way as in the case of increasing the parameters of the prefiltering.",
+                    "Those modules where the correlation between the variables is higher do not fall into modules even if the edges with a low correlation square are removed from the correlation graph.",
+                    "In the same way, increasing the resolution will not result in a new group of variables.",
+                    "If the similarity between variables is the correlation function and the number of LVs is fixed according to the value of the GNDA method, then the proposed method can be compared with other dimensional reduction methods.",
+                    "However, if the similarity function is asymmetric, e.g., partial or semipartial correlation, the results cannot be compared with state-of-the-art methods.",
+                    "For block matrices, GNDA correctly identified the number of LVs based on partial (see Fig. ",
+                    "At the same time, for real-world data, partial correlations can give a sparser similarity graph, which is why the GNDA method will also determine more latent variables (see ",
+                    "Remember that, in this case, LVs can also be interpreted differently."
+                ],
+                "references": [
+                    "(Zhang et al., 2012)",
+                    "(Schölkopf et al., 1997",
+                    "(Schölkopf et al., , 1998))",
+                    "(Wang & Zhang, 2012)",
+                    "(Liu et al., 2021), and",
+                    "VAE (Mahmud et al., 2021)",
+                    "3",
+                    "4",
+                    "1",
+                    "5",
+                    "7",
+                    "2",
+                    "8(bc",
+                    "8",
+                    "9(ac",
+                    "3",
+                    "(compare Figs. and 11)",
+                    null,
+                    "4)",
+                    "13",
+                    "14",
+                    "6(a)",
+                    "6(b)",
+                    "Fig. A.15)"
+                ]
+            },
+            {
+                "title": [
+                    "7.",
+                    "Summary and conclusion"
+                ],
+                "text": [
+                    "Dimensionality reduction methods are essential parts of data analysis.",
+                    "The paper provides a new approach to transforming data into a network and allows scholars to combine descriptive network science and exploratory analytical methods.",
+                    "The proportion of observations and variables often varies.",
+                    "Therefore, robust methods should be used to compare results.",
+                    "Usually, different methods are used to solve HDLSS and LDHSS problems.",
+                    "The number of LVs is the most difficult Z.T. ",
+                    "In this paper, we proposed a nonparametric network-based dimensionality analysis method, which determines the number of LVs.",
+                    "The proposed method works in HDLSS but also in a high number of observations.",
+                    "Hyperparameters, such as minimal EVC ( min ), minimal communality (ℎ min ), and common communality values ( min ), are only used for feature selection, but prefiltering -which increases the minimal (square) correlation between variables,  2 min ) -can separate modules of variables and provides a hierarchy of variable groupings.",
+                    "For both simulated and real-world data, GNDA best identifies the number of LVs.",
+                    "In addition, GNDA can provide a cleaner group of variables.",
+                    "Finally, the proposed set of visual and analysis tools, such as correlation graphs, word clouds of terms, and the list of greatest common communalities, also supports the interpretation in the case of a high number of variables and observations.",
+                    "The replacement of applied methods, such as the correlation method, modularity method, and measure of centrality, provides possible further improvements.",
+                    "GNDA is implemented by MATLAB and R, and the developer version of GNDA is freely available at https://github.com/kzst/nda",
+                    "(accessed: 13 April 2023)."
+                ],
+                "references": [
+                    "Kosztyán et al."
+                ]
+            },
+            {
+                "title": [
+                    "8.",
+                    "Limitations and future works"
+                ],
+                "text": [
+                    "Our earlier study ",
+                    "This paper focused on the case of a larger number of observations than variables.",
+                    "The implemented GNDA employs only Person's, Spearman's, Kendall's, and distance correlation methods; however, further distances, such as contingency and Jaccard's distance, can be implemented to handle this method for topic mining, where one of the crucial problems is to specify the number of topics.",
+                    "Furthermore, combining GNDA with advanced artificial intelligence techniques offers a promising approach to enhance the performance of the original algorithm.",
+                    "Another possible improvement would be to extend this method for biclustering and multiclustering, which would open this method up for further applications.",
+                    "Since the explored dimensionality reduction methods can only handle a symmetric correlation matrix or a symmetric distance matrix, it was not possible to compare the proposed method with existing methods.",
+                    "At the same time, the appendix contains the proposed dimensionality reduction methods obtained for partial and semipartial correlations.",
+                    "The discussion of these results should be elaborated on in a subsequent study not only due to page limitations but also because the factor loading and communality values must then be interpreted differently."
+                ],
+                "references": [
+                    "(Kosztyán et al., 2022)"
+                ]
+            },
+            {
+                "title": [
+                    "Acronyms"
+                ],
+                "text": [],
+                "references": []
+            },
+            {
+                "title": [
+                    "AFS"
+                ],
+                "text": [],
+                "references": []
+            }
+        ]
+    },
+    "Figures": {
+        "Figures": [
+            {
+                "title": "Fig. 1 .",
+                "label": "1",
+                "description": [
+                    "Fig. 1.",
+                    "The main steps of the proposed GNDA algorithm."
+                ]
+            },
+            {
+                "title": "Fig. 2 .",
+                "label": "2",
+                "description": [
+                    "Fig. 2. Correlation matrix of simulated samples, where the number of rows/observations () is 300, the number of columns/variables is () 50, the numbers of blocks () are 2 and 5, and exponential smoothing values () are 1 and -1."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "generated dataset ((×)  , ), where the number of rows is  = 300, and the number of columns is  = 50.",
+                    "The numbers of blocks are  = 2 and  = 5, and the exponents of smoothing are  = 1 and  = -1.",
+                    "The correlations are between [-1,1].",
+                    "Bluish cells indicate positive correlations, while reddish cells represent negative correlations.",
+                    "Darker cells indicate higher absolute correlations.",
+                    "A correlation matrix of a block matrix is also a block matrix.",
+                    "Nevertheless, in this case, the blocks are square matrices because the number of rows and the number of columns are equal to each other."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "Z.T.Kosztyán et al."
+                ]
+            },
+            {
+                "title": "Fig. 3 .",
+                "label": "3",
+                "description": [
+                    "Fig. 3. Scree plots of simulated samples."
+                ]
+            },
+            {
+                "title": "Fig. 4 .",
+                "label": "4",
+                "description": [
+                    "Fig. 4. Number of estimated LVs for simulated data."
+                ]
+            },
+            {
+                "title": "Fig. 5 .",
+                "label": "5",
+                "description": [
+                    "Fig. 5. Network plots for simulated samples.",
+                    "Figs.",
+                    "(a-b) provide the clustered correlation graph (network plot) for LDHSS, while Figs.",
+                    "(c-d) provide the HDLSS dataset."
+                ]
+            },
+            {
+                "title": "Fig. 6 .Fig. 7 .",
+                "label": "67",
+                "description": [
+                    "Fig. 6.",
+                    "Communities on Pearson's partial correlation graph on simulated samples ( = 300,  = 50,  = 5,  = 1)."
+                ]
+            },
+            {
+                "title": "Fig. 8 .",
+                "label": "8",
+                "description": [
+                    "Fig. 8. Word cloud of the terms of the indicators in the case of three factors."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "Z.T.Kosztyán et al."
+                ]
+            },
+            {
+                "title": "Fig. 9 .",
+                "label": "9",
+                "description": [
+                    "Fig. 9. Word cloud of terms of the variable descriptions (a-c), distance correlation network of indicators (d), and biplot of latent variables (e) (GNDA without feature selection)."
+                ]
+            },
+            {
+                "title": "Fig. 10 .",
+                "label": "10",
+                "description": [
+                    "Fig. 10.",
+                    "Word cloud of the terms of the indicators after feature selection (ℎ min =  min = 0.1) in the case of three factors."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "Fig.10shows that after feature selection, the frequency of terms is slightly changed.",
+                    "Later, income, police presence, and people/ immigrants can be identified by both PCA and PFA.Fig.11(a-c)",
+                    "shows the word cloud of terms of three LVs, where the most frequent terms were similar to those of PCA and PFA: immigrants, police, and income.",
+                    "The hyper parameters suggested by",
+                    "In Fig.11(d), black nodes represent the dropped indicators.",
+                    "Fig. 11(a) shows that the group of indicators was cleaner, and Fig. 11(d) shows that the selected indicators were closer.",
+                    "The increase in minimal common communality eliminated the variable in biplot diagonals (compare Figs. 9(d) and 11(d)), which further promotes the interpretation.Table4displays the top five indicators for all explored dimension reduction methods with the greatest loading values.",
+                    "The head row indicates the interpretation of the 3 LVs, namely, (1) income, (2) police presence, and (3) immigrants.",
+                    "The first row in every block displays Pearson's correlation between LV and the output variable (crimes per population).After feature selection, PCA and PFA provided similar results but not the same top five indicators.",
+                    "The main difference was their ranks.",
+                    "The signs of correlations for given LVs were the same, but PFA provided the highest absolute correlation value for LV 1 and LV 2 .",
+                    "GNDA provided the highest correlation value for LV 3 .",
+                    "GNDA provided more balanced correlations between the LVs and the outcome variables.To be able to compare the results of the given interpretation of LVs (see the head of Table4is used for every dimension reduction method.",
+                    "Nevertheless, only in the case of GNDA did feature selection provide a clean set of indicators."
+                ]
+            },
+            {
+                "title": "Fig. 11 .",
+                "label": "11",
+                "description": [
+                    "Fig. 11.",
+                    "Word cloud of terms of the variable descriptions (a-c), distance correlation network of indicators (d), and biplot of latent variables (e) (GNDA with feature selection,  min = ℎ min = 0.1,  min = 0.065)."
+                ]
+            },
+            {
+                "title": "Fig. 12 .",
+                "label": "12",
+                "description": [
+                    "Fig. 12. Spatial heatmap of score values of LVs (NDA)."
+                ]
+            },
+            {
+                "title": "Fig. 13 .",
+                "label": "13",
+                "description": [
+                    "Fig. 13.",
+                    "Correlation graph and LVs in the case of prefiltering (minimal  2 min = 0.4, min_comm = 10)."
+                ]
+            },
+            {
+                "title": "Fig. 14 .",
+                "label": "14",
+                "description": [
+                    "Fig. 14.",
+                    "The hierarchical GNDA tree for prefiltering."
+                ]
+            },
+            {
+                "title": "Fig. A. 15 .",
+                "label": "15",
+                "description": [
+                    "Fig. A.15. GNDA employed on Spearman's partial correlation graph.",
+                    "(Note: black nodes are dropped from the modules (8 factors).)."
+                ]
+            },
+            {
+                "title": "Fig. A. 16 .",
+                "label": "16",
+                "description": [
+                    "Fig. A.16. GNDA employed on Spearman's semipartial correlation graph.",
+                    "(Note: black nodes are dropped from the modules (16 factors).)."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    " min ) is specified.",
+                    "The result of modularity-based community detection is  modules, which are disjoint subgraphs of the graph.",
+                    "Formally,  1 ,  2 , … ,   ∈ ,   ∩   = ∅, ,  ∈ 1, … , , ∪  ∶=1   ⊆ , and |  | ≥   min for all   (  ,   ,   ) ∈ ."
+                ]
+            },
+            {
+                "title": "Table 2",
+                "label": "2",
+                "description": [
+                    "Estimation of the number of factors to be retained in the model."
+                ]
+            },
+            {
+                "title": "Table 3",
+                "label": "3",
+                "description": [
+                    "Top five indicators with greatest loadings."
+                ]
+            },
+            {
+                "title": "Table 4",
+                "label": "4",
+                "description": [
+                    "Top five indicators with greatest loadings."
+                ]
+            },
+            {
+                "title": "Table 5",
+                "label": "5",
+                "description": [
+                    "Top five cities with highest scores."
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "LVs of PCA and the IDs of top five indicators.",
+                    "LVs of PFA and the IDs of top five indicators.",
+                    "LVs of state-of-the-art dimension reduction methods, correlations between the output variable and LVs, and top five indicators, if the number of LVs are assumed as the result of GNDA (i.e.,  = 3)."
+                ]
+            }
+        ],
+        "Tables": [
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    " min ) is specified.",
+                    "The result of modularity-based community detection is  modules, which are disjoint subgraphs of the graph.",
+                    "Formally,  1 ,  2 , … ,   ∈ ,   ∩   = ∅, ,  ∈ 1, … , , ∪  ∶=1   ⊆ , and |  | ≥   min for all   (  ,   ,   ) ∈ ."
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 2",
+                "label": "2",
+                "description": [
+                    "Estimation of the number of factors to be retained in the model."
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "Methods",
+                            "Applied correlation methods",
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Pearson's",
+                            "Spearman",
+                            "Kendall",
+                            "Distance"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PCA (K1)",
+                            "17",
+                            "15",
+                            "16",
+                            "19"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PFA (K1)",
+                            "11",
+                            "10",
+                            "10",
+                            "12"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "MAP",
+                            "29",
+                            "15",
+                            "16",
+                            "19"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "MAP(2000)",
+                            "29",
+                            "22",
+                            "16",
+                            "23"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "MCVE",
+                            "1",
+                            "1",
+                            "1",
+                            "1"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "GNDA",
+                            "4",
+                            "3",
+                            "3",
+                            "3"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "Note: Parallel Analysis (PA) cannot be calculated for this dataset."
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Table 3",
+                "label": "3",
+                "description": [
+                    "Top five indicators with greatest loadings."
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "Method",
+                            null,
+                            null,
+                            "Income",
+                            "Police presence",
+                            "Immigrants"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Correlations (PCA)",
+                            null,
+                            "-0.4867",
+                            "0.4456",
+                            "0.2618"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PCA, PFA",
+                            "Correlations (PFA) Top 5 variables:",
+                            "1. 2.",
+                            "-0.4835 per capita income percentage of households with wage",
+                            "0.4445 police average overtime worked percentage of people living in areas",
+                            "0.2625 percent of housing units with less than 3 bedrooms percent of population who speak only"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "classified as urban",
+                            "English"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "3.",
+                            "per capita income for caucasian",
+                            "mean people per household",
+                            "percent of family households that are large"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "(6 or more)"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "4.",
+                            "rental housing -upper quartile rent",
+                            "police operating budget",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "immigrated within the last 10 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "5.",
+                            "median gross rent",
+                            "gang unit deployed",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "immigrated within the last 8 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Correlations (GNDA)",
+                            null,
+                            "-0.1538",
+                            "0.4146",
+                            "0.2694"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "GNDA",
+                            "Top 5 variables:",
+                            "1. 2.",
+                            "population for community percentage of households with wage or",
+                            "police average overtime worked percent of police that are caucasian",
+                            "percent of the population who have immigrated within the last 8 years percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            "salary income",
+                            null,
+                            "immigrated within the last 10 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "3.",
+                            "per capita income",
+                            "gang unit deployed",
+                            "percent of people who speak only English"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "4.",
+                            "median gross rent",
+                            "sworn full-time police officers in field",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "operations",
+                            "immigrated within the last 5 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "5.",
+                            "median gross rent as a percentage of",
+                            "percent of police officers who are",
+                            "percent of family households that are large"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            "household income",
+                            "African American",
+                            "(6 or more)"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Table 4",
+                "label": "4",
+                "description": [
+                    "Top five indicators with greatest loadings."
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "Method",
+                            null,
+                            null,
+                            "Income",
+                            "Police presence",
+                            "Immigrants"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Correlations",
+                            null,
+                            "-0.5047",
+                            "0.4396",
+                            "0.2330"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PCA",
+                            "Top 5 variables:",
+                            "1.",
+                            "median family income",
+                            "number of different kinds of drugs seized",
+                            "percent of people who do not speak English well"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "2.",
+                            "median household income",
+                            "number of people living in areas",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "classified as urban",
+                            "immigrated within the last 10 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "(numeric"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "3.",
+                            "per capita income",
+                            "population for community",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "immigrated within the last 10 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "4.",
+                            "percentage of households with",
+                            "number of police cars",
+                            "percent of people foreign-born"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            "investment/rent income",
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "5.",
+                            "rental housing -upper quartile rent",
+                            "percent of sworn full-time police",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "officers on patrol",
+                            "immigrated within the last 8 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Correlations",
+                            null,
+                            "-0.5106",
+                            "0.5004",
+                            "0.3217"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PFA",
+                            "Top 5 variables:",
+                            "1.",
+                            "median family income",
+                            "number of different kinds of drugs seized",
+                            "percent of people who do not speak English well"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "2.",
+                            "median household income",
+                            "number of people living in areas",
+                            "percent of persons in dense housing"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "classified as urban",
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "3.",
+                            "per capita income",
+                            "number of police cars",
+                            "percent of all occupied households that"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "are large"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "4.",
+                            "rental housing -upper quartile rent",
+                            "population for community",
+                            "percent of family households that are"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "large (6 or more)"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "5.",
+                            "rental housing -median rent",
+                            "a measure of the racial match",
+                            "percent of the population who have"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "between the community and the",
+                            "immigrated within the last 10 years"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            "police force",
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Correlations",
+                            null,
+                            "-0.3629",
+                            "0.3211",
+                            "0.3871"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "GNDA",
+                            "Top 5 variables:",
+                            "1. 2.",
+                            "median family income",
+                            "number of different kinds of drugs seized",
+                            "percent of persons in dense housing (more than 1 person per room)"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Table 5",
+                "label": "5",
+                "description": [
+                    "Top five cities with highest scores."
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "Top five scores",
+                            "LV1 -Income",
+                            "LV2 -Police presence",
+                            "LV3 -Immigrations"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "1",
+                            "Piedmontcity CA",
+                            "Los Angeles City CA",
+                            "Huntington Park City CA"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "2",
+                            "Orindacity CA",
+                            "New York City CA",
+                            "Paramount City CA"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "3",
+                            "Manhattan Beach City CA",
+                            "Philadelphia City PA",
+                            "Santa Ana City CA"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "4",
+                            "Rancho Palos Verdes City CA",
+                            "Maimi City FL",
+                            "South El Monte City CA"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "5",
+                            "La Canada Flintridge City CA",
+                            "Washington DC",
+                            "Bell City CA"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "they can show unique phenomena. However, a deeper analysis of this",
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "is beyond the scope of this paper.",
+                            null,
+                            null,
+                            null
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "LVs of PCA and the IDs of top five indicators.",
+                    "LVs of PFA and the IDs of top five indicators.",
+                    "LVs of state-of-the-art dimension reduction methods, correlations between the output variable and LVs, and top five indicators, if the number of LVs are assumed as the result of GNDA (i.e.,  = 3)."
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "Table A.6 Table A.8 (continued).",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "LDHSS",
+                            "Low-Dimension High-Sample-Size"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "LV 1",
+                            null,
+                            null,
+                            "LV",
+                            "LV 2",
+                            "latent variable LV 3"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PCA",
+                            "LV 1",
+                            null,
+                            "LV 2",
+                            "4.",
+                            "LV 3 medIncome",
+                            "MAP",
+                            "LV 4 medFamInc",
+                            "Minimum Average Partial LV 5 PctVacMore6Mos"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LemasSwFTFieldOps",
+                            "RentHighQ 5.",
+                            "PctRecImmig10 PctYoungKids2Par",
+                            "MCVE RentHighQ PctIlleg",
+                            "Minimal cumulative variance explained PersPerOccupHous pctWSocSec"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LemasSwFTFieldPerPop LemasSwFTPerPop KPCA Correlations PolicPerPop Top 5 variables NumKindsDrugsSeiz LV 6",
+                            "RentMedian MedRent OwnOccLowQuart -0.4646 PctRecImmig8 PctRecImmig5 PctRecentImmig 1. PctPolicAsian OwnOccMedVal PctForeignBorn 2. LemasGangUnitDeploy LV 7 LV 8 3. PctPolicHisp 4. LemasPctOfficDrugUn",
+                            "MSRL -0.2211 pctWPubAsst racePctWhite NDA PctUnemployed agePct12t29 PctNotHSGrad PersPerFam NNMF LV 9 PersPerOwnOccHous Marginally Structured Representation PersPerFam 0.0392 household size Learning PersPerOwnOccHous fold Network-based Dimensionality Reduction pctUrban PctLargHouseOccup and Analysis Non-Negative Matrix Factorization PctHousOccup LV 10 MedRentPctHousInc PctSameState85"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "population NumUnderPov NumInShelters t-SNE Correlations",
+                            "PctImmigRec5 5. PctImmigRec8 PctImmigRec10",
+                            "pctWSocSec PctPolicBlack agePct65up pctWWage 0.2376",
+                            "PA PCA",
+                            "PctHousLess3BR householdsize MedNumBR PctHousOwnOcc -0.0511",
+                            "agePct16t24 PctSpeakEnglOnly Parallel Analysis Principal Component Analysis agePct12t29 agePct12t21 -0.5696"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "NumIlleg",
+                            "Top 5 variables",
+                            "PctImmigRecent 1.",
+                            "fold",
+                            "pctWRetire",
+                            "PFA",
+                            "Principal Factor Analysis PctPersOwnOccup MalePctNevMarr LemasGangUnitDeploy OtherPerCap"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "HousVacant LV 11 TotalPctDiv",
+                            null,
+                            "PctSameHouse85 2. PctHousOccup PctEmploy LV 12 LV 13 3. PctEmploy 4. PctTeen2Par PctSameState85 PctEmplProfServ 5. MedYrHousBuilt",
+                            "SNA SPCA PctPolicAsian PctFam2Par t-SNE LV 14 PctPolicWhite LemasSwFTFieldOps Social Network Analysis PctHousOwnOcc HispPerCap Sparse Principal Component Analysis OwnOccHiQuart LV 15 RentMedian t-distributed stochastic neighbor MedOwnCostPctIncNoMtg PctWorkMomYoungKids PolicReqPerOffic AsianPerCap"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "FemalePctDiv",
+                            "PctSameCity85",
+                            null,
+                            null,
+                            "PctEmplManu",
+                            "MedYrHousBuilt",
+                            "embedding",
+                            "PctWorkMom"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "MalePctDivorce",
+                            "PctBornSameState",
+                            null,
+                            "PctBSorMore",
+                            "VAE",
+                            "PctUsePubTrans",
+                            "Variational Autoencoder PctEmploy"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctFam2Par",
+                            null,
+                            "PctSameHouse85",
+                            null,
+                            "PctOccupMgmtProf",
+                            "PopDens",
+                            "PctUnemployed"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctSameHouse85",
+                            "PctEmplManu",
+                            null,
+                            null,
+                            "PctOccupManu",
+                            "PctVacMore6Mos",
+                            "pctWPubAsst"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LV 16",
+                            null,
+                            "LV 17",
+                            null,
+                            null,
+                            null,
+                            "LV 18",
+                            "LV 19",
+                            "LV 20"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "HispPerCap",
+                            null,
+                            "pctWFarmSelf",
+                            null,
+                            null,
+                            "MedRentPctHousInc",
+                            "PctHousOccup",
+                            "fold"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "OtherPerCap",
+                            null,
+                            "pctUrban",
+                            null,
+                            null,
+                            "MedOwnCostPctInc",
+                            "PctVacMore6Mos",
+                            "indianPerCap"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "racePctHisp",
+                            null,
+                            "PctUsePubTrans",
+                            null,
+                            null,
+                            "PctEmplManu",
+                            "pctUrban",
+                            "PctWOFullPlumb"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctPersDenseHous",
+                            "PopDens",
+                            null,
+                            null,
+                            "PctEmploy",
+                            "HousVacant",
+                            "MedOwnCostPctInc"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "indianPerCap",
+                            "numbUrban",
+                            null,
+                            null,
+                            "PctPopUnderPov",
+                            "PctHousNoPhone",
+                            "PopDens"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "Table A.7",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "PFA",
+                            "LV 1",
+                            null,
+                            "LV 2",
+                            null,
+                            null,
+                            null,
+                            "LV 3",
+                            "LV 4",
+                            "LV 5"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctKids2Par",
+                            "perCapInc",
+                            null,
+                            null,
+                            "PctRecImmig10",
+                            "racePctWhite",
+                            "PctImmigRec8"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctFam2Par",
+                            "RentHighQ",
+                            null,
+                            null,
+                            "PctRecImmig8",
+                            "PctLargHouseFam",
+                            "PctSameHouse85"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "NumUnderPov",
+                            "RentMedian",
+                            null,
+                            null,
+                            "PctRecImmig5",
+                            "PctPersDenseHous",
+                            "PctImmigRec5"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctPopUnderPov",
+                            "OwnOccLowQuart",
+                            null,
+                            "PctRecentImmig",
+                            "PctLargHouseOccup",
+                            "PctImmigRecent"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctYoungKids2Par",
+                            "OwnOccMedVal",
+                            null,
+                            null,
+                            "PctNotSpeakEnglWell",
+                            "agePct12t29",
+                            "PctImmigRec10"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LV 6",
+                            null,
+                            "LV 7",
+                            null,
+                            null,
+                            null,
+                            "LV 8",
+                            "LV 9",
+                            "LV 10"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "agePct65up",
+                            null,
+                            "PctBSorMore",
+                            null,
+                            null,
+                            "LemasSwFTFieldPerPop",
+                            "agePct12t21",
+                            "TotalPctDiv"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "pctWSocSec",
+                            "PctOccupManu",
+                            null,
+                            null,
+                            "LemasSwFTFieldOps",
+                            "agePct16t24",
+                            "MalePctDivorce"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "pctWWage",
+                            null,
+                            "PctOccupMgmtProf",
+                            null,
+                            "LemasSwFTPerPop",
+                            "agePct12t29",
+                            "FemalePctDiv"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "MedYrHousBuilt",
+                            "PctNotHSGrad",
+                            null,
+                            null,
+                            "PolicPerPop",
+                            "whitePerCap",
+                            "PctEmplManu"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "householdsize",
+                            "PctSameCity85",
+                            null,
+                            null,
+                            "PctPolicWhite",
+                            "householdsize",
+                            "PctBSorMore"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LV 11",
+                            null,
+                            "LV 12",
+                            null,
+                            null,
+                            null,
+                            "LV 13",
+                            "LV 14",
+                            "LV 15"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "MedYrHousBuilt",
+                            "racepctblack",
+                            null,
+                            null,
+                            "PctWorkMom",
+                            "PctEmplProfServ",
+                            "pctUrban"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "racepctblack",
+                            "PctImmigRec8",
+                            null,
+                            null,
+                            "PctWorkMomYoungKids",
+                            "PctUsePubTrans",
+                            "PopDens"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctUsePubTrans",
+                            "PctImmigRec10",
+                            null,
+                            null,
+                            "PctSameHouse85",
+                            "PctBSorMore",
+                            "MedYrHousBuilt"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PopDens",
+                            null,
+                            "PctImmigRec5",
+                            null,
+                            null,
+                            "PctEmploy",
+                            "PctImmigRec5",
+                            "PctUsePubTrans"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "MalePctNevMarr",
+                            "racePctWhite",
+                            null,
+                            null,
+                            "MedRentPctHousInc",
+                            "PctWorkMom",
+                            "pctWFarmSelf"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "LV 16",
+                            null,
+                            "LV 17",
+                            null,
+                            null,
+                            null,
+                            "LV 18",
+                            "LV 19",
+                            "LV 20"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctHousOccup",
+                            "PctHousOccup",
+                            null,
+                            null,
+                            "MedOwnCostPctInc",
+                            "MedRentPctHousInc",
+                            "MedRentPctHousInc"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PctEmplManu",
+                            "pctUrban",
+                            null,
+                            null,
+                            "PctEmplProfServ",
+                            "MedYrHousBuilt",
+                            "pctUrban"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "HousVacant",
+                            "MedRentPctHousInc",
+                            null,
+                            "pctUrban",
+                            "PctEmplProfServ",
+                            "PctLargHouseFam"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PersPerOccupHous",
+                            "PctEmplProfServ",
+                            null,
+                            null,
+                            "pctWFarmSelf",
+                            "MedOwnCostPctInc",
+                            "numbUrban"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "PersPerOwnOccHous",
+                            "TotalPctDiv",
+                            null,
+                            null,
+                            "PctPopUnderPov",
+                            "PctPersDenseHous",
+                            "racePctWhite"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "Table A.8",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Automated Feature Selection",
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "BDLRR",
+                            "Block-Diagonal Low-Rank Representation LV 1",
+                            "LV 2",
+                            "LV 3"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "CFA",
+                            "Common Factor Analysis NNMF Correlations",
+                            null,
+                            null,
+                            "0.4967",
+                            "-0.4983",
+                            "0.3774"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "DENLR",
+                            "Discriminative Elastic-Net Regularized Top 5 variables 1.",
+                            "fold",
+                            "fold",
+                            "fold"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Linear Regression",
+                            null,
+                            "2.",
+                            null,
+                            "LemasSwFTFieldOps",
+                            "pctUrban",
+                            "PctSpeakEnglOnly"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "EFA",
+                            "Explanatory Factor Analysis",
+                            "3.",
+                            null,
+                            "pctUrban",
+                            "PctYoungKids2Par",
+                            "PctBornSameState"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "EVC FA",
+                            "eigenvector centrality Factor Analysis",
+                            null,
+                            "4. 5.",
+                            null,
+                            "PctPolicWhite LemasPctPolicOnPatr",
+                            "racePctWhite PctKids2Par",
+                            "PctSameState85 PctSameCity85"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "GNDA",
+                            "Generalized Network-based Dimensionality SPCA Correlations -0.0352",
+                            "-0.6504",
+                            "-0.2817"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Analysis",
+                            "Top 5 variables",
+                            "1.",
+                            null,
+                            "fold",
+                            "PctYoungKids2Par",
+                            "PctSpeakEnglOnly"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "HDLSS K1",
+                            "2. High-Dimension Low-Sample-Size Kaiser's Rule 3.",
+                            null,
+                            "pctUrban RentHighQ",
+                            "medIncome PctKids2Par",
+                            "PctBornSameState racePctWhite"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "KPCA",
+                            "Kernel Principal Component Analysis",
+                            null,
+                            null,
+                            "(continued on next page)"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "Graphics": [
+            {
+                "type": "bitmap",
+                "coords": "3,117.53,56.24,360.35,72.19"
+            },
+            {
+                "type": "bitmap",
+                "coords": "5,117.56,55.72,360.29,207.97"
+            },
+            {
+                "type": "bitmap",
+                "coords": "8,81.56,66.60,432.29,557.89"
+            },
+            {
+                "type": "bitmap",
+                "coords": "9,81.56,82.97,432.29,178.51"
+            },
+            {
+                "type": "bitmap",
+                "coords": "10,124.29,76.58,346.87,272.23"
+            },
+            {
+                "type": "bitmap",
+                "coords": "11,102.66,66.65,390.00,375.85"
+            },
+            {
+                "type": "bitmap",
+                "coords": "12,111.52,76.55,372.27,273.85"
+            },
+            {
+                "type": "bitmap",
+                "coords": "13,105.64,76.61,384.00,394.47"
+            },
+            {
+                "type": "bitmap",
+                "coords": "13,101.92,539.06,391.47,74.11"
+            },
+            {
+                "type": "bitmap",
+                "coords": "15,127.23,76.56,340.81,362.41"
+            },
+            {
+                "type": "bitmap",
+                "coords": "16,105.56,55.75,384.29,442.81"
+            },
+            {
+                "type": "bitmap",
+                "coords": "19,43.60,227.27,239.11,469.93"
+            },
+            {
+                "type": "bitmap",
+                "coords": "19,312.62,227.12,239.11,433.99"
+            }
+        ]
+    },
+    "Notes": {
+        "acknowledgements": {
+            "head": "Acknowledgments"
+        },
+        "funding_list": {
+            "type": "funding"
+        },
+        "availability": {
+            "content": [
+                "The R package of GNDA can be downloaded from the CRAN official site: https://cran.r-project.org/web/packages/nda/index.html.",
+                "The test version can be downloaded from https://github.com/kzst/nda",
+                "or from the Code Ocean cite ",
+                "Data is included to the proposed package."
+            ]
+        },
+        "annex": {
+            "content": [
+                "The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.",
+                "Z.T. "
+            ]
+        },
+        "references": {
+            "references": [
+                {
+                    "title": "Principal component analysis",
+                    "authors": [
+                        "Abdi",
+                        "Williams"
+                    ],
+                    "doi": "10.1002/wics.101",
+                    "journal_abbreviation": "Wiley Interdisciplinary Reviews: Computational Statistics",
+                    "issn": "1939-5108",
+                    "publisher": "Wiley"
+                },
+                {
+                    "title": "Factor analysis, sparse PCA, and Sum of Ranking Differences-based improvements of the Promethee-GAIA multicriteria decision support technique",
+                    "authors": [
+                        "Abonyi",
+                        "Czvetkó",
+                        "Kosztyán",
+                        "Héberger"
+                    ],
+                    "doi": "10.1371/journal.pone.0264277",
+                    "journal_abbreviation": "PLOS ONE",
+                    "publisher": "Public Library of Science (PLoS)"
+                },
+                {
+                    "title": "Using PCA and Factor Analysis for dimensionality reduction of Bioinformatics Data",
+                    "authors": [
+                        "Ali",
+                        "Ahmed",
+                        "Ferzund",
+                        "Mehmood",
+                        "Rehman"
+                    ]
+                },
+                {
+                    "title": "Model reduction by PCA and Kriging",
+                    "authors": [
+                        "Aversano",
+                        "Li",
+                        "Gicquel",
+                        "Parente"
+                    ]
+                },
+                {
+                    "title": "Rand corporation research study, Dynamic Programming",
+                    "authors": [
+                        "Bellman"
+                    ],
+                    "publisher": "Princeton University Press"
+                },
+                {
+                    "title": "Fast unfolding of communities in large networks",
+                    "authors": [
+                        "Blondel",
+                        "Guillaume",
+                        "Lambiotte",
+                        "Lefebvre"
+                    ],
+                    "doi": "10.1088/1742-5468/2008/10/p10008",
+                    "journal_abbreviation": "Journal of Statistical Mechanics: Theory and Experiment",
+                    "publisher": "IOP Publishing"
+                },
+                {
+                    "title": "Tensor Networks for Dimensionality Reduction and Large-scale Optimization: Part 1 Low-Rank Tensor Decompositions",
+                    "authors": [
+                        "Cichocki",
+                        "Lee",
+                        "Oseledets",
+                        "Phan",
+                        "Zhao",
+                        "Mandic"
+                    ],
+                    "doi": "10.1561/2200000059",
+                    "journal_abbreviation": "Foundations and Trends® in Machine Learning",
+                    "issn": "1935-8237",
+                    "publisher": "Now Publishers"
+                },
+                {
+                    "title": "Tensor Networks for Dimensionality Reduction and Large-scale Optimization: Part 2 Applications and Future Perspectives",
+                    "authors": [
+                        "Cichocki",
+                        "Lee",
+                        "Oseledets",
+                        "Phan",
+                        "Zhao",
+                        "Sugiyama",
+                        "Mandic"
+                    ],
+                    "doi": "10.1561/2200000067",
+                    "journal_abbreviation": "Foundations and Trends® in Machine Learning",
+                    "issn": "1935-8237",
+                    "publisher": "Now Publishers"
+                },
+                {
+                    "title": "Boosting for tumor classification with gene expression data",
+                    "authors": [
+                        "Dettling",
+                        "Bühlmann"
+                    ],
+                    "doi": "10.1093/bioinformatics/btf867",
+                    "journal_abbreviation": "Bioinformatics",
+                    "issn": "1367-4803",
+                    "publisher": "Oxford University Press (OUP)"
+                },
+                {
+                    "authors": [
+                        "Fabrigar",
+                        "Wegener"
+                    ],
+                    "publisher": "Oxford University Press"
+                },
+                {
+                    "title": "Resolution limit in community detection",
+                    "authors": [
+                        "Fortunato",
+                        "Barthélemy"
+                    ],
+                    "journal_abbreviation": "Proceedings of the National Academy of Sciences"
+                },
+                {
+                    "title": "Learning in high-dimensional multimedia data: the state of the art",
+                    "authors": [
+                        "Gao",
+                        "Song",
+                        "Liu",
+                        "Shao",
+                        "Liu",
+                        "Shao"
+                    ],
+                    "doi": "10.1007/s00530-015-0494-1",
+                    "journal_abbreviation": "Multimedia Systems",
+                    "issn": "0942-4962",
+                    "publisher": "Springer Science and Business Media LLC"
+                },
+                {
+                    "title": "Multivariate data analysis",
+                    "authors": [
+                        "Hair",
+                        "William",
+                        "Barry",
+                        "Rolph"
+                    ],
+                    "publisher": "Prentice Hall"
+                },
+                {
+                    "authors": [
+                        "Jolliffe"
+                    ],
+                    "publisher": "Springer"
+                },
+                {
+                    "title": "PCA consistency in high dimension, low sample size context",
+                    "authors": [
+                        "Jung",
+                        "Marron"
+                    ],
+                    "doi": "10.1214/09-aos709",
+                    "journal_abbreviation": "The Annals of Statistics",
+                    "issn": "0090-5364",
+                    "publisher": "Institute of Mathematical Statistics"
+                },
+                {
+                    "title": "Dimensionality reduction using factor analysis",
+                    "authors": [
+                        "Khosla"
+                    ],
+                    "doi": "10.25904/1912/3890",
+                    "publisher": "Griffith University"
+                },
+                {
+                    "title": "Common Factor Analysis Versus Principal Component Analysis: Choice for Symptom Cluster Research",
+                    "authors": [
+                        "Kim"
+                    ],
+                    "doi": "10.1016/s1976-1317(08)60025-0",
+                    "journal_abbreviation": "Asian Nursing Research",
+                    "issn": "1976-1317",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "Generalized network-based dimensionality analysis and reduction",
+                    "authors": [
+                        "Kosztyán"
+                    ],
+                    "doi": "10.24433/CO.1191558.v1",
+                    "journal_abbreviation": "GNDA"
+                },
+                {
+                    "title": "Network-based dimensionality reduction of high-dimensional, low-sample-size datasets",
+                    "authors": [
+                        "Kosztyán",
+                        "Kurbucz",
+                        "Katona"
+                    ],
+                    "doi": "10.1016/j.knosys.2022.109180",
+                    "journal_abbreviation": "Knowledge-Based Systems",
+                    "issn": "0950-7051",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "A joint dataset of official COVID-19 reports and the governance, trade and competitiveness indicators of World Bank group platforms",
+                    "authors": [
+                        "Kurbucz"
+                    ],
+                    "doi": "10.1016/j.dib.2020.105881",
+                    "journal_abbreviation": "Data in Brief",
+                    "issn": "2352-3409",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "The Role of Societal Aspects in the Formation of Official COVID-19 Reports: A Data-Driven Analysis",
+                    "authors": [
+                        "Kurbucz",
+                        "Katona",
+                        "Lantos",
+                        "Kosztyán"
+                    ],
+                    "doi": "10.3390/ijerph18041505",
+                    "journal_abbreviation": "International Journal of Environmental Research and Public Health",
+                    "publisher": "MDPI AG"
+                },
+                {
+                    "title": "Profile forward regression screening for ultra-high dimensional semiparametric varying coefficient partially linear models",
+                    "authors": [
+                        "Li",
+                        "Li",
+                        "Lian",
+                        "Tong"
+                    ],
+                    "doi": "10.1016/j.jmva.2016.12.006",
+                    "journal_abbreviation": "Journal of Multivariate Analysis",
+                    "issn": "0047-259X",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "Using t-distributed Stochastic Neighbor Embedding (t-SNE) for cluster analysis and spatial zone delineation of groundwater geochemistry data",
+                    "authors": [
+                        "Liu",
+                        "Yang",
+                        "Ye",
+                        "James",
+                        "Tang",
+                        "Dong",
+                        "Xing"
+                    ],
+                    "doi": "10.1016/j.jhydrol.2021.126146",
+                    "journal_abbreviation": "Journal of Hydrology",
+                    "issn": "0022-1694",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "Unsupervised classification of high-dimension and low-sample data with variational autoencoder based dimensionality reduction",
+                    "authors": [
+                        "Mahmud",
+                        "Fu"
+                    ],
+                    "doi": "10.1109/icarm.2019.8834333",
+                    "publisher": "IEEE"
+                },
+                {
+                    "title": "High-Dimensional Limited-Sample Biomedical Data Classification Using Variational Autoencoder",
+                    "authors": [
+                        "Mahmud",
+                        "Fu",
+                        "Huang",
+                        "Masud"
+                    ],
+                    "doi": "10.1007/978-981-13-6661-1_3",
+                    "publisher": "Springer Singapore"
+                },
+                {
+                    "title": "Unsupervised Adaptation for High-Dimensional with Limited-Sample Data Classification Using Variational Autoencoder",
+                    "authors": [
+                        "Mahmud",
+                        "Huang",
+                        "Fu",
+                        "Ruby",
+                        "Wu"
+                    ],
+                    "doi": "10.31577/cai_2021_1_1",
+                    "journal_abbreviation": "Computing and Informatics",
+                    "publisher": "Central Library of the Slovak Academy of Sciences"
+                },
+                {
+                    "title": "Adaptive dimensionality reduction for neural network-based online principal component analysis",
+                    "authors": [
+                        "Migenda",
+                        "Möller",
+                        "Schenck"
+                    ],
+                    "doi": "10.1371/journal.pone.0248896",
+                    "journal_abbreviation": "PLOS ONE",
+                    "publisher": "Public Library of Science (PLoS)"
+                },
+                {
+                    "title": "Clustering by principal component analysis with Gaussian kernel in high-dimension, low-sample-size settings",
+                    "authors": [
+                        "Nakayama",
+                        "Yata",
+                        "Aoshima"
+                    ],
+                    "doi": "10.1016/j.jmva.2021.104779",
+                    "journal_abbreviation": "Journal of Multivariate Analysis",
+                    "issn": "0047-259X",
+                    "publisher": "Elsevier BV"
+                },
+                {
+                    "title": "Modularity and community structure in networks",
+                    "authors": [
+                        "Newman"
+                    ],
+                    "doi": "10.1073/pnas.0601602103",
+                    "journal_abbreviation": "Proceedings of the National Academy of Sciences",
+                    "issn": "0027-8424",
+                    "publisher": "Proceedings of the National Academy of Sciences"
+                },
+                {
+                    "title": "Correlative analysis of the relationships among different yield traits in dry bean",
+                    "authors": [
+                        "Pop",
+                        "Ciulca"
+                    ],
+                    "journal_abbreviation": "Research Journal of Agricultural Science"
+                },
+                {
+                    "title": "A data-driven software tool for enabling cooperative information sharing among police departments",
+                    "authors": [
+                        "Redmond",
+                        "Baveja"
+                    ],
+                    "doi": "10.1016/S0377-2217(01)00264-8",
+                    "journal_abbreviation": "European Journal of Operational Research"
+                },
+                {
+                    "title": "Detecting Fuzzy Community Structures in Complex Networks with a Potts Model",
+                    "authors": [
+                        "Reichardt",
+                        "Bornholdt"
+                    ],
+                    "doi": "10.1103/physrevlett.93.218701",
+                    "journal_abbreviation": "Physical Review Letters",
+                    "issn": "0031-9007",
+                    "publisher": "American Physical Society (APS)"
+                },
+                {
+                    "title": "Statistical mechanics of community detection",
+                    "authors": [
+                        "Reichardt",
+                        "Bornholdt"
+                    ],
+                    "doi": "10.1103/physreve.74.016110",
+                    "journal_abbreviation": "Physical Review E",
+                    "issn": "1539-3755",
+                    "publisher": "American Physical Society (APS)"
+                },
+                {
+                    "title": "psych: Procedures for psychological, psychometric, and personality research",
+                    "authors": [
+                        "Revelle"
+                    ]
+                },
+                {
+                    "title": "Kernel principal component analysis",
+                    "authors": [
+                        "Schölkopf",
+                        "Smola",
+                        "Müller"
+                    ],
+                    "doi": "10.1007/bfb0020217",
+                    "publisher": "Springer Berlin Heidelberg"
+                },
+                {
+                    "title": "Nonlinear Component Analysis as a Kernel Eigenvalue Problem",
+                    "authors": [
+                        "Schölkopf",
+                        "Smola",
+                        "Müller"
+                    ],
+                    "doi": "10.1162/089976698300017467",
+                    "journal_abbreviation": "Neural Computation",
+                    "issn": "0899-7667",
+                    "publisher": "MIT Press - Journals"
+                },
+                {
+                    "title": "BiometricBlender: Ultrahigh dimensional, multiclass synthetic data generator to imitate biometric feature space",
+                    "authors": [
+                        "Stippinger",
+                        "Hanák",
+                        "Kurbucz",
+                        "Hanczár",
+                        "Törteli",
+                        "Somogyvári"
+                    ],
+                    "doi": "10.1016/j.softx.2022.101297",
+                    "journal_abbreviation": "SoftwareX"
+                },
+                {
+                    "title": "The distance correlation t test of independence in high dimension",
+                    "authors": [
+                        "Székely",
+                        "Rizzo"
+                    ],
+                    "doi": "10.1016/j.jmva.2013.02.012",
+                    "journal_abbreviation": "Journal of Multivariate Analysis"
+                },
+                {
+                    "title": "From Louvain to Leiden: guaranteeing well-connected communities",
+                    "authors": [
+                        "Traag",
+                        "Waltman",
+                        "Van Eck"
+                    ],
+                    "doi": "10.1038/s41598-019-41695-z",
+                    "journal_abbreviation": "Scientific Reports",
+                    "publisher": "Springer Science and Business Media LLC"
+                },
+                {
+                    "title": "Dimensionality reduction: A comparative review",
+                    "authors": [
+                        "Van Der Maaten",
+                        "Postma",
+                        "Van Den Herik"
+                    ],
+                    "journal_abbreviation": "Journal of Machine Learning Research"
+                },
+                {
+                    "title": "Determining the number of components from the matrix of partial correlations",
+                    "authors": [
+                        "Velicer"
+                    ],
+                    "doi": "10.1007/bf02293557",
+                    "journal_abbreviation": "Psychometrika",
+                    "issn": "0033-3123",
+                    "publisher": "Springer Science and Business Media LLC"
+                },
+                {
+                    "title": "Construct Explication through Factor or Component Analysis: A Review and Evaluation of Alternative Procedures for Determining the Number of Factors or Components",
+                    "authors": [
+                        "Velicer",
+                        "Eaton",
+                        "Fava"
+                    ],
+                    "doi": "10.1007/978-1-4615-4397-8_3",
+                    "publisher": "Springer US"
+                },
+                {
+                    "title": "Nonnegative Matrix Factorization: A Comprehensive Review",
+                    "authors": [
+                        "Wang",
+                        "Zhang"
+                    ],
+                    "doi": "10.1109/tkde.2012.51",
+                    "journal_abbreviation": "IEEE Transactions on Knowledge and Data Engineering",
+                    "issn": "1041-4347",
+                    "publisher": "Institute of Electrical and Electronics Engineers (IEEE)"
+                },
+                {
+                    "title": "Sparse PCA: Convex relaxations, algorithms and applications",
+                    "authors": [
+                        "Zhang",
+                        "Aspremont",
+                        "El Ghaoui"
+                    ],
+                    "doi": "10.1109/TKDE.2012.51",
+                    "publisher": "Springer"
+                },
+                {
+                    "title": "Discriminative elasticnet regularized linear regression",
+                    "authors": [
+                        "Zhang",
+                        "Lai",
+                        "Xu",
+                        "Shao",
+                        "Wu",
+                        "Xie"
+                    ],
+                    "journal_abbreviation": "IEEE Transactions on Image Processing"
+                }
+            ]
+        }
+    }
+}

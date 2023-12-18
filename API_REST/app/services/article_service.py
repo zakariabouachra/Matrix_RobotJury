@@ -53,3 +53,22 @@ class ArticleService:
             """, (str(random_number),))
             if exists[0] == 0:
                 return str(random_number)
+            
+    def supprimer_article(self, article_id):
+        try:
+            self.db_service.execute_query("""
+                DELETE FROM ARTICLE_SCIENTIFIQUE WHERE ID = %s;
+            """, (article_id,))
+            self.db_service.commit()
+ 
+            self.db_service.execute_query("""
+                DELETE FROM ARTICLE_AUTOR_RELATION WHERE ARTICLE_ID = %s;
+            """, (article_id,))
+            self.db_service.commit()
+ 
+            self.db_service.execute_query("""
+                DELETE FROM USER_ARTICLE WHERE IDARTICLE = %s;
+            """, (article_id,))
+            self.db_service.commit()
+        except Exception as e:
+            raise Exception(f"Erreur lors de la suppression de l'article {article_id}: {str(e)}")

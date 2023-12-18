@@ -1,0 +1,1524 @@
+{
+    "Langue": "en",
+    "Titre principale": "Implementation of variance reduction techniques applied to the pricing of investment certificates",
+    "Publie par": {
+        "publisher": null
+    },
+    "Information": {
+        "issn": null,
+        "eissn": null,
+        "publisher": null,
+        "volume": null,
+        "issue": null,
+        "page": null,
+        "date de publication": null,
+        "DOI": null,
+        "Note": "Article submitted to double-blind peer review, received on 11 th January 2023 and accepted on 18 th April 2023"
+    },
+    "Auteurs": {
+        "Auteur 1": {
+            "ORCID": null,
+            "prenom": "Anna",
+            "nom": "Bottasso"
+        },
+        "Auteur 2": {
+            "ORCID": null,
+            "prenom": "Michelangelo",
+            "nom": "Fusaro"
+        },
+        "Auteur 3": {
+            "ORCID": null,
+            "prenom": "Giuseppe",
+            "nom": "Pier"
+        },
+        "Auteur 4": {
+            "ORCID": null,
+            "prenom": "Alessio",
+            "nom": "Giribone"
+        },
+        "Auteur 5": {
+            "ORCID": null,
+            "prenom": null,
+            "nom": "Tissone"
+        }
+    },
+    "Keywords": [
+        "Hypercube",
+        "Stratified Sampling",
+        "Antithetic Variables",
+        "Importance Sampling",
+        "Moment Matching and Control Variates Certificate pricing",
+        "Stochastic Differential Equation",
+        "Variance Reduction Techniques",
+        "Latin Hypercube",
+        "Stratified Sampling",
+        "Antithetic Variables",
+        "Importance Sampling",
+        "Moment Matching",
+        "Control Variates",
+        "Randomized Quasi Monte Carlo -G17-C53-C63"
+    ],
+    "Abstract": "Certificates are structured financial instruments that aim to provide investors with investment solutions tailored to their needs.\nCertificates can be modeled using a bond component and a derivative component, typically an options strategy.\nThe pricing of certificates is typically performed using the Monte Carlo numerical methodology.\nSuch method allows for projections of the underlying using series of random numbers.\nThe results obtained display an error (standard deviation) that depends on the number of simulations used and on the specific characteristics of the structured product.\nThis work has the objective of minimizing the experimental error, and, consequently, of accelerating the speed of convergence using statistical techniques known in the literature as variance reduction methods.\nThe most popular stochastic dynamics have been analyzed, like the classical Black and Scholes model, the Local Volatility model and the Heston model.\nThree certificates are analyzed in the paper and they are characterized by different payoffs.\nThe variance reduction techniques, implemented in different programming languages (Python, Matlab and R), are: Latin",
+    "Structure": {
+        "Introduction": [],
+        "Conclusion": [],
+        "Other": [
+            {
+                "title": [
+                    "1) Introduction"
+                ],
+                "text": [
+                    "This introductory section aims to highlight the innovative nature of the application of variance reduction techniques to instruments of a hybrid nature, such as investment certificates, through a literature review.",
+                    "The implementation of this category of statistical techniques especially connected with the Monte Carlo method is certainly not new in quantitative finance.",
+                    "Indeed, these approaches are considered important as they are able to improve the performance of a numerical scheme that allows the integration of a stochastic differential equation aimed at solving problems connected with the determination of the fair value and the estimation of the related sensitivity measures (typically the Greeks).",
+                    "Most studies concentrate on the quantitative analysis of the most common path-dependent exotic options: Asian, barrier and lookback ",
+                    "In particular, focusing on options whose pay-off depends on the average of the underlying values assumed during the life of the derivative, i.e.",
+                    "Asian-type options, several studies apply the variance reduction techniques to different types of stochastic processes always aimed at valuating the derivative.",
+                    "By way of example, Zhao, Liu and Gu (2013) implement the Importance Sampling technique for an Asian call option based on the arithmetic mean by adopting a traditional Geometric Brownian Motion to simulate the forward projections of the spot level.",
+                    "As highlighted by ",
+                    "Indeed, the Importance Sampling technique has been used for pricing Asian options whose pay-off was grounded both on the geometric and arithmetic mean of the underlying, together with a more complex stochastic dynamics used for modeling the prospective values of the underlying based on a stochastic process dedicated to describing the dynamics assumed by variance ",
+                    "Dingeç, Sak and Hörmann (2014) instead proposed a Control Variates approach applied to a conditional Monte Carlo and showed its efficiency with a huge number of different stochastic processes implemented for the projection.",
+                    "However, not only first generation Asian options have been considered in the previous literature; for example ",
+                    "Barrier options have been studied in detail by ",
+                    "Another widespread application of variance reduction techniques is related to the pricing of American options, i.e. derivatives with an early exercise feature.",
+                    "For example, Boire, Reesor and Stentoft (2021a-b) have experimented an extremely efficient usage of Antithetical Variables, Control Variates and Importance Sampling to this end.",
+                    "Moreover, ",
+                    "Finally, ",
+                    "Within the different types of regressive methods that can be combined with the Longstaff and Schwartz approach, machine learning was also taken into consideration by Goudenège, Molent and Zanette (2021) that show how Control Variates can also be applied in this statistical context.",
+                    "The literature also includes interesting examples of application of variance reduction techniques for the estimation of the main risk measures of financial portfolios, like Value-at-Risk ",
+                    "To the best of our knowledge, scientific studies that apply variance reduction techniques to certificates are practically absent so that this work can be considered original from this perspective.",
+                    "Moreover, this study can be of great practical value for the Italian financial industry.",
+                    "To better understand its practical importance, in Section 2 we analyze the Italian market of certificates on the basis of the statistics compiled on a quarterly basis by ACEPI, the Italian Association of Certificates and Investment Products and we review the most widespread investment certificates, the different product features and trading venues.",
+                    "In the following sections we discuss the application of variance reduction techniques to the quantitative analysis of such financial instruments.",
+                    "A \"bottom-up\" discussion is proposed where we start from discussing the problem that need to be solved (description of the product to be analyzed) and then we deal with the pricing model which is usually adopted by financial market participants (i.e. the as-is solution for the problem).",
+                    "We present the best practice for estimating the fair value of the observed financial instrument and we proceed to implement the statistical methods which allow an increase in the convergence performance in terms of dispersion respect to the expected value (i.e.",
+                    "improvement of the current solution).",
+                    "This methodological approach is adopted for the analysis of three different structured products that display increasing levels of difficulty in their pricing.",
+                    "Section 3 provides a comprehensive quantitative analysis for \"Banca Ponti Certificate Protection Cap Euro Stoxx 50 25/12/2026\" (ISIN: IT0005468142).",
+                    "The pricing of this structured product is relatively simple, since the optional component can be modeled as a long position in a bull call spread at maturity, thus the theoretical quotation was tackled with a traditional Black-Scholes pricing framework.",
+                    "The choice of this dynamic is motivated by the fact that the pay-off can be replicated with a short and a long position of a call option written on the underlying index and an expiration date equal to the maturity date of the certificate.",
+                    "Therefore an analyst can trade the two vanilla options separately on the financial markets, typically making use of a closed-formula valuation model (for example, a standard pricing module such as Bloomberg® OVME).",
+                    "The possibility of replicating the Monte Carlo method with a closed formula derived by the analytical resolution of the fundamental Black-Scholes-Merton PDE, allows to check the correct theoretical convergence to the fair-value of the implemented techniques.",
+                    "This validation improves the confidence of correctly pricing more complex certificates that cannot be priced using an analytical closed-form approach.",
+                    "Section 4 deals with the \"Banca Ponti Certificate Protection Cap on FTSE MIB 08/03/2027\" (ISIN: IT0005481442).",
+                    "Unlike the previous product, in this case, the option component consists in a strip of conditional amounts with the so-called memory effect, while the invested capital is fully protected.",
+                    "One of the reference pricing techniques for this category of certificates is the Local Volatility model and the pricing problem cannot be analytically handled in closed form due to the memory effect.",
+                    "We therefore proceed to verify which variance reduction techniques are best suited to improve the performance of this Monte Carlo simulator.",
+                    "The last section considers another feature which is quite common in certificates, namely the \"autocallability\".",
+                    "The analyzed product is the \"Phoenix reverse convertible linked to the FTSEMIB Index\" issued by JP Morgan (ISIN: XS2168930340).",
+                    "In this case the reference market model for the valuation is the Heston model.",
+                    "As in the previous cases, the pricing of the instrument is presented using a standard Monte Carlo method (known in jargon as \"Crude Monte Carlo\"); then the analysis shows that the performance can be optimized thanks to the code of a Randomized Monte Carlo.",
+                    "In order not to burden the discussion, the working principles of the variance reduction techniques implemented in the paper are briefly reported in the appendix: Antithetic Variables (A.1), Stratified Sampling (A.2), Latin Hypercube (A.3),",
+                    "Control Variates (A.4), Moment Matching (A.5), Importance Sampling (A.6) and Randomized Quasi-Monte Carlo (A.7)."
+                ],
+                "references": [
+                    "(Avramidis and L'Ecuyer, 2006)",
+                    "Moretto, Pasquali and Trivellato (2017)",
+                    "(Fouque and Han, 2004",
+                    "Giribone and Ligato (2013)",
+                    "Hieber and Scherer (2010)",
+                    "Zhang (2020)",
+                    "Lemieux (1999)",
+                    "Lemieux and La (2005)",
+                    "Longstaff and Schwartz (2001)",
+                    "Areal, Rodrigues and Armada (2008)",
+                    "(Glasserman, Heidelberger and Shahabuddin, 2000)",
+                    "(Hsieh et al., 2019)"
+                ]
+            },
+            {
+                "title": [
+                    "2) An overview of investment certificates and the Italian market"
+                ],
+                "text": [
+                    "Investment certificates are financial instruments with different risk/return profiles that allow for the identification of financial solutions aligned with the needs of the investor (ACEPI, 2022).",
+                    "Certificates are securitized derivatives, essentially a combination of financial contracts incorporated in a security, negotiable in the same way as a share.",
+                    "They are usually issued by bank issuers in the form of notes (i.e., short-term bonds) and they are subject to issuer risk, a risk associated with the default of the obligations of the issuer in relation to the product, consistently with the contents of the prospectus.Certificates have a significant derivative component; therefore, their value is connected to the performance of an underlying, which can be a share, an index or a basket of them ",
+                    "The types of certificates differ according to:",
+                    "-Directionality of the underlying (there may be an exposure to the downside or upside of the asset).",
+                    "-Distribution of payment flows during the life of the financial instrument (additional amounts).",
+                    "-Possibility of early repayment with payment of a premium to the investor (Autocallable).",
+                    "-Capital protection which can be total, partial or conditional.",
+                    "-Repayment at maturity.",
+                    "By accessing this type of investment, the investor renounces the dividends distributed by the underlying in order to benefit from the conditions defined in the derivative contract.",
+                    "Specifically, there are three macro types of certificates: Investments Certificates (for investment purposes), Leverage Certificates (for trading or risk hedging purposes) and finally Credit Linked Notes.",
+                    "There are also three sub-categories of Investment Certificates which are: Protected Capital, Conditionally Protected Capital and Unprotected Capital (ACEPI, 2022).",
+                    "The protected capital certificates can be divided into:",
+                    "-Equity protection: they can be long (i.e. the holder makes a profit if the underlying goes up) or short (i.e. the holder makes a profit if the underlying goes down) to be able to participate in the increases or decreases in the price of the underlying.",
+                    "However they protect the issue price or a percentage of it, at maturity.",
+                    "-Digital: they allow for additional earnings if, on the observation dates, the underlying quotation is higher or lower than the initial quotation.",
+                    "Conditionally protected capital certificates can be classified into:",
+                    "-Bonus: they allow to participate in increases and decreases in the price of the underlying, also providing an additional income when certain conditions occur.",
+                    "-Express: they can be subject to early maturity /reimbursement at issue price plus a premium, if the price of the underlying is greater than or equal to an initially pre-set level on the observation dates (this type is also called Autocallable).",
+                    "-Twin win: there is a barrier level beyond which the capital is no longer protected.",
+                    "These instruments offer the possibility of a positive return both in the event of a rise and a slight fall in the underlying.",
+                    "-Credit linked: they allow to obtain recurring bonuses conditional on the \"non-default\" status of one or more reference entities.",
+                    "-Accelerator: they allow to participate in the increase or decrease of the performance of the underlying in a more than proportional way.",
+                    "In case of loss there is usually an \"Airbag\" factor.",
+                    "The Airbag is a factor (ratio between the final and initial value of the underlying) which is multiplied by the price at maturity (in the event that the underlying is below the floor barrier at maturity).",
+                    "-Premium Certificate: they pay certain and fixed premiums during the life of the instrument regardless of the performance of the underlying and a premium at maturity conditional to the performance of the underlying.",
+                    "However, there is a barrier level beyond which the capital is no longer protected.",
+                    "-Cash Collect: they have the peculiarity of distributing fixed premiums and conditional additional premiums, according to the performance of the underlying.",
+                    "Certificates with unprotected capital, on the other hand, do not have sub-categories but have specific characteristics, they replicate the performance of the benchmark and can have more or less proportional fluctuations.",
+                    "The graphs in Figures ",
+                    "Certificates can be traded on regulated markets, such as SeDex (Securities Derivative Exchange or Electronic Securitized Derivatives Market) or EuroTLX.",
+                    "This allows the instrument to be reasonably liquid and consequently to have systematic purchase and sale offers entered by an authorized operator.",
+                    "The SeDex market is the market managed by Borsa Italiana on which Covered Warrants and Certificates are traded.",
+                    "As reported on the official Borsa Italiana website (borsaitaliana.it)",
+                    "this market is segmented as follows:",
+                    "-\"plain vanilla covered warrant segment\" (covered warrants consisting of a call or a put option).",
+                    "-\"structured/exotic covered warrant segment\" (covered warrants which are combinations of call and/or put options or which incorporate exotic options).",
+                    "-\"leverage certificates segment\" (certificates that replicate the performance of the underlying asset, with a leverage effect).",
+                    "-\"investment certificates segment\" (certificates which replicate the performance of the underlying asset without leverage effect, or which replicate the performance of the underlying asset and also include one or more ancillary structured or exotic options).",
+                    "This market was created in 2004 as a segment dedicated to the negotiation of Certificates and Covered Warrants which are overall defined as securitized derivatives.",
+                    "The first covered warrant was listed on the stock market in 1998.",
+                    "The success of these instruments soon led to the listing of several thousand instruments and the creation of the Covered Warrant Market (MCW).",
+                    "Since the early years, alongside the covered warrants, the first certificates have also started to be traded.",
+                    "Over the years, the number of certificates and the related traded volumes have progressively been growing, as the variety of types listed.",
+                    "For this reason, in 2004 Borsa Italiana replaced the MCW market with SeDeX.",
+                    "The opening hours of this market go from 9:05 am to 5:30 pm, Monday to Friday."
+                ],
+                "references": [
+                    "(Oliveri, 2018)",
+                    "1",
+                    "2"
+                ]
+            },
+            {
+                "title": [
+                    "Investment Certificates traded on the SeDeX market segment of Borsa Italiana belong to two classes:"
+                ],
+                "text": [
+                    "-Class A: they linearly replicate the performance of the underlying (so-called benchmark certificates).",
+                    "-Class B: they replicate the performance of the underlying and include one or more structured options to provide further benefits (for example, total or partial capital protection with Protection Certificates).",
+                    "For the purposes of admission to the SeDex market, the issuer must provide the following reports as indicated in the official regulation provided by Borsa Italiana:",
+                    "-a prospectus approved by the competent authority in accordance with the Prospectus legislation.",
+                    "-a base prospectus approved by the competent authority in accordance with the Prospectus legislation, supplemented by the final terms.",
+                    "-a registration document accompanied by the securities note on the financial instruments approved by the competent authority in compliance with the Prospectus legislation or, alternatively, accompanied by the KID required by Regulation 2014/1286.",
+                    "-an admission document containing the information referred to attachments 6 or 7 and 14 or 15 of the EU Delegated Regulation 2019/980.",
+                    "In any case, this information must be sufficient to allow investors to make an informed investment decision on the financial instruments and it must contain any other information that Borsa Italiana may request to facilitate the orderly conduct of trading.",
+                    "The focus on this type of financial instrument is due to the fact that, in a context of very low interest rates and low returns, investors are looking for a solution that can provide a suitable return and a protection from strong market fluctuations.",
+                    "In particular, we will analyze certificates that provide investors with total protection or partial, but still high, protection.",
+                    "The first certificate, for example, has a protection of 90% (section 3) of the amount initially invested while the second has total protection i.e., 100% (section 4).",
+                    "In addition to the level of protection, investors can obtain additional amounts, conditional or not, depending on the specific characteristics of the product (section 5).",
+                    "We believe one of the main contributions of this study is the application of variance reduction techniques to the pricing of investment certificates as these techniques are typically only applied to individual options."
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "3) Analysis of the certificate -Banca Ponti Certificate Protection Cap Euro Stoxx 50 28/12/2026"
+                ],
+                "text": [
+                    "The 90% protected certificate with a 115% cap is a partially protected capital \"Investment Certificate\" (ISIN: IT0005468142).",
+                    "This type of certificate allows the investor to protect his capital up to 90% therefore in the worst case he will obtain 90% of the invested capital at maturity.",
+                    "Conversely, if the underlying outperforms, the customer will receive up to a maximum of 115% of the initial investment (this is due to the presence of the cap).",
+                    "In addition to the capital at maturity, conditional to the performance of the underlying, the certificate distributes an unconditional additional payment of 1.5% of the nominal value on pre-established dates.",
+                    "The valuation of the certificate is done on 31/03/2022, the issue date was 20/12/2021 while the expiry date is 28/12/2026.",
+                    "Table ",
+                    "This financial product (as well as the subsequent case studies), can only be offered to a retail customer which has the following characteristics:",
+                    "-Experience and knowledge of financial markets.",
+                    "-Ability to bear capital losses.",
+                    "-A high risk tolerance (equal to or higher than the risk indicator).",
+                    "-Time horizon of the investment, at least medium term.",
+                    "The payment dates of the unconditional amount are fixed in advance and indicated in Table ",
+                    "The minimum amount for buying this certificate is 1,000 euros and such minimum amount represents one unit.",
+                    "The underlying index on which the performance of the certificate is conditioned is the EURO STOXX 50 (which represents the stock index including the 50 major Eurozone companies in the main industrial sectors).",
+                    "The strike price of the index, i.e., the 100% threshold, is set on 17/12/2021.",
+                    "The costs incurred, useful for pricing the instrument, are: 2.50% for placement commissions and 1.5% for structuring costs.",
+                    "The following section highlights the pricing method (Monte Carlo technique) and subsequently the payoff, the Greeks and the variance reduction techniques will be analyzed.",
+                    "Table "
+                ],
+                "references": [
+                    "1",
+                    "1",
+                    "1"
+                ]
+            },
+            {
+                "title": [
+                    "3.1) The Monte Carlo methodology and the Black-Scholes-Merton pricing framework"
+                ],
+                "text": [
+                    "The value of a derivative, being closely linked to the performance of the underlying financial asset (), depends on the possible trajectories that it will take in the future ",
+                    "One of the most widespread stochastic processes for this purpose is the Geometric Brownian Motion, which, consistently with the Black-Scholes-Merton pricing framework, is represented by the following Stochastic Differential Equation (SDE): Where:",
+                    " = annualized expected return earned by an investor over the time period .",
+                    "In the pricing of options on equity or stock indexes it is usually set as:  -, where  is the risk-free rate and  is the continuous dividend yield of the underlying.",
+                    " = the annualized volatility of the asset.",
+                    "When vanilla option prices are available, the implicit volatility is usually used, otherwise a historical estimate is made.",
+                    "  = Wiener stochastic process.",
+                    "The SDE can be numerically integrated through the Euler-Maruyama scheme and therefore implemented using a numerical processing software (in this study three languages are mostly used: Python, Matlab and R):",
+                    "where  represents an extraction from a standard normal distribution and ∆ the discretization interval ",
+                    "A Wiener process is a particular type of stochastic Markov process, used to model the Brownian motion of various random phenomena.",
+                    "Formally, () follows a Wiener process if it satisfies the following properties:",
+                    "-",
+                    "-random variable ( 2 ) -( 1 ), with 0 ≤  1 ≤  2 is normally distributed with zero mean and standard deviation  2 - 1 and -random variables ( 2 ) -( 1 ) and ( 4 ) -( 3 ) with  1 <  2 <  3 <  4 are independent random variables.",
+                    "In our paper, the Monte Carlo engine is used with simulation brackets that correspond to a letter: A indicates a thousand simulations, B represents ten thousand simulations, C stands for a hundred thousand simulations and finally D stands for a million.",
+                    "For each number of simulations indicated, 200 replications are made in order to extrapolate the great mean, which corresponds to the fair value of the structured product, the standard deviation (used as a measure of precision and for comparison purposes related to the improvement hopefully introduced by the variance reduction techniques) and the computing time (useful for understanding the \"cost\" in computational terms of increasing the number of simulations or the methodology).",
+                    "For pricing purposes, the certificate can be broken down into two parts: the former concerns the flows of unconditional additional amounts and the latter regards the options strategy at maturity (bull call spread).",
+                    "The calculation of the unconditional amounts was implemented discounting the future additional amounts, while the call-spread value at maturity was estimated simulating the value of the underlying using the Monte Carlo engine ",
+                    "Assuming that the notional is equal to 1,000 (minimum amount that can be purchased), the three different cases at maturity are analyzed:",
+                    "-If the simulated underlying is less than 90% of the strike price at maturity, then the certificate will pay 900.",
+                    "The exercise price is the initial reference value of the index, on 17/12/2021, equal to EUR 4,161.35.",
+                    "-If the simulated underlying is between 90% and 115% of the strike, then it will pay the corresponding value between EUR 900 and EUR 1,150.",
+                    "-Finally, if the underlying is greater than 115% of the strike price, then the final redemption will be EUR 1,150.",
+                    "Once the two components have been obtained, they are added together.",
+                    "The prices obtained on the valuation date 31/03/2022 using Bloomberg® market data are shown in Table "
+                ],
+                "references": [
+                    "(Hunt & Kennedy, 2001)",
+                    "(Kloeden & Platen, 1992)",
+                    "(Boyle, 1977)",
+                    "2"
+                ]
+            },
+            {
+                "title": [
+                    "Table 2: Pricing of certificate IT0005468142 with Crude Monte Carlo technique"
+                ],
+                "text": [
+                    "The values obtained are in line with the market quotation observed on the Sedex on 31/03/2022 (923.75 -Source: Borsaitaliana.it) and also with the fair value of the hedge estimated using the traditional Black-Scholes-Merton closed formula for the long position in the call with the lower strike price and for the short position in the call with the higher strike price ",
+                    "In order to complete the analysis, the price sensitivity measures were calculated with respect to the main inputs of the valuation model (Tables ",
+                    "The stochastic process of the variables underlying a derivative is replicated implementing a huge number of simulations in order to estimate the value of the financial instrument with a certain level of accuracy.",
+                    "The greater the number of simulations, the greater the accuracy accompanied by a significant increase in computing time.",
+                    "In this context, the variance reduction techniques can be used to improve the accuracy of the Monte Carlo engine results and to also save on computing time ",
+                    "The most popular techniques in the literature are: Antithetic Variables, Stratified Sampling, Latin Hypercube, Control Variates, Moment Matching and Importance Sampling ",
+                    "A short summary of their working principles can be found in the Appendix."
+                ],
+                "references": [
+                    "(Black & Scholes, 1973)",
+                    "3",
+                    "(Giribone & Ligato, 2013)",
+                    "(Botev & Ridder, 2017)"
+                ]
+            },
+            {
+                "title": [
+                    "3.2) Implementation of variance reduction techniques in the first certificate"
+                ],
+                "text": [
+                    "This section shows the results of the variance reduction techniques applied to the first certificate (ISIN:IT0005468142).",
+                    "In addition to the tables displaying the results, the graphs are also shown in order to illustrate that the Monte Carlo engine reaches convergence at the theoretical price of the Black and Scholes closed formula in a different way between the Crude Monte Carlo and the one improved by the various reduction techniques implemented.",
+                    "All tables showing reduction techniques results display a reduction in standard deviation.",
+                    "In particular, for the first certificate, the technique that largely outperforms is the Latin Hypercube Sampling."
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "Tables: First Certificate, Variance Reduction Techniques"
+                ],
+                "text": [
+                    "It is also clear from the tables that there is an inverse relation between the computational time and the reduction: the designer has to find the optimal trade-off between these two quantities.",
+                    "In our study, the increase in the implementation times using the variance reduction techniques is more than compensated by the significant reduction of the standard deviation.",
+                    "The graphs for the variance reduction techniques are shown below (Figure "
+                ],
+                "references": [
+                    "3"
+                ]
+            },
+            {
+                "title": [
+                    "Table 10: Protected Capital Certificate on FTSEMIB (from the KID) -Source: Banca Cesare Ponti (Gruppo BPER)"
+                ],
+                "text": [
+                    "The valuation model used is the local volatility model, proposed in 1994 by Dupire for the continuous case ",
+                    "Initially, it is necessary to define the concept of implied volatility, which corresponds to the expectation of the market for the volatility of the underlying stock in the future.",
+                    "Implied volatility is one of six inputs used in the Black and Scholes option pricing model, but it cannot be directly observed in the market ",
+                    "The standard method to determine it, knowing the option price and the other five parameters (Spot, Strike, Dividend Yield, Time to Maturity and interest rate), is to solve the equation of the Black and Scholes model for the unknown parameter (i.e., the implied volatility).",
+                    "The important observation is that the \"volatility smile\" should never occur based on the Black and Scholes theory, as it theoretically assumes a completely flat volatility curve.",
+                    "The first case that drew attention to the volatility smile was the stock market crash that occurred in 1987.",
+                    "The reason for the need to move to a more sophisticated model lies precisely in that historical event, in fact Derman describe this model change as follows: \"After the crash, and ever since, equity index option markets have displayed a volatility smile, an anomaly in blatant disagreement with the Black-Scholes-Merton model.",
+                    "Since then, quants around the world have labored to extend the model to accommodate this anomaly\" ",
+                    "Essentially, the authors showed that new models have been developed from that anomaly, and that quants aim to move from the Black-Scholes-Merton model to more complex models that better describe the trend and reality of the market.",
+                    "The Local Volatility model implements a different Geometric Brownian Motion, since in this case volatility will depend on time and on the performance of the underlying in a time-varying way.",
+                    "In order to take into consideration the Local volatility model, starting from the standard Geometric Brownian Motion, see Eq (1), we have to set the volatility in function of the   and .",
+                    "Consequently the new dynamics can be represented by the following Stochastic Differential Equation:",
+                    "  = ( -)   + (  , )    ",
+                    "The",
+                    "With:",
+                    "Where   is the function of the implied volatility estimated from the numerical inversion of the Black-Scholes-Merton pricing formula starting from the market quoted prices.",
+                    "The implied volatility surface used to calculate the Local Volatility of this certificate is that of the FTSEMIB index (Source: Bloomberg®).",
+                    "Contrary to the previous case, due to the path dependency given by the memory effect of the coupon strip, closed formulas cannot be used for the pricing of digital options ",
+                    "Given that no closed-formulas exist for pricing this optionality, the numerical methodology of the Monte Carlo engine with local volatility can be implemented for the pricing, also applying the variance reduction techniques.",
+                    "Specifically, the techniques used are: Antithetic Variables (AV), Latin Hypercube Sampling (LHS), Moment Matching (MM) and finally Stratified Sampling (SS).",
+                    "The table below displays values on the customer side: In this case, the approach that did not impact so much is the Moment Matching, which failed to meet the expectations of a significative improvement measured in terms of standard deviation reduction (see Table ",
+                    "The graphs of the pricing convergence of the financial instrument are also shown, using the same graphic conventions used in the previous certificate."
+                ],
+                "references": [
+                    "(Dupire, 1994)",
+                    "(Haug, 2007)",
+                    "(Itkin, 2020)",
+                    "(5)",
+                    "(Dupire, 1998)",
+                    "(Giribone & Revetria, 2021)",
+                    "11"
+                ]
+            },
+            {
+                "title": [
+                    "5) Analysis of the certificate -Phoenix Reverse Convertible Linked to the FTSEMIB Index"
+                ],
+                "text": [
+                    "The Phoenix Reverse Convertible linked to the FTSEMIB certificate is a structured certificate from JP Morgan.",
+                    "The certificate is characterized by the payment of conditional additional amounts and also by the payment of an amount in the event of early termination.",
+                    "The timing and amount of such payments will depend on the performance of the underlying.",
+                    "The financial product has in any case a fixed maturity and will terminate on the maturity date.",
+                    "The certificate has a barrier option at 70%.",
+                    "This implies that if the price of the underlying falls below the barrier level at maturity, the product will pay an amount lower than the nominal amount, which could theoretically, in the most extreme case, be equal to zero.",
+                    "On the coupon payment dates the investor will receive the coupon rate of 3.55% to be multiplied by the notional, if the reference level of the underlying is equal to or higher than the coupon barrier level (equal to 70% of the initial reference).",
+                    "If this condition is not met, the investor will not receive any Coupon Payment on that Payment Date.",
+                    "The reference dates for the coupon payments are shown in Table ",
+                    "Table ",
+                    "Source: JP Morgan On the maturity date, the investor will receive:",
+                    "-in the event that the final reference level is equal to or higher than the barrier level, a final payment equal to the nominal value.",
+                    "-in case the price level is below the barrier level, the amount of the final payment will be directly linked to the performance of the underlying.",
+                    "The amount of such final payment will be equal to the notional amount multiplied by the final reference level divided by the exercise level.",
+                    "The certificate also has a peculiar feature, i.e. the possibility of being redeemed before maturity.",
+                    "This feature is \"mentioned\" in the name of the certificate, since the \"Phoenix\" type indicates the autocallability by the issuer, as well as the fact that the coupons can be cumulated.",
+                    "In the event that the underlying, on the coupon observation dates indicated above, is higher than the initial reference value, observed at the issue of the certificate, then the early termination is triggered and the investor will receive a final payment of 100% of the nominal value, plus the corresponding coupon.",
+                    "This peculiarity implies that a different model has to be used for calculating the volatility: the Heston Volatility Model, which will be described in the next sub-section.",
+                    "The characteristics of the structured product described previously are shown in"
+                ],
+                "references": [
+                    "12",
+                    "12"
+                ]
+            },
+            {
+                "title": [
+                    "5.1) Heston stochastic volatility model"
+                ],
+                "text": [
+                    "Volatility is a difficult parameter to measure, as it is constantly changing and it becomes natural to consider the use of a stochastic model intended to model this particular parameter ",
+                    "The most popular method for modeling stochastic volatility certificates characterized by a highly non-linear pay-off is the Heston Volatility Model ",
+                    "The proposed model is the following:",
+                    "  = ( -  ) + √    2 (9)",
+                    "Where   and   are the price and its variance respectively, while   1   2 are correlated Wiener processes with correlation parameter .",
+                    "Moreover,  is the long-term mean of variance,  is the rate of adjustment of the long-term mean,  is the volatility of volatility and  is the correlation parameter.",
+                    "The parameter  can be considered as the correlation between the log-returns and the volatility of the asset and it impacts the asymmetric width of the tails.",
+                    "Intuitively if  is greater than zero then volatility will increase, as will the price of the underlying asset.",
+                    "In this case, the right tail will increase while the left tail will decrease, creating a distribution with a \"fat\" right tail.",
+                    "Conversely, if the correlation parameter is less than zero then volatility will increase, while the value of the asset decreases, which produces an effect on the distribution leading to a \"fat\" left tail.",
+                    "The parameter  impacts the kurtosis (which indicates the \"fatness\" of the tails) of the returns; when it is equal to zero, the variance  is deterministic, and the log-returns are distributed according to a normal.",
+                    "Increasing the sigma will result in an increase in kurtosis, which will lead to greater heaviness in the tails on both sides, consequently the volatility surface will have a more accentuated smile (meaning that the market has higher probability of having extreme movements).",
+                    "This insertion made in Heston's model allows the distribution to be adapted to the one observed on the market, approximating not only the first two moments (mean and variance) but also the third and the fourth (skewness and kurtosis).",
+                    "These adjustment factors allow this model to be better than others, in terms of predictive capabilities and consequently able to provide a better estimation of the instrument sensitivities in relation to a structured product characterized by the autocallability feature, like the Phoenix Reverse Convertible ",
+                    "The parameters are calculated starting from the implied volatility surface of the underlying index (in this case, the FTSEMIB index)."
+                ],
+                "references": [
+                    "(Rouah, 2013)",
+                    "(Heston, 1993)",
+                    "(Hansson, 2012)"
+                ]
+            },
+            {
+                "title": [
+                    "5.2) Estimation of the parameters of the Heston model"
+                ],
+                "text": [
+                    "The Heston model implies that the price trend and volatility of a security follow certain laws according to 5 parameters:   , , , , .",
+                    "These parameters cannot be directly observed on the market therefore they must be calibrated in order to enter them into the Monte Carlo pricing engine.",
+                    "For the calibration, we start from the implied volatility surface of the FTSEMIB and take the volatilities of the options traded on the market, then all the parameters are estimated together using a least squares minimization ",
+                    "It is also possible to assign weights, for example, giving importance to the volatilities deriving from the most traded options on the market (the most liquid ones).",
+                    "Such implied surface has strikes ranging from 80% to 120% in terms of moneyness while the maturities range from 1 month to 7 years.",
+                    "The calibration is presented as a five-dimension minimization problem where we try to minimize the least squares of the differences between the volatilities obtained from the model and those observed on the market.",
+                    "Therefore, defining the implied volatility of an option as (  ), the problem is as follows:",
+                    "min ∑ ((  The two techniques that performed best for this certificate, in terms of standard deviation and in terms of computing time were Halton and Sobol.",
+                    "On the other hand, the Monte Carlo engine implemented with the Broadie-Kaya scheme has brought a huge increase in the computing time despite a good reduction of the standard deviation and an expected value slightly higher compared to the other methodologies.",
+                    "For the Broadie-Kaya method, only cases with 1,000 and 10,000 simulations have been reported due to the high computing time and the negligible improvement in standard deviation compared to the other techniques.",
+                    "For the last certificate, the Randomized Sobol performed better than the other reduction techniques, i.e. the Randomized Halton and the Broadie-Kaya.",
+                    "In the last case we analyzed, we also achieved a reduction in the standard deviation."
+                ],
+                "references": [
+                    "(Mrázek & Pospíšil, 2017)"
+                ]
+            },
+            {
+                "title": [
+                    "6) Conclusions"
+                ],
+                "text": [
+                    "The purpose of this paper is to study and implement variance reduction techniques for structured and complex products such as investment certificates.",
+                    "These techniques are usually applied to single options and their application to certificates represents an innovative approach that has never been reported in the previous literature.",
+                    "Indeed, the market for these financial instruments has grown considerably in recent years, as highlighted in the first part of the paper, so that our analysis takes on particular relevance.",
+                    "Three pricing models have been used: the first is the traditional Black and Scholes model, the second is the Local Volatility model and lastly the Heston model.",
+                    "Each model has been associated with a specific certificate, each of them being characterized by a different payoff.",
+                    "The pricing and the volatility model analysis have been performed with three different programming languages: Python, Matlab and R. The market data have been provided by the info-provider Bloomberg®, one of the most widely used infoproviders in the global financial sector.",
+                    "The certificates payoffs have been replicated analyzing their Termsheets and verifying that the estimated theoretical price reflects the market price or it was calculated independently using the Bloomberg® calculation modules (DLIB and OVME).",
+                    "The variance reduction techniques applied are: Latin Hypercube, Stratified Sampling, Antithetic Variables, Importance Sampling, Moment Matching and Control Variates.",
+                    "Overall results suggest that our research objective have been reached for all three certificates we have examined.",
+                    "Ultimately, we can state that the formulations of the initial hypotheses have been demonstrated with highly satisfactory results.",
+                    "This study might be extended by combining different variance reduction techniques in order to study if further standard deviation reductions can be achieved; furthermore, the efficiency of the techniques could be verified with other types of structured products, since the certificate industry includes extremely heterogeneous kinds of products."
+                ],
+                "references": []
+            },
+            {
+                "title": [
+                    "A.4) Control Variates"
+                ],
+                "text": [
+                    "The method is based on the idea of obtaining information about the errors in the estimates of known quantities in order to reduce the error in estimating unknown quantities ",
+                    "In order to describe the mathematical procedure, we consider a random variable  and another random variable  correlated with .",
+                    "We suppose that  is the control variable for .",
+                    "Assuming that the statistical average of  is known, we define a new variable  * as follows:",
+                    " * =  + [ -()] (A5)",
+                    "Note that the statistical average of  * is equal to the mean of :   =   * , consequently we can estimate the average of  rather than   * .",
+                    "Thus, the goal is to choose a parameter  that minimizes the variance of  * .",
+                    "The optimal choice is to set the first derivative equal to zero: ≥ 0, it follows that ( * ) ≤ ()."
+                ],
+                "references": [
+                    "(Lemieux, 2017)"
+                ]
+            },
+            {
+                "title": [
+                    "𝑉𝑎𝑟 (𝑋"
+                ],
+                "text": [
+                    "The same logical steps can be generalized for a dimensional space.",
+                    "In this context, we generate   control variables for .",
+                    "The new variables  * can be expressed in the form: Given that Λ  ⃗⃗ is positively defined, Λ  ⃗⃗ -1 ≻ 0. Being the quadratic form,  ⃗⃗  Λ  ⃗⃗ -1  ⃗⃗ positive, it follows that ( * ) ≤ ()."
+                ],
+                "references": []
+            }
+        ]
+    },
+    "Figures": {
+        "Figures": [
+            {
+                "title": "Figure 1 :",
+                "label": "1",
+                "description": [
+                    "Figure 1: Pie chart of certificates placed in the third quarter of 2022 -Source: Acepi (ITForum 16 June 2022)"
+                ]
+            },
+            {
+                "title": "Figure 2 :",
+                "label": "2",
+                "description": [
+                    "Figure 2: Development of certificates in years 2019-2022.",
+                    "Source: Acepi (ITForum 16 June 2022)"
+                ]
+            },
+            {
+                "title": ", 4 and 5",
+                "label": "5",
+                "description": []
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    ") and refer to the long position of the hedging call: the prices of the Crude Monte Carlo are shown in green, while those of the reduction techniques are shown in blue.",
+                    "The horizontal red line indicates the theoretical price of the Call obtained with the Black and Scholes closed formula and equal to 529.70.",
+                    "The y-axis indicates the prices of the Long Call while the x-axis indicates the number of simulations performed: from 0 to 200, prices are based on 10 3 simulations (Case A), from 200 to 400, on 10 4 simulations (Case B), from 400 to 600, on 10 5 simulations (Case C), from 600 to 800, on 10 6 simulations (Case D)."
+                ]
+            },
+            {
+                "title": "Figure 4 :Figure 5 : 4 )",
+                "label": "454",
+                "description": [
+                    "Figure 4: Convergences of Latin hypercube (LHS), Antithetic Variables (AV), Moment Matching (MM) and Stratified Sampling (SS)to the fair value of the certificate"
+                ]
+            },
+            {
+                "title": "Figure 7 :",
+                "label": "7",
+                "description": [
+                    "Figure 7: Local Volatility of FTSEMIB as of 31/03/2022"
+                ]
+            },
+            {
+                "title": "Figure 8 :",
+                "label": "8",
+                "description": [
+                    "Figure 8: Antithetic Variables (AV), Moment Matching (MM), Stratified Sampling (SS), Latin Hypercube (LHS)"
+                ]
+            },
+            {
+                "title": "Figure 9 :",
+                "label": "9",
+                "description": [
+                    "Figure 9: Crude and Antithetic Variables price distributions"
+                ]
+            },
+            {
+                "title": "Figure 11 :",
+                "label": "11",
+                "description": [
+                    "Figure 11: Antithetic Variables (AV), Latin Hypercube (LHS), Randomized Sobol and Halton"
+                ]
+            },
+            {
+                "title": "Figure 12 :",
+                "label": "12",
+                "description": [
+                    "Figure 12: Crude and Randomized Sobol price distributions"
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "* ) = [( * -  * ) 2 ] = [( + [ -()] -  * ) 2 ] = () +  2 () + 2  (, ) (A6)Where (, ) = [( -  )( -  )]"
+                ]
+            },
+            {
+                "title": "2 𝑉𝑎𝑟",
+                "label": "2",
+                "description": [
+                    "2 * () + 2 (, ) = 0 →  * = -(,) () (A7) ( * ) = () -[(,)]"
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    " * =  +  1 [ 1 -( 1 )] + ⋯ +   [  -(  )] (A9) Or, in a vectorized notation we can express the same relationship in a more concise way: * =  +  ⃗  ( ⃗⃗ - ⃗⃗⃗  ⃗⃗ ) (A10)The variance of  * becomes:( * ) = [( * -  * ) 2 ] =  [( -  +  ⃗  ( ⃗⃗ - ⃗⃗⃗  ⃗⃗ )) ( -  + ( ⃗⃗ - ⃗⃗⃗  ⃗⃗ )   ⃗)] = () +  ⃗  Λ  ⃗⃗  ⃗ + 2 ⃗   ⃗⃗ (A11)Where Λ is the variance-covariance matrix of the array (,  ⃗⃗ ) and  ⃗⃗ is the covariance array:Λ =  [( -  ,  ⃗⃗ - ⃗⃗⃗  ⃗⃗ )  ( -  ,  ⃗⃗ - ⃗⃗⃗  ⃗⃗ )] (A12)  ⃗⃗ = [( ⃗⃗ - ⃗⃗⃗  ⃗⃗ )( -  )] = [(,  1 ), … , (,   )]  (A13)Assuming that the covariance matrix is positively defined, the optimal choice for  ⃗ is:+ 2Λ  ⃗⃗  ⃗ = 0 →  ⃗ * = -Λ  ⃗⃗ -1  ⃗⃗ (A14)With this optimal choice, the variance of  * is:( * ) = () - ⃗⃗  Λ  ⃗⃗ -1  ⃗⃗ (A15)"
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": []
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": []
+            },
+            {
+                "title": "Table 3 :",
+                "label": "3",
+                "description": [
+                    "Numerical estimation of Delta (left) and Vega (right) with the 2-sided Finite Difference Method for certificate IT0005468142 with Crude Monte Carlo technique"
+                ]
+            },
+            {
+                "title": "Table 4 :",
+                "label": "4",
+                "description": [
+                    "Numerical estimation of Rho (left) and Theta (right) using the Finite Difference Method, respectively 2-sided and 1-sided, for certificate IT0005468142 with Crude Monte Carlo technique"
+                ]
+            },
+            {
+                "title": "Table 5 :",
+                "label": "5",
+                "description": [
+                    "Numerical estimation of Gamma with the Finite Difference Method for certificate IT0005468142 with Crude Monte Carlo technique"
+                ]
+            },
+            {
+                "title": "Table 6 :",
+                "label": "6",
+                "description": [
+                    "Latin Hypercube"
+                ]
+            },
+            {
+                "title": "Table 7 :",
+                "label": "7",
+                "description": [
+                    "Antithetic Variables"
+                ]
+            },
+            {
+                "title": "Table 8 :",
+                "label": "8",
+                "description": [
+                    "Stratified Sampling"
+                ]
+            },
+            {
+                "title": "Table 9 :",
+                "label": "9",
+                "description": [
+                    "Moment Matching"
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "calculation of the volatility through the Local Volatility is implemented starting from the implied volatilities deriving from the traded prices.A series of Call and/or Put price vectors for different strikes and different maturities by means of interpolations allows to attain a Local Volatility surface.",
+                    "The connection relates the different volatility structure for different strikes and for different maturities.",
+                    "The formula for calculating the local volatility area is given below (Di Franco, Polimeni & Proietti, 2002):"
+                ]
+            },
+            {
+                "title": "Table 11 :",
+                "label": "11",
+                "description": [
+                    "Crude, Antithetic Variables (AV), Stratified Sampling (SS), Latin Hypercube (LHS) and Moment Matching (MM)"
+                ]
+            },
+            {
+                "title": "Table 13 :",
+                "label": "13",
+                "description": []
+            },
+            {
+                "title": "Table RISK MANAGEMENT MAGAZINE -Volume 18, Issue 1 -Page -32 -Table 13 :",
+                "label": "RISK13",
+                "description": [
+                    "Characteristics of certificate (ISIN: XS2168930340).",
+                    "Source: JP Morgan"
+                ]
+            },
+            {
+                "title": "Table 14 :",
+                "label": "14",
+                "description": [
+                    "Crude, Antithetic Variables (AV), Sobol, Latin Hypercube (LHS), Randomized Halton and Kaya"
+                ]
+            }
+        ],
+        "Tables": [
+            {
+                "title": "Table 3 :",
+                "label": "3",
+                "description": [
+                    "Numerical estimation of Delta (left) and Vega (right) with the 2-sided Finite Difference Method for certificate IT0005468142 with Crude Monte Carlo technique"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 4 :",
+                "label": "4",
+                "description": [
+                    "Numerical estimation of Rho (left) and Theta (right) using the Finite Difference Method, respectively 2-sided and 1-sided, for certificate IT0005468142 with Crude Monte Carlo technique"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 5 :",
+                "label": "5",
+                "description": [
+                    "Numerical estimation of Gamma with the Finite Difference Method for certificate IT0005468142 with Crude Monte Carlo technique"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 6 :",
+                "label": "6",
+                "description": [
+                    "Latin Hypercube"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 7 :",
+                "label": "7",
+                "description": [
+                    "Antithetic Variables"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 8 :",
+                "label": "8",
+                "description": [
+                    "Stratified Sampling"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 9 :",
+                "label": "9",
+                "description": [
+                    "Moment Matching"
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "Mean",
+                            "SD",
+                            "Time"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "A4",
+                            "6.364351",
+                            "0.62309148",
+                            "0.1"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "B4",
+                            "6.356778",
+                            "0.1973578",
+                            "0.88"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "C4",
+                            "6.350574",
+                            "0.06623772",
+                            "9.06"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "D4",
+                            "6.345232",
+                            "0.01756761",
+                            "115.8"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "Mean",
+                            "SD",
+                            "Time"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "A4",
+                            "0.09256348",
+                            "0.007277801",
+                            "0.11"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "B4",
+                            "0.09184981",
+                            "0.002338103",
+                            "0.96"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "C4",
+                            "0.09187552",
+                            "0.000724441",
+                            "9.39"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "D4",
+                            "0.09193785",
+                            "0.00023892",
+                            "98.17"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            null,
+                            "Mean",
+                            "SD",
+                            "Time"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "A4",
+                            "2.24E-07",
+                            "1.92E-06",
+                            "0.17"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "B4",
+                            "4.29E-07",
+                            "6.25E-07",
+                            "1.35"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "C4",
+                            "4.19E-07",
+                            "2.01E-07",
+                            "13.11"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "D4",
+                            "4.38E-07",
+                            "6.07E-08",
+                            "156.95"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": null,
+                "label": null,
+                "description": [
+                    "calculation of the volatility through the Local Volatility is implemented starting from the implied volatilities deriving from the traded prices.A series of Call and/or Put price vectors for different strikes and different maturities by means of interpolations allows to attain a Local Volatility surface.",
+                    "The connection relates the different volatility structure for different strikes and for different maturities.",
+                    "The formula for calculating the local volatility area is given below (Di Franco, Polimeni & Proietti, 2002):"
+                ],
+                "rows": [
+                    {
+                        "cells": [
+                            "𝜎(𝐾, 𝑇) = √",
+                            "𝜎 𝐼𝑀𝑃 2 +2𝑇𝜎 𝐼𝑀𝑃 [1+𝐾𝑑 1 √𝑇 𝜕𝜎 𝐼𝑀𝑃 𝜕𝐾 ] 2 +𝐾 2 𝑇𝜎 𝐼𝑀𝑃 ( 𝜕𝜎 𝐼𝑀𝑃 𝜕𝑇 +2𝑟𝐾𝑇𝜎 𝐼𝑀𝑃 𝜕𝜎 𝐼𝑀𝑃 2 𝜕𝐾 2 -𝑑 1 ( 𝜕𝜎 𝐼𝑀𝑃 𝜕𝐾 𝜕𝜎 𝐼𝑀𝑃 𝜕𝐾",
+                            ") 2",
+                            "√𝑇)"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Table 11 :",
+                "label": "11",
+                "description": [
+                    "Crude, Antithetic Variables (AV), Stratified Sampling (SS), Latin Hypercube (LHS) and Moment Matching (MM)"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 13 :",
+                "label": "13",
+                "description": [],
+                "rows": [
+                    {
+                        "cells": [
+                            null,
+                            null,
+                            "Coupon Payment"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "t",
+                            "Coupon observation dates",
+                            "Coupon payment dates"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "1",
+                            "20 September 2022",
+                            "4 October 2022"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "2",
+                            "20 September 2023",
+                            "4 October 2023"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "3",
+                            "20 September 2024",
+                            "4 October 2024"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "4",
+                            "22 September 2025",
+                            "6 October 2025"
+                        ]
+                    },
+                    {
+                        "cells": [
+                            "5",
+                            "Final Valuation Date",
+                            "Final Date"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Table RISK MANAGEMENT MAGAZINE -Volume 18, Issue 1 -Page -32 -Table 13 :",
+                "label": "RISK13",
+                "description": [
+                    "Characteristics of certificate (ISIN: XS2168930340).",
+                    "Source: JP Morgan"
+                ],
+                "rows": []
+            },
+            {
+                "title": "Table 14 :",
+                "label": "14",
+                "description": [
+                    "Crude, Antithetic Variables (AV), Sobol, Latin Hypercube (LHS), Randomized Halton and Kaya"
+                ],
+                "rows": []
+            }
+        ],
+        "Graphics": [
+            {
+                "type": "bitmap",
+                "coords": "4,168.97,598.66,264.50,183.00"
+            },
+            {
+                "type": "bitmap",
+                "coords": "5,114.22,30.10,373.94,208.25"
+            },
+            {
+                "type": "bitmap",
+                "coords": "10,35.45,164.74,532.39,399.25"
+            },
+            {
+                "type": "bitmap",
+                "coords": "12,77.73,488.28,446.50,259.00"
+            },
+            {
+                "type": "bitmap",
+                "coords": "13,70.88,392.79,460.70,313.98"
+            },
+            {
+                "type": "bitmap",
+                "coords": "14,140.72,30.10,321.00,205.80"
+            },
+            {
+                "type": "bitmap",
+                "coords": "18,44.73,198.99,512.74,243.75"
+            },
+            {
+                "type": "bitmap",
+                "coords": "18,136.22,517.43,329.40,264.57"
+            },
+            {
+                "type": "bitmap",
+                "coords": "11,88.18,344.97,426.10,309.60"
+            },
+            {
+                "type": "bitmap",
+                "coords": "17,82.80,154.18,436.77,220.65"
+            }
+        ]
+    },
+    "Notes": {
+        "annex": {
+            "content": [
+                "With  ̅ = (  , , , , ) under the following conditions:   ≥ 0,  ≥ 0,  ≥ 0,  ≥ 0 e -1 ≤  ≤ +1",
+                "The closed formula for pricing a European Call Option that pays a continuous dividend within the Heston model pricing framework is ",
+                "  (,   , , ) = Having found the parameters that regulate the Heston dynamics, we then move on to the description of the numerical integration schemes implemented.",
+                "The most classic integration scheme is the Euler discretization.",
+                "For each step of the Monte Carlo, the time horizon [0, ] is partitioned into M periods with a constant duration of Δ.",
+                "[0 =  0 <  1 < ⋯   = ],   =   ,  = 0,1, … ,  ",
+                "And here is the volatility process:",
+                "The  represents the speed of adjustment for variance to return towards the long-term average ().",
+                "The correlation constraint must be respected:  = ( 1 ,  2 )  in accordance with the numerical implementation of the Cholesky decomposition.",
+                "Euler's discretization method presents a major problem, namely that volatility can reach a negative value with non-zero probability, contrary to the definition of variance.",
+                "To ensure that this does not happen, the well-known Feller condition has to be checked on the variance process: 2 ≥  2 ",
+                "If this inequality holds, then the drift is sufficiently large for the variance process to be guaranteed positive and not reach zero.",
+                "Given that the calibration of the five parameters that characterized the Heston dynamics strictly depend on the raw market data used for this aim (i.e.",
+                "European call/put market prices or their implied log-normal volatilities), we are not sure that this condition can definitely be met.",
+                "For this reason, we prefer to implement a more robust and reliable discretization scheme.",
+                "The Broadie-Kaya scheme for calculating the Monte Carlo steps is based on the possibility of having exact values of the probability distributions of the underlying price and its volatility at each discrete time increment ",
+                "For each time interval we have that:",
+                "The steps to be followed are:",
+                "Step 1: Generate a sample from the distribution   given   .",
+                "Step 2: Generate a sample from the distribution of ∫     ",
+                "given   and   .",
+                "Step 3: Recover ∫ √   .",
+                "The two suggested methods offer two different solutions, Euler offers a lower level of approximation with the same time step ∆ compared to the exact solution from Broadie-Kaya.",
+                "The implementation of the Broadie-Kaya scheme corresponds to the method with the highest precision thus it remains important for verifying the validity of the model to be used.",
+                "The Heston model is therefore one of the stochastic volatility models that best represents the pace of market prices.",
+                "However, we emphasize the high sensitivity of the five parameters calibration of the dynamics to market data and the absence of closed formulas for non-European contracts.",
+                "A \"Low-Discrepancy Sequence\", also called Quasi-random Sequence, is a sequence of a representative sample from a probability distribution ",
+                "The feature of these sequences is that they have a standard error proportional to 1/ instead of 1/√, where  is the sample size.",
+                "Quasi-random Sampling is very similar to Stratified Sampling: the goal is to sample representative values for the underlying variables.",
+                "In Stratified Sampling we assume we know in advance how many samples will be considered, while in low discrepancy sequences, the procedure is more flexible.",
+                "In this case the samples are taken in such a way that the gaps between the created sample and the existing one are filled.",
+                "With each simulation, the sampled points are approximately uniformly arranged within the probability space.",
+                "The resulting (deterministic) sampling is entered into the Monte Carlo engine replacing the typical random sampling ",
+                "The advantage of using this methodology is to obtain the same result as the stochastic methodology with a lower number of simulations.",
+                "For a brief summary of the working principle, see appendix A.7.",
+                "In this certificate pricing context, we decided to introduce a normal random outcome by means of a Low Discrepancy Sequence (LDS) for the generation of   1 , and a normal random output by means of a traditional uniform distribution for   2 since this combination of random number generation has proven to be empirically more efficient compared to a standard variance reduction methodology.",
+                "Consequently, the output of the SDE system is not deterministic, but based on LDS, and it is associated with the Randomized QMC methods (L'Ecuyer & Lemieux, 2002).",
+                "The reduction techniques applied to this Certificate are: Antithetic Variables, Latin Hypercube Sampling, Randomized Halton and Randomized Sobol.",
+                "The result of the Crude Monte Carlo was obtained using the Euler-Maruyama integration scheme while the result obtained using the Broadie-Kaya scheme is also reported, which indicates an improvement in the standard deviation, but at the cost of a higher computing time.",
+                "In the Antithetic Variables technique, the simulation by the Monte Carlo engine is made through the estimation of two values of the derivative to be evaluated ",
+                "The first value  1 is calculated normally while the second value  2 is calculated by changing the sign to the whole random sample deriving from the standard normal distribution.",
+                "The sample of final values of a simulation will be the mean of the values  1 and  2 .",
+                "This method works well when one value is above the exact value while the other tends to be below and vice versa.",
+                "The mean of the two values is calculated:",
+                "The final estimate of the value of the derivative is the mean of the obtained values  ̅ .",
+                "Considering  ̅ as the standard deviation of the  ̅ values and  as the number of simulations then the estimation error will be  ̅",
+                ". The final result should have a lower error compared to using 2 random simulations ",
+                "Stratified Sampling consists in dividing the sample domain into smaller areas, and for each of them, a representative value of the function is selected ",
+                "The fundamental concept is to limit the extractions in specific subsets of the random number generation domain without introducing biases.",
+                "Let us presume we need to estimate [], with  real-valued random variable and let us consider  1 , … ,   the disjunct sets for which the probability ( ∈ ⋃  ) is one:",
+                "In a random sampling,  1 , … ,   are independently generated and they have the same distribution as X.",
+                "The fraction of such extractions that fall into partition   generally does not equal   .",
+                "In Stratified Sampling, on the other hand, the portion of the sampling that should be obtained from each stratum   is decided in advance.",
+                "The simplest and most common application of this methodology consists in partitioning the random variables distributed according to layers:",
+                "Each one of these ranges has a probability of being selected.",
+                "Instead, if operating with the SS logic, a random variable selected within the designated interval will be generated.",
+                "By sampling the random variable conditional to belonging to one of the designed proportional partitions, iteration after iteration, the contribution due to the sampling variability is eliminated.",
+                "Latin Hypercube Sampling is obtained by dividing a cumulative density function into n equal parts and then selecting a random point in each division ",
+                "This technique allows to extend Stratified Sampling in a multidimensional context.",
+                "To generate a Latin Hypercube of dimension  in d dimensions, let us consider   () , the random variables generated by U(0,1) for i = 1,…,d , j = 1,…., .",
+                "This technique consists in transforming the paths in order to match the moments of the distribution ",
+                "This can be done for example in the simulation of an underlying asset (  ) simulated under the assumption of risk neutrality and with a constant interest rate.",
+                "If the underlying pays no dividends, then we have:",
+                "We assume to simulate n independent copies of the process  1 , … . .",
+                ",   and we define the mean of the sample:",
+                "For a finite number of n, the mean of the sample will not coincide with [()], therefore it would occur that the current value of the simulations would not coincide with the real current value of the underlying:",
+                "The left side of the equation is the current underlying while the right side represents the estimated and discounted simulation.",
+                "A possible remedy that Moment Matching attempts to bring is to transform the simulated paths:",
+                "At this stage, we use   ̃() instead of   for the price of the derivative.",
+                "The Importance Sampling tries to accelerate the convergence rate of the Monte Carlo engine by changing the probability measure from which the paths are generated ",
+                "This methodology focuses on those regions that contribute to the mean of the Monte Carlo integration procedure.",
+                "An example to understand this technique consists in calculating the price of a European \"deep-out-of-the-money\" Call option with strike price K and maturity T.",
+                "In this case, the sample of values at time T will lead to a zero payoff most times.",
+                "This is a computational waste of time because the paths that lead to zero contribute very little to the value of the option.",
+                "The operation to be implemented in this case is to only select the important paths, i.e., those where the price of the underlying is higher than the strike price at maturity (for the Call option; vice versa for a Put option).",
+                "To further clarify the reasoning described above, we proceed with the mathematical steps.",
+                "Let us suppose we have to estimate:",
+                "Where X is a random variable in ℜ  with probability density f and h is a function ℜ  → ℜ.",
+                "The estimator in an ordinary Monte Carlo is:",
+                "With  1 , … . .",
+                ",   being independent variables extracted from f.",
+                "Let g be any other probability density in ℜ  that satisfies the condition: () > 0 → () > 0, ∀ ∈ ℜ ",
+                "In this case we can also represent  as:",
+                "This integral can be interpreted as the expected value with respect to density g:",
+                "If  1 , … . .",
+                ",   are now random variables extracted from g, the estimator of the Importance Sampling associated with g is:",
+                "Where the ratio",
+                "is the stochastic derivative of Radon-Nikodym calculated in   .",
+                "Since the following is true:",
+                "] (A26) it follows that  ̃[ ̂] is an unbiased estimator of  in order to compare the variances with and without the technique in question and it is sufficient to analyze the second moments.",
+                "With the Importance Sampling, we have:",
+                "Such figure can be greater or smaller than the second moment of the ordinary Monte Carlo, [ℎ() 2 ] depending on how the density function  is designed, which is strongly related to the type of option we want to valuate.",
+                "The difficulty in defining a suitable density function makes it complicated to generalize the method and therefore to integrate it into automated pricing systems.",
+                "The Quasi-Monte Carlo (QMC) method approximates the integral using:",
+                "For points  1 ,  2 , …   suitably extracted in a deterministic and sequential way from a numerical series within the unitary hypercube [0, 1)  .",
+                "The issue with Quasi-Monte Carlo techniques is that they are related to the dimensionality of the problem, and it is actually essential to know d in order to correctly produce the sequences of points.",
+                "Starting from the Van der Corput series, the basis of most of the QMC simulations, the Halton and Sobol sequences will then be obtained, which are the ones used in this certificate.",
+                "Given a collection X of subsets measurable according to Lebesgue of A=[0, 1)  , the discrepancy D of the set of points { 1 , … .",
+                "  } relative to X is defined as follows:",
+                "Where:",
+                "#{  ∈ } indicates the number of   in A, vol(A) is the measure of A in the reference space.",
+                "The LDS numerical sequences manage to minimize the quantity D and to solve the integration problem ",
+                "To obtain the Van der Corput sequences, the following steps must be followed:",
+                "• Choosing a prime number b",
+                "• Writing n in base b.",
+                "This operation allows to find the unknown   () which satisfies the equation:",
+                "where  is the smallest integer so that   () = 0, ∀ > ",
+                "• Converting n to decimal base to find the n-th element, indicated as:",
+                "After introducing the Van der Corput sequence, we can introduce the Halton sequence which constitutes a multi-dimensional extension of the Van der Corput sequence.",
+                "The implementation of this sequence is very simple, and it is sufficient to select a different base b for each dimension, to build it.",
+                "The Sobol sequence is built starting from the Van der Corput sequence, alternating its elements for each dimension of the problem: we have the same fundamental elements, but the order is permuted ",
+                "The values are calculated according to the following logic: let us suppose we want to generate the term n+1 of sequence j, indicated as  +1  .",
+                "We start with the sequence  1 = 0.5 in base ten or 0.1 in base two and we write n in binary notation:",
+                "We define k as the subscript i of the first coefficient   ≠ 0. Finally, element  +1 is calculated through the operation:  +1 =   ⨁   , where   is the direction k for the considered dimension j.",
+                "The ⨁ operator represents the XOR binary operator.",
+                "The deterministic numbers   are generated by iteratively applying the recurrence: Where i > q and a are the coefficients (0/1) of the primitive polynomial of degree q of the following form: P(X) =   +  1  -1 +  2  -2 + ⋯ +  -1  1 + 1 (A33)",
+                "To achieve greater tractability, the theory of numbers suggests performing the transformation of a variable:   = 2    ",
+                "These values satisfy the recurrence:",
+                "  = 2 1  -1 ⨁2 2  2  -2 ⨁. .",
+                "⨁2 -1  -1  -+1 ⨁2   - ⨁ - (A34)",
+                "Given the properties of   , then   is an odd integer between 0 and 2  .",
+                "Instead of generating the values of   , in order to simplify the algorithm, we will rescale the values to generate the variables   , which will be multipliers of   .",
+                "The theoretical procedure can be efficiently implemented in a programming environment:",
+                "-Select a primitive polynomial for dimension j.",
+                "-Select a starting value for the first figure   with Eq. (A34)",
+                "-Determine k in the base 2 decomposition of n Eq. (A31)",
+                "-Calculate a new value for   .",
+                "-Calculate  +1 = {   ⨁2  +1 -      =  +1 2  ⨁2  +1 -      ≠  +1  +1 :  +1 =  +1 /2  +1 (A35)",
+                "In the implemented Randomized Quasi-Monte Carlo we have used this algorithm for generating the Wiener process associated with the spot level projection in the Heston model."
+            ]
+        },
+        "references": {
+            "references": [
+                {},
+                {
+                    "title": "Variance reduction of Monte Carlo and Randomized Quasi-Monte Carlo estimators for stochastic volatility models in finance",
+                    "authors": [
+                        "Ameur",
+                        "L'ecuyer",
+                        "Lemieux"
+                    ]
+                },
+                {
+                    "title": "On improving the least squares Monte Carlo option valuation method",
+                    "authors": [
+                        "Areal",
+                        "Rodrigues",
+                        "Armada"
+                    ],
+                    "journal_abbreviation": "Review of Derivatives Research"
+                },
+                {
+                    "title": "Efficient Monte Carlo and Quasi-Monte Carlo Option Pricing under the Variance Gamma Model",
+                    "authors": [
+                        "Avramidis",
+                        "L'ecuyer"
+                    ],
+                    "journal_abbreviation": "Management Science"
+                },
+                {
+                    "title": "The pricing of options and corporate liabilities",
+                    "authors": [
+                        "Black",
+                        "Scholes"
+                    ],
+                    "journal_abbreviation": "Journal of Political Economy"
+                },
+                {
+                    "title": "Efficient Variance Reduction for American Call Options Using Symmetry Arguments",
+                    "authors": [
+                        "Boire",
+                        "Reesor",
+                        "Stentoft"
+                    ],
+                    "journal_abbreviation": "Journal of Risk and Financial Management"
+                },
+                {
+                    "title": "American Option Pricing with Importance Sampling and Shifted Regressions",
+                    "authors": [
+                        "Boire",
+                        "Reesor",
+                        "Stentoft"
+                    ],
+                    "journal_abbreviation": "Journal of Risk and Financial Management"
+                },
+                {
+                    "title": "Exact simulation of stochastic volatility and other affine jump diffusion processes",
+                    "authors": [
+                        "Broadie",
+                        "Kaya"
+                    ],
+                    "journal_abbreviation": "Operations Research"
+                },
+                {
+                    "title": "Variance Reduction",
+                    "authors": [
+                        "Botev",
+                        "Ridder"
+                    ],
+                    "publisher": "Wiley Online Library"
+                },
+                {
+                    "title": "Options: a Monte Carlo approach",
+                    "authors": [
+                        "Boyle"
+                    ],
+                    "journal_abbreviation": "Journal of Financial Economics"
+                },
+                {
+                    "title": "Opzioni e titoli strutturati",
+                    "authors": [
+                        "Franco",
+                        "Polimeni",
+                        "Proietti"
+                    ],
+                    "journal_abbreviation": "Il Sole"
+                },
+                {
+                    "title": "Variance Reduction for Asian Options under a General Model Framework",
+                    "authors": [
+                        "Dingeç",
+                        "Sak",
+                        "Hörmann"
+                    ],
+                    "journal_abbreviation": "Review of Finance"
+                },
+                {
+                    "title": "Monte Carlo simulation: methodologies and applications for pricing and risk management",
+                    "authors": [
+                        "Dupire"
+                    ],
+                    "journal_abbreviation": "Risk Publications"
+                },
+                {
+                    "title": "Pricing with a smile",
+                    "authors": [
+                        "Dupire"
+                    ],
+                    "journal_abbreviation": "Risk Magazine"
+                },
+                {
+                    "title": "Variance reduction for Monte Carlo methods to evaluate option prices under multi-factor stochastic volatility models",
+                    "authors": [
+                        "Fouque",
+                        "Han"
+                    ],
+                    "journal_abbreviation": "Quantitative Finance"
+                },
+                {
+                    "title": "Variance Reduction Applied to Machine Learning for Pricing Bermudan/American Options in High Dimension",
+                    "authors": [
+                        "Goudenège",
+                        "Molent",
+                        "Zanette"
+                    ],
+                    "publisher": "Nova Science Publishers"
+                },
+                {
+                    "title": "Progettazione di un controllo affidabile sull'errore commesso dall'introduzione di sequenze a bassa discrepanza in un framework di pricing Monte Carlo",
+                    "authors": [
+                        "Giribone",
+                        "Ligato"
+                    ],
+                    "journal_abbreviation": "AIFIRM Magazine"
+                },
+                {
+                    "title": "Metodologie per migliorare la velocità di convergenza nei simulatori Monte Carlo: Analisi delle tecniche ed implementazione in un framework di pricing",
+                    "authors": [
+                        "Giribone",
+                        "Ligato"
+                    ],
+                    "journal_abbreviation": "AIFIRM Magazine"
+                },
+                {
+                    "title": "Certificate pricing using Discrete Event Simulations and System Dynamics theory",
+                    "authors": [
+                        "Giribone",
+                        "Revetria"
+                    ],
+                    "journal_abbreviation": "Risk Management Magazine"
+                },
+                {
+                    "title": "Monte Carlo Methods in Financial Engineering",
+                    "authors": [
+                        "Glasserman"
+                    ],
+                    "publisher": "Springer"
+                },
+                {
+                    "title": "Variance Reduction Techniques for Estimating Value-at-Risk",
+                    "authors": [
+                        "Glasserman",
+                        "Heidelberger",
+                        "Shahabuddin"
+                    ],
+                    "journal_abbreviation": "Management Science"
+                },
+                {
+                    "title": "A pricing and performance study on auto-callable structured products",
+                    "authors": [
+                        "Hansson"
+                    ]
+                },
+                {
+                    "title": "The complete guide to Option Pricing Formulas",
+                    "authors": [
+                        "Haug"
+                    ],
+                    "publisher": "McGraw-Hill"
+                },
+                {
+                    "title": "Antithetic Variates",
+                    "authors": [
+                        "He",
+                        "Chen"
+                    ],
+                    "publisher": "Wiley Online Library"
+                },
+                {
+                    "title": "A closed-form solution for options with stochastic volatility with applications to bond and currency options",
+                    "authors": [
+                        "Heston"
+                    ],
+                    "journal_abbreviation": "The Review of Financial Studies"
+                },
+                {
+                    "title": "Efficiently pricing barrier options in a Markov-switching framework",
+                    "authors": [
+                        "Hieber",
+                        "Scherer"
+                    ],
+                    "journal_abbreviation": "Journal of Computational and Applied Mathematics"
+                },
+                {
+                    "title": "Efficiently Estimating multifactor portfolio credit risk: A variance reduction approach",
+                    "authors": [
+                        "Hsieh",
+                        "Lee",
+                        "Shyu",
+                        "Chiu"
+                    ],
+                    "journal_abbreviation": "Pacifi-Basin Finance Journal",
+                    "publisher": "Elsevier"
+                },
+                {
+                    "title": "Options, Futures and other Derivatives",
+                    "authors": [
+                        "Hull"
+                    ],
+                    "publisher": "Wiley"
+                },
+                {
+                    "title": "Financial Derivatives in Theory and Practice",
+                    "authors": [
+                        "Hunt",
+                        "Kennedy"
+                    ],
+                    "publisher": "Wiley"
+                },
+                {
+                    "title": "Stochastic simulation and applications in finance with Matlab programs",
+                    "authors": [
+                        "Huynh",
+                        "Lai",
+                        "Soumare"
+                    ],
+                    "publisher": "Wiley"
+                },
+                {
+                    "title": "Latin hypercube sampling",
+                    "authors": [
+                        "Iman",
+                        "Davenport",
+                        "Zeigler"
+                    ]
+                },
+                {
+                    "title": "Fitting Local Volatility: Analytical and numerical approaches in Black-Scholes and Local Variance Gamma models",
+                    "authors": [
+                        "Itkin"
+                    ],
+                    "publisher": "World Scientific Publishing"
+                },
+                {
+                    "title": "Monte Carlo methods in finance",
+                    "authors": [
+                        "Jäckel"
+                    ],
+                    "publisher": "John Wiley & Sons"
+                },
+                {
+                    "title": "Numerical Solution of SDE through computer experiments",
+                    "authors": [
+                        "Kloeden",
+                        "Platen",
+                        "Schurz"
+                    ],
+                    "publisher": "Springer"
+                },
+                {
+                    "title": "Numerical Solution of Stochastic Differential Equations",
+                    "authors": [
+                        "Kloeden",
+                        "Platen"
+                    ],
+                    "publisher": "Springer Verlang"
+                },
+                {
+                    "title": "Recent Advances in Randomized Quasi-Monte Carlo Methods",
+                    "authors": [
+                        "L'ecuyer",
+                        "Lemieux"
+                    ],
+                    "publisher": "Springer"
+                },
+                {
+                    "title": "Control Variates",
+                    "authors": [
+                        "Lemieux"
+                    ],
+                    "publisher": "Wiley Online Library"
+                },
+                {
+                    "title": "A study of variance reduction techniques for American option pricing",
+                    "authors": [
+                        "Lemieux",
+                        "La"
+                    ]
+                },
+                {
+                    "title": "Valuing American options by simulations: A simple least-squares approach",
+                    "authors": [
+                        "Longstaff",
+                        "Schwartz"
+                    ],
+                    "journal_abbreviation": "Review of Financial Studies"
+                },
+                {
+                    "title": "A non-Gaussian option pricing model based on Kaniadakis exponential deformation",
+                    "authors": [
+                        "Moretto",
+                        "Pasquali",
+                        "Trivellato"
+                    ],
+                    "journal_abbreviation": "The European Physical Journal B"
+                },
+                {
+                    "title": "Calibration and simulation of Heston model",
+                    "authors": [
+                        "Mrázek",
+                        "Pospíšil"
+                    ],
+                    "journal_abbreviation": "Open Mathematics"
+                },
+                {
+                    "title": "Banche, allarme derivati: valgono 33 volte il PIL mondiale",
+                    "authors": [
+                        "Oliveri"
+                    ],
+                    "journal_abbreviation": "Il Sole",
+                    "publisher": "R&S Mediobanca"
+                },
+                {
+                    "title": "The Heston model and its extensions in Matlab and C#",
+                    "authors": [
+                        "Rouah"
+                    ],
+                    "journal_abbreviation": "Wiley Finance Series"
+                },
+                {
+                    "title": "The distribution of points in a cube and the approximate evaluation of integrals",
+                    "authors": [
+                        "Sobol"
+                    ],
+                    "journal_abbreviation": "USSR Computational Mathematics and Mathematical Physics"
+                },
+                {
+                    "title": "Variance reduction for risk measures with Importance Sampling in nested simulation",
+                    "authors": [
+                        "Xing",
+                        "Sit",
+                        "Wong"
+                    ],
+                    "journal_abbreviation": "Quantitative Finance"
+                },
+                {
+                    "title": "The value of Monte Carlo model-based variance reduction technology in the pricing of financial derivatives",
+                    "authors": [
+                        "Zhang"
+                    ],
+                    "journal_abbreviation": "PoS ONE"
+                },
+                {
+                    "title": "Variance Reduction Techniques of Importance Sampling Monte Carlo Methods for Pricing Options",
+                    "authors": [
+                        "Zhao",
+                        "Liu",
+                        "Gu"
+                    ],
+                    "journal_abbreviation": "Journal of Mathematical Finance"
+                }
+            ]
+        }
+    }
+}

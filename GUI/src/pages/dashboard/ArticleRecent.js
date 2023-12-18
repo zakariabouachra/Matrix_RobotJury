@@ -74,9 +74,9 @@ const ArticleStatus = ({ status }) => {
   let title;
 
   switch (status) {
-    case 'Verified':
+    case 'Accepted':
       color = 'warning';
-      title = 'Verified';
+      title = 'Accepted';
       break;
     case 'Published':
       color = 'success';

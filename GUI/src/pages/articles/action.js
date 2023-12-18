@@ -9,7 +9,7 @@ import {
   import Payment from './paiement'
   import SoummissionFinal from './publier'
 
-const RenderDialog = ({dialogInfo,articlesData,handleCloseDialog}) => {
+const RenderDialog = ({dialogInfo,handleCloseDialog}) => {
 
   //------hnaya ndir la fonction besh nsuprimier -----//
   const handleDelete = async (articleId) => {
@@ -25,14 +25,11 @@ const RenderDialog = ({dialogInfo,articlesData,handleCloseDialog}) => {
       const response = await fetch(`http://localhost:5000/supprimerarticle/${articleId}`, requestOptions);
   
       if (response.ok) {
+        const data = await response.json();
         console.log(`Article avec ID ${articleId} supprimé avec succès.`);
-  
-        // Mettez à jour localement la liste des articles après la suppression
-        const updatedArticles = articlesData.filter((article) => article.id !== articleId);
-        localStorage.setItem('articlesData', JSON.stringify(updatedArticles));
-  
-        // Appeler la fonction de fermeture du dialogue avec le nouvel état
-        handleCloseDialog(updatedArticles);
+        localStorage.setItem('articlesData', JSON.stringify(data.articles));
+        window.location.reload();
+        handleCloseDialog();
       } else {
         console.error(`Échec de la suppression de l'article avec ID ${articleId}.`);
       }
